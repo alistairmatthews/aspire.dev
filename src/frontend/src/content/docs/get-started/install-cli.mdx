@@ -1,0 +1,136 @@
+---
+title: Install Aspire CLI
+description: Learn how to install the Aspire CLI as a native executable or .NET global tool to manage your cloud-native applications.
+lastUpdated: true
+tableOfContents: true
+---
+
+import InstallAspireCLI from '@components/InstallAspireCLI.astro';
+import LearnMore from '@components/LearnMore.astro';
+import { Aside, Code, Tabs, TabItem, Steps } from '@astrojs/starlight/components';
+
+Aspire provides a command-line interface (CLI) tool to help you create and manage Aspire-based apps. The CLI streamlines your development workflow with an interactive-first experience. This guide shows you how to install the Aspire CLI on your system. The Aspire CLI requires the [.NET 10.0 SDK](https://dotnet.microsoft.com/download/dotnet/10.0).
+
+<LearnMore>
+Before installing the Aspire CLI, ensure you have the [required prerequisites](/get-started/prerequisites/) set up.
+</LearnMore>
+
+## Install as a native executable
+
+The Aspire CLI is installed using an installation script available for Bash and PowerShell.
+
+<Aside type="note" title="Download and install" icon="download">
+You can download and run the script in a single command, to install the Aspire CLI as a native executable:
+
+<Tabs syncKey="terminal">
+    <TabItem label="Bash" icon="seti:shell">
+        <Code
+            lang="bash"
+            code="curl -sSL https://aspire.dev/install.sh | bash"
+        />
+    </TabItem>
+    <TabItem label="PowerShell" icon="seti:powershell">
+        <Code
+            lang="powershell"
+            code='iex "& { $(irm https://aspire.dev/install.ps1) }"'
+        />
+    </TabItem>
+</Tabs>
+
+The script installs the latest stable release of Aspire CLI. See [Validation](#validation) to verify the installation.
+</Aside>
+
+Alternatively, you can download the script and run it as a two-step process:
+
+<Steps>
+01. Open a terminal.
+01. Download the script and save it as a file:
+
+    <Tabs syncKey="terminal">
+        <TabItem label="Bash" icon="seti:shell">
+            <Code
+                lang="bash"
+                code="curl -sSL https://aspire.dev/install.sh -o aspire-install.sh"
+            />
+        </TabItem>
+        <TabItem label="PowerShell" icon="seti:powershell">
+            <Code
+                lang="powershell"
+                code='irm https://aspire.dev/install.ps1 -OutFile aspire-install.ps1'
+            />
+        </TabItem>
+    </Tabs>
+
+01. Run the script to install the stable release build of Aspire.
+
+    You should see output similar to the following snippet:
+
+    <Tabs syncKey="terminal">
+        <TabItem label="Bash" icon="seti:shell">
+            ```txt title="Output" frame="terminal"
+            Downloading from: https://aka.ms/dotnet/9/aspire/ga/daily/aspire-cli-linux-x64.tar.gz
+            Aspire CLI successfully installed to: /home/username/.aspire/bin/aspire
+            Added /home/username/.aspire/bin to PATH for current session
+            Added /home/username/.aspire/bin to PATH in /home/username/.bashrc
+            
+            The aspire cli is now available for use in this and new sessions.
+            ```
+        </TabItem>
+        <TabItem label="PowerShell" icon="seti:powershell">
+            ```txt title="Output" frame="terminal"
+            Downloading from: https://aka.ms/dotnet/9/aspire/ga/daily/aspire-cli-win-x64.zip
+            Aspire CLI successfully installed to: C:\Users\name\.aspire\bin\aspire.exe
+            Added C:\Users\username\.aspire\bin to PATH for current session
+            Added C:\Users\username\.aspire\bin to user PATH environment variable
+            
+            The aspire cli is now available for use in this and new sessions.
+            ```
+        </TabItem>
+    </Tabs>
+</Steps>
+
+## Install as a .NET global tool
+
+Use the `dotnet tool` command to install the Aspire CLI global tool. The name of the global tool is [`Aspire.Cli`](https://www.nuget.org/packages/Aspire.CLI).
+
+<Steps>
+01. Open a terminal.
+01. Run the following command to install Aspire CLI:
+
+    ```bash title=".NET CLI"
+    dotnet tool install -g Aspire.Cli
+    ```
+
+    <Aside type="tip" title="Not recommended" icon="random">
+        Although the .NET global tool installation method is functional, we recommend using the native executable installation script for the best experience.
+    </Aside>
+</Steps>
+
+## Validation
+
+To validate that the global tool is installed, use the `--version` option to query Aspire CLI for a version number:
+
+```bash title="Aspire CLI"
+aspire --version
+```
+
+If that command works, you're presented with the version of the Aspire CLI tool:
+
+```bash title="Aspire CLI — Output"
+13.0.0+{commitSHA}
+```
+
+The `+{commitSHA}` suffix indicates the specific commit from which the Aspire CLI was built. This suffix is included in pre-release builds and may not be present in stable releases.
+
+<LearnMore>
+Learn more by reading the [Aspire CLI reference](/reference/cli/overview/) documentation.
+</LearnMore>
+
+<Aside type='caution' title='Troubleshooting'>
+If you're not seeing a version number, it's possible that your terminal session needs to be restarted to pick up the changes to your PATH environment variable. Simply close and reopen your terminal, then try running the `aspire --version` command again.
+</Aside>
+
+## See also
+
+- [aspire-install script reference](/reference/cli/install-script/)
+- [`aspire` command reference](/reference/cli/commands/aspire/)
