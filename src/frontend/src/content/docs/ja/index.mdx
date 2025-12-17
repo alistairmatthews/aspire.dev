@@ -8,6 +8,9 @@ description: スタックに Aspire を追加し、コードファーストな�
 template: splash
 editUrl: false
 next: false
+banner:
+  content: |
+    <strong>🚀 Aspire 13.1 がリリースされました！</strong> — <a href="/ja/whats-new/aspire-13-1/">Aspire 13.1 の新機能を確認。</a>
 hero:
   tagline: あなたのスタックをシンプルに。 <p>フロントエンド、API、コンテナ、データベースを簡単にオーケストレーション—再実装不要、制限なし。Aspire を拡張してあらゆるプロジェクトを強化。</p>
   image:
@@ -25,6 +28,7 @@ import LoopingVideo from '@components/LoopingVideo.astro';
 import FreeAndOpenSourceAside from '@components/FreeAndOpenSourceAside.astro';
 import FluidGrid from '@components/FluidGrid.astro';
 import SimpleCard from '@components/SimpleCard.astro';
+import SearchSection from '@components/SearchSection.astro';
 import { Code, Card, CardGrid, Tabs, TabItem, LinkButton, LinkCard } from '@astrojs/starlight/components';
 
 <FreeAndOpenSourceAside />
@@ -128,6 +132,12 @@ import IntegrationGrid from '@components/IntegrationGrid.astro';
 **マルチクラウド & 無制限インテグレーション** — Azure / AWS / 自前インフラへ接続。多様なエコシステムで任意スタックを強化。[インテグレーションギャラリーを見る](/ja/integrations/gallery/)。
 
 <IntegrationGrid />
+
+## 検索して詳しく知る
+
+**バズワードを信じない？あなたのスタックでドキュメントを検索！** ここでキーワードを入力して、Aspire がすでにお使いのツールとどのように連携するかを正確に確認できます。
+
+<SearchSection />
 
 ## 利用者の声
 
