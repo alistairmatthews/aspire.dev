@@ -187,7 +187,7 @@ var token = builder.Configuration.GetValue<string>("MILVUSDB_TOKEN");
 Use the `os.getenv()` method to obtain these environment variables in consuming projects:
 
 ```python title="Python - Obtain configuration properties"
-connection_uri = os.getenv("ConnectionStrings:milvusdb")
+connection_uri = os.getenv("ConnectionStrings__milvusdb")
 host = os.getenv("MILVUSDB_HOST")
 port = os.getenv("MILVUSDB_PORT")
 token = os.getenv("MILVUSDB_TOKEN")

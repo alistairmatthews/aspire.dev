@@ -190,7 +190,7 @@ string databaseName = builder.Configuration.GetValue<string>("MONGODB_DATABASENA
 Use the `os.getenv()` method to obtain these environment variables in consuming projects:
 
 ```python title="Python - Obtain configuration properties"
-connection_uri = os.getenv("ConnectionStrings:mongodb")
+connection_uri = os.getenv("ConnectionStrings__mongodb")
 host = os.getenv("MONGODB_HOST")
 port = os.getenv("MONGODB_PORT")
 username = os.getenv("MONGODB_USERNAME")
