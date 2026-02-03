@@ -18,7 +18,7 @@ import postgresqlIcon from '@assets/icons/azure-postgresql-icon.png';
   data-zoom-off
 />
 
-To get started with the Aspire Azure PostgreSQL integrations, follow the [Get started with Azure PostgreSQL integrations](../azure-postgresql-get-started/) guide.
+To get started with the Aspire Azure PostgreSQL integrations, follow the [Get started with Azure PostgreSQL integrations](/integrations/databases/efcore/azure-postgresql/azure-postgresql-get-started/) guide.
 
 This article includes full details about the Aspire Azure PostgreSQL Client integration, which allows you to connect to and interact with Azure PostgreSQL databases from your Aspire consuming projects.
 
@@ -97,7 +97,7 @@ builder.Services.AddDbContext<YourDbContext>(options =>
 ```
 
 > [!NOTE]
-> The connection string name that you pass to the `GetConnectionString` method must match the name used when adding the PostgreSQL server resource in the AppHost project. For more information, see [Add an Azure Database for PostgreSQL resource](../azure-postgresql-host/#add-an-azure-database-for-postgresql-resource).
+> The connection string name that you pass to the `GetConnectionString` method must match the name used when adding the PostgreSQL server resource in the AppHost project. For more information, see [Add an Azure Database for PostgreSQL resource](/integrations/databases/efcore/azure-postgresql/azure-postgresql-host/#add-an-azure-database-for-postgresql-resource).
 
 You have more flexibility when you create the database context in this way, for example:
 

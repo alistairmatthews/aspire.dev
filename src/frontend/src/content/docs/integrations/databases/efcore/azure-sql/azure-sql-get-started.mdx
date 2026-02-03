@@ -23,10 +23,10 @@ import sqlServerIcon from '@assets/icons/azure-sqlserver-icon.png';
 
 [Azure SQL](https://azure.microsoft.com/products/azure-sql) is a family of relational database management systems that run in the Azure cloud. The database systems are Platform-as-a-Service (PaaS) products that enable database administrators to implement highly scalable and available databases without maintaining complex infrastructures themselves. The Aspire Azure SQL Server Hosting integration provides methods to create a new Azure Database server and databases from code in your Aspire AppHost project. In a consuming project, you can use the Aspire SQL Server client integration as you would for any other SQL Server instance.
 
-In this introduction, you'll see how to install and use the Aspire Azure SQL integrations in a simple configuration. If you already have this knowledge, see [Azure SQL Hosting integration](../azure-sql-host/) for full reference details.
+In this introduction, you'll see how to install and use the Aspire Azure SQL integrations in a simple configuration. If you already have this knowledge, see [Azure SQL Hosting integration](/integrations/databases/efcore/azure-sql/azure-sql-host/) for full reference details.
 
 <Aside type="note">
-    To follow this guide, you must have created an Aspire solution to work with. To learn how to do that, see [Build your first Aspire app](../../../../../get-started/first-app/).
+    To follow this guide, you must have created an Aspire solution to work with. To learn how to do that, see [Build your first Aspire app](/get-started/first-app/).
 </Aside>
 
 ## Set up hosting integration
@@ -49,7 +49,7 @@ var exampleProject = builder.AddProject<Projects.ExampleProject>("apiservice")
 ```
 
 <Aside type="tip">
-    This is the simplest implementation of Azure SQL resources in the AppHost. There are many more options you can choose from to address your requirements. For full details, see [Azure SQL Hosting integration](../azure-sql-host/).
+    This is the simplest implementation of Azure SQL resources in the AppHost. There are many more options you can choose from to address your requirements. For full details, see [Azure SQL Hosting integration](/integrations/databases/efcore/azure-sql/azure-sql-host/).
 </Aside>
 
 <Aside type="caution">
@@ -95,7 +95,7 @@ string sqlJDBCConnectionString = builder.Configuration.GetValue<string>("DATABAS
 ```
 
 <Aside type="tip">
-    The full set of properties that Aspire injects depends on the Azure SQL resource configuration. For more information, see [Properties of the Azure SQL resources](../azure-sql-client/#properties-of-the-azure-sql-resources).
+    The full set of properties that Aspire injects depends on the Azure SQL resource configuration. For more information, see [Properties of the Azure SQL resources](/integrations/databases/efcore/azure-sql/azure-sql-client/#properties-of-the-azure-sql-resources).
 </Aside>
 
 ### Use Azure SQL resources in client code

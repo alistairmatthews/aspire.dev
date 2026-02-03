@@ -17,7 +17,7 @@ import sqlServerIcon from '@assets/icons/azure-sqlserver-icon.png';
   data-zoom-off
 />
 
-To get started with the Aspire Azure SQL integrations, follow the [Get started with Azure SQL integrations](../azure-sql-get-started/) guide.
+To get started with the Aspire Azure SQL integrations, follow the [Get started with Azure SQL integrations](/integrations/databases/efcore/azure-sql/azure-sql-get-started/) guide.
 
 This article includes full details about the Aspire Azure SQL Hosting integration, which models Azure SQL server and database resources as the `AzureSqlServerResource` and `AzureSqlDatabaseResource` types. To access these types and APIs, you need to install the Azure SQL Hosting integration in your AppHost project.
 
@@ -52,7 +52,7 @@ The preceding call to `AddAzureSqlServer` configures the Azure SQL server resour
 </Aside>
 
 <Aside type="note">
-    When you call `WithReference` in the AppHost to pass Azure SQL resources to a consuming project, Aspire makes several properties available to that project, such as connection strings, URIs, and port numbers. For a complete list of these properties, see [Properties of the Azure SQL resources](../azure-sql-client/#properties-of-the-azure-sql-resources).
+    When you call `WithReference` in the AppHost to pass Azure SQL resources to a consuming project, Aspire makes several properties available to that project, such as connection strings, URIs, and port numbers. For a complete list of these properties, see [Properties of the Azure SQL resources](/integrations/databases/efcore/azure-sql/azure-sql-client/#properties-of-the-azure-sql-resources).
 </Aside>
 
 ## Connect to an existing Azure SQL server

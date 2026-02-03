@@ -23,10 +23,10 @@ import postgresqlIcon from '@assets/icons/azure-postgresql-icon.png';
 
 [Azure Database for PostgreSQL](https://learn.microsoft.com//azure/postgresql/)—Flexible Server is a relational database service based on the open-source Postgres database engine. It's a fully managed database-as-a-service that can handle mission-critical workloads with predictable performance, security, high availability, and dynamic scalability. The Aspire Azure PostgreSQL integration provides a way to connect to existing Azure PostgreSQL databases, or create new instances from .NET with the [`docker.io/library/postgres` container image](https://hub.docker.com/_/postgres).
 
-In this introduction, you'll see how to install and use the Aspire Azure PostgreSQL integrations in a simple configuration. If you already have this knowledge, see [Azure PostgreSQL Hosting integration](../azure-postgresql-host/) for full reference details.
+In this introduction, you'll see how to install and use the Aspire Azure PostgreSQL integrations in a simple configuration. If you already have this knowledge, see [Azure PostgreSQL Hosting integration](/integrations/databases/efcore/azure-postgresql/azure-postgresql-host/) for full reference details.
 
 <Aside type="note">
-    To follow this guide, you must have created an Aspire solution to work with. To learn how to do that, see [Build your first Aspire app](../../../../../get-started/first-app/).
+    To follow this guide, you must have created an Aspire solution to work with. To learn how to do that, see [Build your first Aspire app](/get-started/first-app/).
 </Aside>
 
 ## Set up hosting integration
@@ -49,7 +49,7 @@ var exampleProject = builder.AddProject<Projects.ExampleProject>("apiservice")
 ```
 
 <Aside type="tip">
-    This is the simplest implementation of Azure PostgreSQL resources in the AppHost. There are many more options you can choose from to address your requirements. For full details, see [Azure PostgreSQL Hosting integration](../azure-postgresql-host/).
+    This is the simplest implementation of Azure PostgreSQL resources in the AppHost. There are many more options you can choose from to address your requirements. For full details, see [Azure PostgreSQL Hosting integration](/integrations/databases/efcore/azure-postgresql/azure-postgresql-host/).
 </Aside>
 
 <Aside type="caution">
@@ -95,7 +95,7 @@ string postgresJDBCConnectionString = builder.Configuration.GetValue<string>("PO
 ```
 
 <Aside type="tip">
-    The full set of properties that Aspire injects depends on the Azure PostgreSQL resource configuration. For more information, see [Properties of the Azure PostgreSQL resources](../azure-postgresql-client/#properties-of-the-azure-postgresql-resources).
+    The full set of properties that Aspire injects depends on the Azure PostgreSQL resource configuration. For more information, see [Properties of the Azure PostgreSQL resources](/integrations/databases/efcore/azure-postgresql/azure-postgresql-client/#properties-of-the-azure-postgresql-resources).
 </Aside>
 
 ### Use Azure PostgreSQL resources in client code
