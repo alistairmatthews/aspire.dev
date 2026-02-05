@@ -1,11 +1,10 @@
 ---
-title: Azure AI Foundry integration
-description: This article describes the Aspire Azure AI Foundry integration features and capabilities.
+title: Azure AI Foundry hosting integration
+description: Learn how to use the Aspire Azure AI Foundry hosting integration to create Azure AI Foundry resources.
 ---
 
 import { Aside, Badge } from '@astrojs/starlight/components';
 import InstallPackage from '@components/InstallPackage.astro';
-import InstallDotNetPackage from '@components/InstallDotNetPackage.astro';
 import { Image } from 'astro:assets';
 import aiFoundryIcon from '@assets/icons/azure-ai-foundry-icon.png';
 
@@ -20,15 +19,13 @@ import aiFoundryIcon from '@assets/icons/azure-ai-foundry-icon.png';
 
 <Badge text="🧪 Preview" variant="note" size="large" />
 
-[Azure AI Foundry](https://learn.microsoft.com/ai-studio) provides a unified platform for developing, testing, and deploying AI applications. The Aspire Azure AI Foundry integration enables you to connect to Azure AI Foundry services from your applications, providing access to various AI capabilities including model deployments, prompt flow, and more.
-
-## Hosting integration
-
 The Aspire Azure AI Foundry hosting integration models the AI Foundry project as the `AzureAIFoundryResource` type. To access this type and APIs for expressing them within your AppHost project, install the [📦 Aspire.Hosting.Azure.AIFoundry](https://www.nuget.org/packages/Aspire.Hosting.Azure.AIFoundry) NuGet package:
 
 <InstallPackage packageName="Aspire.Hosting.Azure.AIFoundry" />
 
-### Add an Azure AI Foundry resource
+For an introduction to working with the Azure AI Foundry hosting integration, see [Get started with the Azure AI Foundry integrations](/integrations/cloud/azure/azure-ai-foundry/azure-ai-foundry-get-started/).
+
+## Add an Azure AI Foundry resource
 
 To add an Azure AI Foundry resource to your AppHost project, call the `AddAzureAIFoundry` method providing a name:
 
@@ -48,7 +45,7 @@ The preceding code adds an Azure AI Foundry resource named `foundry` to the AppH
 > [!IMPORTANT]
 > When you call `AddAzureAIFoundry`, it implicitly calls `AddAzureProvisioning`—which adds support for generating Azure resources dynamically during app startup. The app must configure the appropriate subscription and location. For more information, see [Local provisioning: Configuration](/integrations/cloud/azure/local-provisioning/#configuration).
 
-### Add an Azure AI Foundry deployment resource
+## Add an Azure AI Foundry deployment resource
 
 To add an Azure AI Foundry deployment resource, call the `AddDeployment` method:
 
@@ -79,7 +76,7 @@ The preceding code:
 >
 > For more information, see the [AIFoundryModel API reference](https://learn.microsoft.com/dotnet/api/aspire.hosting.azure.aifoundrymodel).
 
-### Configure deployment properties
+## Configure deployment properties
 
 You can customize deployment properties using the `WithProperties` method:
 
@@ -94,7 +91,7 @@ var chat = foundry.AddDeployment("chat", "Phi-4", "1", "Microsoft")
 
 The preceding code sets the SKU name to `Standard` and capacity to `10` for the deployment.
 
-### Connect to an existing Azure AI Foundry service
+## Connect to an existing Azure AI Foundry service
 
 You might have an existing Azure AI Foundry service that you want to connect to. You can chain a call to annotate that your `AzureAIFoundryResource` is an existing resource:
 
@@ -116,7 +113,7 @@ builder.AddProject<Projects.ExampleProject>()
 > [!IMPORTANT]
 > When you call `RunAsExisting`, `PublishAsExisting`, or `AsExisting` methods to work with resources that are already present in your Azure subscription, you must add certain configuration values to your AppHost to ensure that Aspire can locate them. The necessary configuration values include **SubscriptionId**, **AllowResourceGroupCreation**, **ResourceGroup**, and **Location**. If you don't set them, "Missing configuration" errors appear in the Aspire dashboard. For more information about how to set them, see [Use existing Azure resources](/integrations/cloud/azure/overview/#use-existing-azure-resources).
 
-### Use Foundry Local for development
+## Use Foundry Local for development
 
 Aspire supports the usage of Foundry Local for local development. Add the following to your AppHost project:
 
@@ -139,7 +136,7 @@ When the AppHost starts up, the local foundry service is also started. This requ
 
 The `RunAsFoundryLocal` method configures the resource to run as an emulator. It downloads and loads the specified models locally. The method provides health checks for the local service and automatically manages the Foundry Local lifecycle.
 
-### Assign roles to resources
+## Assign roles to resources
 
 You can assign specific roles to resources that need to access the Azure AI Foundry service. Use the `WithRoleAssignments` method:
 
@@ -153,7 +150,7 @@ builder.AddProject<Projects.Api>("api")
 
 The preceding code assigns the `CognitiveServicesUser` role to the `api` project, granting it the necessary permissions to access the Azure AI Foundry resource.
 
-### Provisioning-generated Bicep
+## Provisioning-generated Bicep
 
 If you're new to [Bicep](https://learn.microsoft.com/azure/azure-resource-manager/bicep/overview), it's a domain-specific language for defining Azure resources. With Aspire, you don't need to write Bicep by-hand, instead the provisioning APIs generate Bicep for you. When you publish your app, the generated Bicep provisions an Azure AI Foundry resource with standard defaults.
 
@@ -243,7 +240,7 @@ resource ai_foundry_CognitiveServicesOpenAIUser 'Microsoft.Authorization/roleAss
 
 The generated Bicep is a starting point and is influenced by changes to the provisioning infrastructure in C#. Customizations to the Bicep file directly will be overwritten, so make changes through the C# provisioning APIs to ensure they're reflected in the generated files.
 
-#### Customize provisioning infrastructure
+### Customize provisioning infrastructure
 
 All Aspire Azure resources are subclasses of the `AzureProvisioningResource` type. This enables customization of the generated Bicep by providing a fluent API to configure the Azure resources—using the `ConfigureInfrastructure` API:
 
@@ -271,7 +268,3 @@ The preceding code:
   - The single `CognitiveServicesAccount` resource is retrieved.
   - The `Sku` property is assigned to a new instance of `CognitiveServicesSku` with an `E0` name and `Enterprise` tier.
   - A tag is added to the Cognitive Services resource with a key of `ExampleKey` and a value of `Example value`.
-
-## Client integration
-
-The client integration for Azure AI Foundry is the [Azure AI Inference](/integrations/cloud/azure/azure-ai-inference/) integration.

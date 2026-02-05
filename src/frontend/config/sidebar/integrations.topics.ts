@@ -269,7 +269,21 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
                 },
                 {
                   label: 'Azure AI Foundry',
-                  slug: 'integrations/cloud/azure/azure-ai-foundry',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Get started',
+                      slug: 'integrations/cloud/azure/azure-ai-foundry/azure-ai-foundry-get-started',
+                    },
+                    {
+                      label: 'Hosting integration (AppHost)',
+                      slug: 'integrations/cloud/azure/azure-ai-foundry/azure-ai-foundry-host',
+                    },
+                    {
+                      label: 'Client integration',
+                      slug: 'integrations/cloud/azure/azure-ai-foundry/azure-ai-foundry-client',
+                    },
+                  ],
                 },
                 {
                   label: 'Azure AI Inference',
