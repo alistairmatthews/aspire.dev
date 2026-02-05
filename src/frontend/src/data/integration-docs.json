@@ -129,7 +129,7 @@
   },
   {
     "match": "Aspire.Hosting.Azure.SignalR",
-    "href": "/integrations/cloud/azure/azure-signalr/"
+    "href": "/integrations/cloud/azure/azure-signalr/azure-signalr-get-started/"
   },
   {
     "match": "Aspire.Hosting.Azure.Sql",

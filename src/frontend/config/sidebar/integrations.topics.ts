@@ -523,7 +523,21 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
             },
             {
               label: 'Azure SignalR Service',
-              slug: 'integrations/cloud/azure/azure-signalr',
+              collapsed: true,
+              items: [
+                {
+                  label: 'Get started',
+                  slug: 'integrations/cloud/azure/azure-signalr/azure-signalr-get-started',
+                },
+                {
+                  label: 'Hosting integration (AppHost)',
+                  slug: 'integrations/cloud/azure/azure-signalr/azure-signalr-host',
+                },
+                {
+                  label: 'Hub host integration',
+                  slug: 'integrations/cloud/azure/azure-signalr/azure-signalr-client',
+                },
+              ],
             },
             {
               label: 'Azure SQL Database',
