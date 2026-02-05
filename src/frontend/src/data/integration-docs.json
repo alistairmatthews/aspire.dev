@@ -41,7 +41,7 @@
   },
   {
     "match": "Aspire.Azure.Storage.Blobs",
-    "href": "/integrations/cloud/azure/azure-storage-blobs/"
+    "href": "/integrations/cloud/azure/azure-storage-blobs/azure-storage-blobs-get-started/"
   },
   {
     "match": "Aspire.Azure.Storage.Queues",
