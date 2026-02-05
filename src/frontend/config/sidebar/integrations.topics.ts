@@ -329,7 +329,21 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
             },
             {
               label: 'Azure App Configuration',
-              slug: 'integrations/cloud/azure/azure-app-configuration',
+              collapsed: true,
+              items: [
+                {
+                  label: 'Get started',
+                  slug: 'integrations/cloud/azure/azure-app-configuration/azure-app-configuration-get-started',
+                },
+                {
+                  label: 'Hosting integration (AppHost)',
+                  slug: 'integrations/cloud/azure/azure-app-configuration/azure-app-configuration-host',
+                },
+                {
+                  label: 'Client integration',
+                  slug: 'integrations/cloud/azure/azure-app-configuration/azure-app-configuration-client',
+                },
+              ],
             },
             {
               label: 'Azure App Service',

@@ -65,7 +65,7 @@
   },
   {
     "match": "Aspire.Hosting.Azure.AppConfiguration",
-    "href": "/integrations/cloud/azure/azure-app-configuration/"
+    "href": "/integrations/cloud/azure/azure-app-configuration/azure-app-configuration-get-started/"
   },
   {
     "match": "Aspire.Hosting.Azure.AppContainers",
@@ -277,7 +277,7 @@
   },
   {
     "match": "Aspire.Microsoft.Extensions.Configuration.AzureAppConfiguration",
-    "href": "/integrations/cloud/azure/azure-app-configuration/"
+    "href": "/integrations/cloud/azure/azure-app-configuration/azure-app-configuration-get-started/"
   },
   {
     "match": "Aspire.Milvus.Client",
