@@ -33,7 +33,7 @@
   },
   {
     "match": "Aspire.Azure.Search.Documents",
-    "href": "/integrations/cloud/azure/azure-ai-search/"
+    "href": "/integrations/cloud/azure/azure-ai-search/azure-ai-search-get-started/"
   },
   {
     "match": "Aspire.Azure.Security.KeyVault",
@@ -121,7 +121,7 @@
   },
   {
     "match": "Aspire.Hosting.Azure.Search",
-    "href": "/integrations/cloud/azure/azure-ai-search/"
+    "href": "/integrations/cloud/azure/azure-ai-search/azure-ai-search-get-started/"
   },
   {
     "match": "Aspire.Hosting.Azure.ServiceBus",

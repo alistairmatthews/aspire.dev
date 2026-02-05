@@ -305,7 +305,21 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
                 },
                 {
                   label: 'Azure AI Search',
-                  slug: 'integrations/cloud/azure/azure-ai-search',
+                  collapsed: true,
+                  items: [
+                    {
+                      label: 'Get started',
+                      slug: 'integrations/cloud/azure/azure-ai-search/azure-ai-search-get-started',
+                    },
+                    {
+                      label: 'Hosting integration (AppHost)',
+                      slug: 'integrations/cloud/azure/azure-ai-search/azure-ai-search-host',
+                    },
+                    {
+                      label: 'Client integration',
+                      slug: 'integrations/cloud/azure/azure-ai-search/azure-ai-search-client',
+                    },
+                  ],
                 },
                 {
                   label: 'Azure OpenAI',
