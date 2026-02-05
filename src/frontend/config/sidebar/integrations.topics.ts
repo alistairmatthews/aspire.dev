@@ -594,12 +594,20 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
               ],
             },
             {
-              label: 'Azure Storage',
+              label: 'Azure Storage Tables',
               collapsed: true,
               items: [
                 {
-                  label: 'Azure Storage Tables',
-                  slug: 'integrations/cloud/azure/azure-storage-tables',
+                  label: 'Get started',
+                  slug: 'integrations/cloud/azure/azure-storage-tables/azure-storage-tables-get-started',
+                },
+                {
+                  label: 'Hosting integration',
+                  slug: 'integrations/cloud/azure/azure-storage-tables/azure-storage-tables-host',
+                },
+                {
+                  label: 'Client integration',
+                  slug: 'integrations/cloud/azure/azure-storage-tables/azure-storage-tables-client',
                 },
               ],
             },

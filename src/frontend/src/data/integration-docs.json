@@ -9,7 +9,7 @@
   },
   {
     "match": "Aspire.Azure.Data.Tables",
-    "href": "/integrations/cloud/azure/azure-storage-tables/"
+    "href": "/integrations/cloud/azure/azure-storage-tables/azure-storage-tables-get-started/"
   },
   {
     "match": "Aspire.Azure.Messaging.EventHubs",
