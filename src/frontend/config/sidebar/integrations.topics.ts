@@ -576,13 +576,27 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
               ],
             },
             {
-              label: 'Azure Storage',
+              label: 'Azure Storage Queues',
               collapsed: true,
               items: [
                 {
-                  label: 'Azure Storage Queues',
-                  slug: 'integrations/cloud/azure/azure-storage-queues',
+                  label: 'Get started',
+                  slug: 'integrations/cloud/azure/azure-storage-queues/azure-storage-queues-get-started',
                 },
+                {
+                  label: 'Hosting integration',
+                  slug: 'integrations/cloud/azure/azure-storage-queues/azure-storage-queues-host',
+                },
+                {
+                  label: 'Client integration',
+                  slug: 'integrations/cloud/azure/azure-storage-queues/azure-storage-queues-client',
+                },
+              ],
+            },
+            {
+              label: 'Azure Storage',
+              collapsed: true,
+              items: [
                 {
                   label: 'Azure Storage Tables',
                   slug: 'integrations/cloud/azure/azure-storage-tables',

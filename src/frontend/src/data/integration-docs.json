@@ -45,7 +45,7 @@
   },
   {
     "match": "Aspire.Azure.Storage.Queues",
-    "href": "/integrations/cloud/azure/azure-storage-queues/"
+    "href": "/integrations/cloud/azure/azure-storage-queues/azure-storage-queues-get-started/"
   },
   {
     "match": "Aspire.Confluent.Kafka",
