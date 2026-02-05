@@ -365,7 +365,21 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
             },
             {
               label: 'Azure Cache for Redis',
-              slug: 'integrations/cloud/azure/azure-cache-redis',
+              collapsed: true,
+              items: [
+                {
+                  label: 'Get started',
+                  slug: 'integrations/cloud/azure/azure-cache-redis/azure-cache-redis-get-started',
+                },
+                {
+                  label: 'Hosting integration (AppHost)',
+                  slug: 'integrations/cloud/azure/azure-cache-redis/azure-cache-redis-host',
+                },
+                {
+                  label: 'Client integration',
+                  slug: 'integrations/cloud/azure/azure-cache-redis/azure-cache-redis-client',
+                },
+              ],
             },
             {
               label: 'Azure Container Registry',

@@ -117,7 +117,7 @@
   },
   {
     "match": "Aspire.Hosting.Azure.Redis",
-    "href": "/integrations/cloud/azure/azure-cache-redis/"
+    "href": "/integrations/cloud/azure/azure-cache-redis/azure-cache-redis-get-started/"
   },
   {
     "match": "Aspire.Hosting.Azure.Search",
@@ -261,7 +261,7 @@
   },
   {
     "match": "Aspire.Microsoft.Azure.StackExchangeRedis",
-    "href": "/integrations/cloud/azure/azure-cache-redis/"
+    "href": "/integrations/cloud/azure/azure-cache-redis/azure-cache-redis-get-started/"
   },
   {
     "match": "Aspire.Microsoft.Data.SqlClient",
