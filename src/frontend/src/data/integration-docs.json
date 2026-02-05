@@ -77,7 +77,7 @@
   },
   {
     "match": "Aspire.Hosting.Azure.AppService",
-    "href": "/integrations/cloud/azure/azure-app-service/"
+    "href": "/integrations/cloud/azure/azure-app-service/azure-app-service-get-started/"
   },
   {
     "match": "Aspire.Hosting.Azure.CognitiveServices",

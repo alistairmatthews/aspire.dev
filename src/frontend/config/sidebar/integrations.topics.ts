@@ -347,7 +347,21 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
             },
             {
               label: 'Azure App Service',
-              slug: 'integrations/cloud/azure/azure-app-service',
+              collapsed: true,
+              items: [
+                {
+                  label: 'Get started',
+                  slug: 'integrations/cloud/azure/azure-app-service/azure-app-service-get-started',
+                },
+                {
+                  label: 'Hosting integration (AppHost)',
+                  slug: 'integrations/cloud/azure/azure-app-service/azure-app-service-host',
+                },
+                {
+                  label: 'Client integration',
+                  slug: 'integrations/cloud/azure/azure-app-service/azure-app-service-client',
+                },
+              ],
             },
             {
               label: 'Azure Cache for Redis',
