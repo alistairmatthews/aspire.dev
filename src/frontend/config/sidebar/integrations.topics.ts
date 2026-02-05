@@ -541,7 +541,21 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
             },
             {
               label: 'Azure SQL Database',
-              slug: 'integrations/cloud/azure/azure-sql-database',
+              collapsed: true,
+              items: [
+                {
+                  label: 'Get started',
+                  slug: 'integrations/cloud/azure/azure-sql-database/azure-sql-database-get-started',
+                },
+                {
+                  label: 'Hosting integration (AppHost)',
+                  slug: 'integrations/cloud/azure/azure-sql-database/azure-sql-database-host',
+                },
+                {
+                  label: 'Client integration',
+                  slug: 'integrations/cloud/azure/azure-sql-database/azure-sql-database-client',
+                },
+              ],
             },
             {
               label: 'Azure Storage',

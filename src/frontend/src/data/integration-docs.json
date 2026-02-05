@@ -133,7 +133,7 @@
   },
   {
     "match": "Aspire.Hosting.Azure.Sql",
-    "href": "/integrations/cloud/azure/azure-sql-database/"
+    "href": "/integrations/cloud/azure/azure-sql-database/azure-sql-database-get-started/"
   },
   {
     "match": "Aspire.Hosting.Azure.Storage",
