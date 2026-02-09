@@ -163,7 +163,7 @@ In the AppHost, when you used the `WithReference` method to pass an Elasticsearc
 Use the `GetValue()` method to obtain this environment variable in consuming projects:
 
 ```csharp title="C# - Obtain configuration properties"
-string endpoint = builder.Configuration.GetValue<string>("ConnectionStrings:elasticsearch");
+var endpoint = builder.Configuration.GetConnectionString("elasticsearch");
 ```
 
 </Pivot>
