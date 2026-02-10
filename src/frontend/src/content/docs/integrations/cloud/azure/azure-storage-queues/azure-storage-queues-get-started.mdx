@@ -5,7 +5,6 @@ description: Learn how to use the Azure Queue Storage integration, which include
 
 import { Image } from 'astro:assets';
 import queueIcon from '@assets/icons/azure-storagequeue-icon.png';
-import IntegrationNavigationLinks from '@components/IntegrationNavigationLinks.astro';
 
 <Image
   src={queueIcon}
@@ -17,5 +16,3 @@ import IntegrationNavigationLinks from '@components/IntegrationNavigationLinks.a
 />
 
 [Azure Queue Storage](https://azure.microsoft.com/services/storage/queues/) is a service for storing large amounts of unstructured data. The Aspire Azure Blob Storage integration enables you to connect to existing Azure Storage instances or create new instances from applications with the [`mcr.microsoft.com/azure-storage/azurite` container image](https://mcr.microsoft.com/product/azure-storage/azurite/about).
-
-<IntegrationNavigationLinks integration="azure-storage-queues" />

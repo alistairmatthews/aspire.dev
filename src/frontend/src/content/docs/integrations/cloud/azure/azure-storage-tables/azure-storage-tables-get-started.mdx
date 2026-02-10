@@ -5,7 +5,6 @@ description: Learn how to use the Azure Table Storage integration to store struc
 
 import { Image } from 'astro:assets';
 import tableIcon from '@assets/icons/azure-table-icon.png';
-import IntegrationNavigationLinks from '@components/IntegrationNavigationLinks.astro';
 
 <Image
   src={tableIcon}
@@ -17,5 +16,3 @@ import IntegrationNavigationLinks from '@components/IntegrationNavigationLinks.a
 />
 
 [Azure Table Storage](https://learn.microsoft.com/azure/storage/tables/table-storage-overview) is a service for storing large amounts of unstructured data. The Aspire Azure Blob Storage integration enables you to connect to existing Azure Storage instances or create new instances from applications with the [`mcr.microsoft.com/azure-storage/azurite` container image](https://mcr.microsoft.com/product/azure-storage/azurite/about).
-
-<IntegrationNavigationLinks integration="azure-storage-tables" />
