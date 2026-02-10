@@ -14,10 +14,10 @@ To get started with the Aspire Azure Table Storage client integration, install t
 
 ### Add Azure Table Storage client
 
-In the `Program.cs` file of your client-consuming project, call the `AddAzureTableClient` extension method to register a `TableServiceClient` for dependency injection. The method takes a connection name parameter:
+In the `Program.cs` file of your client-consuming project, call the `AddAzureTableServiceClient` extension method to register a `TableServiceClient` for dependency injection. The method takes a connection name parameter:
 
 ```csharp
-builder.AddAzureTableClient("tables");
+builder.AddAzureTableServiceClient("tables");
 ```
 
 You can then retrieve the `TableServiceClient` instance using dependency injection:
@@ -87,11 +87,11 @@ The Azure Table Storage integration supports named configuration for multiple in
 }
 ```
 
-Use the connection names when calling `AddAzureTableClient`:
+Use the connection names when calling `AddAzureTableServiceClient`:
 
 ```csharp
-builder.AddAzureTableClient("tables1");
-builder.AddAzureTableClient("tables2");
+builder.AddAzureTableServiceClient("tables1");
+builder.AddAzureTableServiceClient("tables2");
 ```
 
 #### Use inline delegates
@@ -99,7 +99,7 @@ builder.AddAzureTableClient("tables2");
 You can also pass the `Action<AzureDataTablesSettings>` delegate to set up options inline:
 
 ```csharp
-builder.AddAzureTableClient(
+builder.AddAzureTableServiceClient(
     "tables",
     settings => settings.DisableHealthChecks = true);
 ```
@@ -107,7 +107,7 @@ builder.AddAzureTableClient(
 You can also configure the `TableClientOptions`:
 
 ```csharp
-builder.AddAzureTableClient(
+builder.AddAzureTableServiceClient(
     "tables",
     configureClientBuilder: clientBuilder =>
         clientBuilder.ConfigureOptions(

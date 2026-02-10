@@ -12,12 +12,12 @@ The Aspire Azure Cache for Redis hosting integration models the Redis cache as t
 
 ## Add an Azure Cache for Redis resource
 
-To add an Azure Cache for Redis resource to your AppHost project, call the `AddAzureRedis` method providing a name:
+To add an Azure Cache for Redis resource to your AppHost project, call the `AddAzureManagedRedis` method providing a name:
 
 ```csharp title="C# — AppHost.cs"
 var builder = DistributedApplication.CreateBuilder(args);
 
-var redis = builder.AddAzureRedis("redis");
+var redis = builder.AddAzureManagedRedis("redis");
 
 builder.AddProject<Projects.ExampleProject>()
     .WithReference(redis);
@@ -28,7 +28,7 @@ builder.AddProject<Projects.ExampleProject>()
 The preceding code adds an Azure Redis resource named `redis` to the AppHost project. The `WithReference` method passes the connection information to the `ExampleProject` project.
 
 <Aside type="caution">
-  When you call `AddAzureRedis`, it implicitly calls
+  When you call `AddAzureManagedRedis`, it implicitly calls
   `AddAzureProvisioning`—which adds support for generating Azure resources
   dynamically during app startup. The app must configure the appropriate
   subscription and location. For more information, see [Local provisioning:
@@ -45,7 +45,7 @@ var builder = DistributedApplication.CreateBuilder(args);
 var existingRedisName = builder.AddParameter("existingRedisName");
 var existingRedisResourceGroup = builder.AddParameter("existingRedisResourceGroup");
 
-var redis = builder.AddAzureRedis("redis")
+var redis = builder.AddAzureManagedRedis("redis")
     .AsExisting(existingRedisName, existingRedisResourceGroup);
 
 builder.AddProject<Projects.ExampleProject>()
@@ -65,7 +65,7 @@ To make use of the [`docker.io/library/redis`](https://hub.docker.com/_/redis/) 
 ```csharp
 var builder = DistributedApplication.CreateBuilder(args);
 
-var cache = builder.AddAzureRedis("azcache")
+var cache = builder.AddAzureManagedRedis("azcache")
     .RunAsContainer();
 
 builder.AddProject<Projects.ExampleProject>()
@@ -86,7 +86,7 @@ By default, the Azure Cache for Redis resource is configured to use [Microsoft E
 ```csharp
 var builder = DistributedApplication.CreateBuilder(args);
 
-var cache = builder.AddAzureRedis("azcache")
+var cache = builder.AddAzureManagedRedis("azcache")
     .WithAccessKeyAuthentication();
 
 builder.AddProject<Projects.ExampleProject>()

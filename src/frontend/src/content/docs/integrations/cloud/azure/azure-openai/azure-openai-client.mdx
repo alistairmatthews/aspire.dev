@@ -4,7 +4,7 @@ description: Learn how to use the Aspire Azure OpenAI client integration to conn
 next: false
 ---
 
-import { Aside } from '@astrojs/starlight/components';
+import { Aside, Badge } from '@astrojs/starlight/components';
 import InstallDotNetPackage from '@components/InstallDotNetPackage.astro';
 import { Image } from 'astro:assets';
 import openaiIcon from '@assets/icons/azure-openai-icon.png';
@@ -17,6 +17,8 @@ import openaiIcon from '@assets/icons/azure-openai-icon.png';
   class:list={'float-inline-left icon'}
   data-zoom-off
 />
+
+<Badge text="🧪 Preview" variant="note" size="large" />
 
 The Aspire Azure OpenAI client integration is used to connect to an Azure OpenAI service. To get started with the Aspire Azure OpenAI client integration, install the [📦 Aspire.Azure.AI.OpenAI](https://www.nuget.org/packages/Aspire.Azure.AI.OpenAI) NuGet package.
 

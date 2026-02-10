@@ -4,7 +4,7 @@ description: Learn how to set up the Aspire Azure OpenAI hosting and client inte
 prev: false
 ---
 
-import { Aside, CardGrid, LinkCard } from '@astrojs/starlight/components';
+import { Aside, Badge, CardGrid, LinkCard } from '@astrojs/starlight/components';
 import InstallPackage from '@components/InstallPackage.astro';
 import InstallDotNetPackage from '@components/InstallDotNetPackage.astro';
 import { Image } from 'astro:assets';
@@ -18,6 +18,8 @@ import openaiIcon from '@assets/icons/azure-openai-icon.png';
   class:list={'float-inline-left icon'}
   data-zoom-off
 />
+
+<Badge text="🧪 Preview" variant="note" size="large" />
 
 [Azure OpenAI Service](https://azure.microsoft.com/products/ai-services/openai-service) provides access to OpenAI's powerful language and embedding models with the security and enterprise promise of Azure. The Aspire Azure OpenAI integration enables you to connect to Azure OpenAI services from your applications.
 
