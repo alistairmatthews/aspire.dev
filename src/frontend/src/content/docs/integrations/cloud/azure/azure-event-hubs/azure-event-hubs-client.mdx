@@ -35,7 +35,7 @@ builder.AddAzureEventHubProducerClient(connectionName: "event-hubs");
 <Aside type="tip">
   The `connectionName` parameter must match the name used when adding the Event
   Hubs resource in the AppHost project. For more information, see [Add an Azure
-  Event Hubs resource](#add-an-azure-event-hubs-resource).
+  Event Hubs resource](/integrations/cloud/azure/azure-event-hubs/azure-event-hubs-host/#add-an-azure-event-hubs-resource).
 </Aside>
 
 After adding the `EventHubProducerClient`, you can retrieve the client instance using dependency injection. For example, to retrieve your data source object from an example service define it as a constructor parameter and ensure the `ExampleService` class is registered with the dependency injection container:
