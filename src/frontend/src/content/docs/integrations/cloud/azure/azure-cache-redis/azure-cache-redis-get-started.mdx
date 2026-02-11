@@ -72,6 +72,26 @@ builder.AddRedisClient(connectionName: "redis");
   The `connectionName` parameter must match the name used when adding the Redis resource in the AppHost project.
 </Aside>
 
+### Use injected Azure Cache for Redis properties
+
+In the AppHost, when you used the `WithReference` method to pass an Azure Cache for Redis resource to a consuming client project, Aspire injects several configuration properties that you can use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Host` property of a resource called `redis` becomes `REDIS_HOST`.
+
+Use the `GetValue()` method to obtain these environment variables in consuming projects:
+
+```csharp title="C# — Obtain configuration properties"
+string redisHost = builder.Configuration.GetValue<string>("REDIS_HOST");
+string redisPort = builder.Configuration.GetValue<string>("REDIS_PORT");
+string redisUri = builder.Configuration.GetValue<string>("REDIS_URI");
+```
+
+<Aside type="tip">
+    The full set of properties that Aspire injects is available in the client integration documentation. For more information, see [Azure Cache for Redis Client integration](/integrations/cloud/azure/azure-cache-redis/azure-cache-redis-client/).
+</Aside>
+
+## Use Azure Cache for Redis resources in client code
+
 After adding the `IConnectionMultiplexer`, you can retrieve the connection instance using dependency injection:
 
 ```csharp title="C# — ExampleService.cs"

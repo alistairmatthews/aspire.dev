@@ -29,6 +29,30 @@ public class ExampleService(BlobServiceClient client)
 }
 ```
 
+## Properties of the Azure Blob Storage resources
+
+When you use the `WithReference` method to pass an Azure Blob Storage resource from the AppHost project to a consuming client project, several properties are available to use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `blobs` becomes `BLOBS_URI`.
+
+### Azure Blob Storage
+
+The Azure Blob Storage resource exposes the following connection properties:
+
+| Property Name | Description                  |
+| ------------- | ---------------------------- |
+| `Uri`         | The blob service endpoint    |
+
+In emulator mode, an additional property is available:
+
+| Property Name      | Description                                |
+| ------------------ | ------------------------------------------ |
+| `ConnectionString` | The full connection string for the emulator |
+
+For example, if you reference a Blob Storage resource named `blobs` in your AppHost project, the following environment variables will be available in the consuming project:
+
+- `BLOBS_URI`
+
 ### Configuration
 
 The Azure Blob Storage integration provides multiple options to configure the `BlobServiceClient`.

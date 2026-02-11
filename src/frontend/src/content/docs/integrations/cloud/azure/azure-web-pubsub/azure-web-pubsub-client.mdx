@@ -48,6 +48,24 @@ For more information, see:
 - [Azure.Messaging.WebPubSub documentation](https://learn.microsoft.com/azure-web-pubsub/howto-create-serviceclient-with-net-and-azure-identity) for examples on using the `WebPubSubServiceClient`.
 - [Dependency injection in .NET](https://learn.microsoft.com/dotnet/core/extensions/dependency-injection) for details on dependency injection.
 
+## Properties of the Azure Web PubSub resources
+
+When you use the `WithReference` method to pass an Azure Web PubSub resource from the AppHost project to a consuming client project, several properties are available to use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `webpubsub` becomes `WEBPUBSUB_URI`.
+
+### Azure Web PubSub service
+
+The Azure Web PubSub resource exposes the following connection properties:
+
+| Property Name | Description                                                           |
+| ------------- | --------------------------------------------------------------------- |
+| `Uri`         | The service endpoint URI (e.g., `https://{name}.webpubsub.azure.com`) |
+
+For example, if you reference an Azure Web PubSub resource named `webpubsub` in your AppHost project, the following environment variables will be available in the consuming project:
+
+- `WEBPUBSUB_URI`
+
 ### Add keyed Web PubSub client
 
 There might be situations where you want to register multiple `WebPubSubServiceClient` instances with different connection names. To register keyed Web PubSub clients, call the `AddKeyedAzureWebPubSubServiceClient` method:

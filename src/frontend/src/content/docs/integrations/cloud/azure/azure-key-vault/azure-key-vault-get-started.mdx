@@ -94,6 +94,24 @@ Alternatively, you can use the `SecretClient` directly to retrieve the secrets o
 builder.AddAzureKeyVaultClient(connectionName: "key-vault");
 ```
 
+### Use injected Azure Key Vault properties
+
+In the AppHost, when you used the `WithReference` method to pass an Azure Key Vault resource to a consuming client project, Aspire injects several configuration properties that you can use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `keyvault` becomes `KEYVAULT_URI`.
+
+Use the `GetValue()` method to obtain these environment variables in consuming projects:
+
+```csharp title="C# — Obtain configuration properties"
+string vaultUri = builder.Configuration.GetValue<string>("KEYVAULT_URI");
+```
+
+<Aside type="tip">
+    The full set of properties that Aspire injects is available in the client integration documentation. For more information, see [Properties of the Azure Key Vault resources](/integrations/cloud/azure/azure-key-vault/azure-key-vault-client/#properties-of-the-azure-key-vault-resources).
+</Aside>
+
+## Use Azure Key Vault resources in client code
+
 After adding the `SecretClient` to the builder, you can get the `SecretClient` instance using dependency injection:
 
 ```csharp

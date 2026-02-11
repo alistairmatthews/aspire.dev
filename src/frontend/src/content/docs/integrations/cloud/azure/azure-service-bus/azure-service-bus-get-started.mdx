@@ -78,6 +78,26 @@ builder.AddAzureServiceBusClient(connectionName: "queue");
 > [!TIP]
 > The `connectionName` parameter must match the name used when adding the Service Bus queue (or topic) in the AppHost project.
 
+### Use injected Azure Service Bus properties
+
+In the AppHost, when you used the `WithReference` method to pass an Azure Service Bus resource to a consuming client project, Aspire injects several configuration properties that you can use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `queue` becomes `QUEUE_URI`.
+
+Use the `GetValue()` method to obtain these environment variables in consuming projects:
+
+```csharp title="C# — Obtain configuration properties"
+string serviceBusHost = builder.Configuration.GetValue<string>("QUEUE_HOST");
+string serviceBusUri = builder.Configuration.GetValue<string>("QUEUE_URI");
+string queueName = builder.Configuration.GetValue<string>("QUEUE_QUEUENAME");
+```
+
+<Aside type="tip">
+    The full set of properties that Aspire injects depends on whether you passed an Azure Service Bus namespace, queue, topic, or subscription resource. For more information, see [Properties of the Azure Service Bus resources](/integrations/cloud/azure/azure-service-bus/azure-service-bus-client/#properties-of-the-azure-service-bus-resources).
+</Aside>
+
+## Use Azure Service Bus resources in client code
+
 After adding the `ServiceBusClient`, you can retrieve the client instance using dependency injection:
 
 ```csharp

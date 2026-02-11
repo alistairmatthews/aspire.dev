@@ -96,6 +96,24 @@ public class ExampleService(SecretClient client)
 }
 ```
 
+## Properties of the Azure Key Vault resources
+
+When you use the `WithReference` method to pass an Azure Key Vault resource from the AppHost project to a consuming client project, several properties are available to use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `keyvault` becomes `KEYVAULT_URI`.
+
+### Azure Key Vault
+
+The Azure Key Vault resource exposes the following connection property:
+
+| Property Name | Description                                                          |
+| ------------- | -------------------------------------------------------------------- |
+| `Uri`         | The vault URI (e.g., `https://{name}.vault.azure.net/`)              |
+
+For example, if you reference an Azure Key Vault resource named `keyvault` in your AppHost project, the following environment variables will be available in the consuming project:
+
+- `KEYVAULT_URI`
+
 ## Add keyed Azure Key Vault client
 
 There might be situations where you want to register multiple `SecretClient` instances with different connection names. To register keyed Azure Key Vault clients, call the `AddKeyedAzureKeyVaultClient` method:

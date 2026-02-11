@@ -66,6 +66,52 @@ The client integration provides additional APIs to configure client instances. W
 
 All of the aforementioned APIs include optional parameters to configure the client instances.
 
+## Properties of the Azure Event Hubs resources
+
+When you use the `WithReference` method to pass an Azure Event Hubs resource from the AppHost project to a consuming client project, several properties are available to use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `eventhubs` becomes `EVENTHUBS_URI`.
+
+### Azure Event Hubs namespace
+
+The Azure Event Hubs namespace resource exposes the following connection properties:
+
+| Property Name | Description                                         |
+| ------------- | --------------------------------------------------- |
+| `Host`        | The namespace hostname                              |
+| `Uri`         | The service endpoint URI                            |
+
+In emulator mode, additional properties are available:
+
+| Property Name      | Description                                |
+| ------------------ | ------------------------------------------ |
+| `Host`             | The local emulator host                    |
+| `Port`             | The local emulator port                    |
+| `Uri`              | The service bus URI                        |
+| `ConnectionString` | The full connection string for the emulator |
+
+### Azure Event Hub
+
+The Azure Event Hub resource inherits all properties from its parent namespace and adds:
+
+| Property Name  | Description           |
+| -------------- | --------------------- |
+| `EventHubName` | The Event Hub name    |
+
+### Azure Event Hub consumer group
+
+The Azure Event Hub consumer group resource inherits all properties from its parent hub and adds:
+
+| Property Name       | Description              |
+| ------------------- | ------------------------ |
+| `ConsumerGroupName` | The consumer group name  |
+
+For example, if you reference an Event Hub resource named `messages` in your AppHost project, the following environment variables will be available in the consuming project:
+
+- `MESSAGES_HOST`
+- `MESSAGES_URI`
+- `MESSAGES_EVENTHUBNAME`
+
 ### Add keyed Event Hubs producer client
 
 There might be situations where you want to register multiple `EventHubProducerClient` instances with different connection names. To register keyed Event Hubs clients, call the `AddKeyedAzureEventHubProducerClient` method:

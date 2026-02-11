@@ -68,6 +68,24 @@ For more information, see:
 - Azure AI Search client library for .NET [samples using the `SearchIndexClient`](https://learn.microsoft.com/azure/search/samples-dotnet).
 - [Dependency injection in .NET](https://learn.microsoft.com/dotnet/core/extensions/dependency-injection) for details on dependency injection.
 
+## Properties of the Azure AI Search resources
+
+When you use the `WithReference` method to pass an Azure AI Search resource from the AppHost project to a consuming client project, several properties are available to use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `search` becomes `SEARCH_URI`.
+
+### Azure AI Search service
+
+The Azure AI Search resource exposes the following connection property:
+
+| Property Name | Description                                                                       |
+| ------------- | --------------------------------------------------------------------------------- |
+| `Uri`         | The service endpoint URI (e.g., `https://{name}.search.windows.net`)              |
+
+For example, if you reference a search resource named `search` in your AppHost project, the following environment variables will be available in the consuming project:
+
+- `SEARCH_URI`
+
 ## Add keyed Azure AI Search index client
 
 There might be situations where you want to register multiple `SearchIndexClient` instances with different connection names. To register keyed Azure AI Search clients, call the `AddKeyedAzureSearchClient` method:

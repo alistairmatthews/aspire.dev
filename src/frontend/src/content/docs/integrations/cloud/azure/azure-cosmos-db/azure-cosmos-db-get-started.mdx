@@ -63,6 +63,25 @@ In the `Program.cs` file of your client-consuming project, call the `AddCosmosDb
 builder.AddCosmosDbContext<MyDbContext>("cosmos-db");
 ```
 
+### Use injected Azure Cosmos DB properties
+
+In the AppHost, when you used the `WithReference` method to pass an Azure Cosmos DB resource to a consuming client project, Aspire injects several configuration properties that you can use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `db` becomes `DB_URI`.
+
+Use the `GetValue()` method to obtain these environment variables in consuming projects:
+
+```csharp title="C# — Obtain configuration properties"
+string cosmosUri = builder.Configuration.GetValue<string>("DB_URI");
+string databaseName = builder.Configuration.GetValue<string>("DB_DATABASENAME");
+```
+
+<Aside type="tip">
+    The full set of properties that Aspire injects depends on whether you passed an Azure Cosmos DB account, database, or container resource. For more information, see [Properties of the Azure Cosmos DB resources](/integrations/cloud/azure/azure-cosmos-db/azure-cosmos-db-client/#properties-of-the-azure-cosmos-db-resources).
+</Aside>
+
+## Use Azure Cosmos DB resources in client code
+
 You can then retrieve the `DbContext` instance using dependency injection. For example, to retrieve the client from a service:
 
 ```csharp

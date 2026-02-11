@@ -51,6 +51,39 @@ For more information, see:
 - [Microsoft.Data.SqlClient documentation](https://learn.microsoft.com/sql/connect/ado-net/introduction-microsoft-data-sqlclient-namespace) for examples on using the `SqlConnection`.
 - [Dependency injection in .NET](https://learn.microsoft.com/dotnet/core/extensions/dependency-injection) for details on dependency injection.
 
+## Properties of the Azure SQL Database resources
+
+When you use the `WithReference` method to pass an Azure SQL Database resource from the AppHost project to a consuming client project, several properties are available to use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Host` property of a resource called `database` becomes `DATABASE_HOST`.
+
+### Azure SQL Server
+
+The Azure SQL Server resource exposes the following connection properties:
+
+| Property Name          | Description                                                                                                         |
+| ---------------------- | ------------------------------------------------------------------------------------------------------------------- |
+| `Host`                 | The server fully qualified domain name                                                                              |
+| `Port`                 | The SQL Server port (default: `1433`)                                                                               |
+| `Uri`                  | The connection URI (e.g., `mssql://{host}:1433`)                                                                    |
+| `JdbcConnectionString` | JDBC-format connection string (e.g., `jdbc:sqlserver://{host}:1433;encrypt=true;trustServerCertificate=false`)      |
+
+### Azure SQL Database
+
+The Azure SQL Database resource inherits all properties from its parent server and adds:
+
+| Property Name  | Description             |
+| -------------- | ----------------------- |
+| `DatabaseName` | The name of the database |
+
+For example, if you reference a database resource named `database` in your AppHost project, the following environment variables will be available in the consuming project:
+
+- `DATABASE_HOST`
+- `DATABASE_PORT`
+- `DATABASE_URI`
+- `DATABASE_JDBCCONNECTIONSTRING`
+- `DATABASE_DATABASENAME`
+
 ### Add keyed SQL client
 
 There might be situations where you want to register multiple `SqlConnection` instances with different connection names. To register keyed SQL clients, call the `AddKeyedSqlServerClient` method:

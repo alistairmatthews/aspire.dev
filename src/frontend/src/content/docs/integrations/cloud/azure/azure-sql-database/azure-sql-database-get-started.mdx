@@ -78,6 +78,26 @@ builder.AddSqlServerClient(connectionName: "database");
 > [!TIP]
 > The `connectionName` parameter must match the name used when adding the SQL database resource in the AppHost project.
 
+### Use injected Azure SQL Database properties
+
+In the AppHost, when you used the `WithReference` method to pass an Azure SQL Database resource to a consuming client project, Aspire injects several configuration properties that you can use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Host` property of a resource called `database` becomes `DATABASE_HOST`.
+
+Use the `GetValue()` method to obtain these environment variables in consuming projects:
+
+```csharp title="C# — Obtain configuration properties"
+string sqlHost = builder.Configuration.GetValue<string>("DATABASE_HOST");
+string sqlPort = builder.Configuration.GetValue<string>("DATABASE_PORT");
+string databaseName = builder.Configuration.GetValue<string>("DATABASE_DATABASENAME");
+```
+
+<Aside type="tip">
+    The full set of properties that Aspire injects depends on whether you passed an Azure SQL Server or database resource. For more information, see [Properties of the Azure SQL Database resources](/integrations/cloud/azure/azure-sql-database/azure-sql-database-client/#properties-of-the-azure-sql-database-resources).
+</Aside>
+
+## Add Azure SQL Database resources in client code
+
 After adding the `SqlConnection`, you can retrieve the connection instance using dependency injection:
 
 ```csharp

@@ -148,6 +148,37 @@ Consider the following example connection strings and whether they register an `
 | `Endpoint=https://{account_name}.openai.azure.com/;Key={account_key};IsAzure=true`  | `AzureOpenAIClient`    |
 | `Endpoint=https://localhost:18889;Key={account_key}`                                | `OpenAIClient`         |
 
+## Properties of the Azure OpenAI resources
+
+When you use the `WithReference` method to pass an Azure OpenAI resource from the AppHost project to a consuming client project, several properties are available to use in the consuming project.
+
+Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `openai` becomes `OPENAI_URI`.
+
+### Azure OpenAI service
+
+The Azure OpenAI resource exposes the following connection property:
+
+| Property Name | Description                     |
+| ------------- | ------------------------------- |
+| `Uri`         | The service endpoint URI        |
+
+### Azure OpenAI deployment
+
+The Azure OpenAI deployment resource inherits the property from its parent service and adds:
+
+| Property Name | Description               |
+| ------------- | ------------------------- |
+| `ModelName`   | The deployment/model name |
+
+For example, if you reference an Azure OpenAI resource named `openai` in your AppHost project, the following environment variables will be available in the consuming project:
+
+- `OPENAI_URI`
+
+If you reference a deployment resource:
+
+- `{DEPLOYMENT}_URI`
+- `{DEPLOYMENT}_MODELNAME`
+
 ## Add keyed Azure OpenAI clients
 
 There might be situations where you want to register multiple `OpenAIClient` instances with different connection names. To register keyed Azure OpenAI clients, call the `AddKeyedAzureOpenAIClient` method:
