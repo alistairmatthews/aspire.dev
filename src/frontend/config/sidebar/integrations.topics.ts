@@ -500,8 +500,42 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
             },
           ],
         },
-        { label: 'Valkey', slug: 'integrations/caching/valkey' },
-        { label: 'Garnet', slug: 'integrations/caching/garnet' },
+        {
+          label: 'Valkey',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/caching/valkey/valkey-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/caching/valkey/valkey-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/caching/valkey/valkey-client',
+            },
+          ],
+        },
+        {
+          label: 'Garnet',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/caching/garnet/garnet-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/caching/garnet/garnet-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/caching/garnet/garnet-client',
+            },
+          ],
+        },
       ],
     },
     {

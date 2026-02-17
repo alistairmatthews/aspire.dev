@@ -1,11 +1,9 @@
 ---
-title: Garnet integration
-description: Learn how to use the Garnet integration, a Redis-compatible high-performance cache from Microsoft Research.
-prev: false
+title: Garnet hosting integration
+description: Learn how to use the Garnet hosting integration to add a Garnet resource to your AppHost.
 ---
 
 import InstallPackage from '@components/InstallPackage.astro';
-import InstallDotNetPackage from '@components/InstallDotNetPackage.astro';
 import { Aside } from '@astrojs/starlight/components';
 import { Image } from 'astro:assets';
 import garnetIcon from '@assets/icons/garnet-icon.png';
@@ -19,15 +17,11 @@ import garnetIcon from '@assets/icons/garnet-icon.png';
   data-zoom-off
 />
 
-[Garnet](https://microsoft.github.io/garnet/) is a high-performance cache-store from Microsoft Research that complies with the Redis serialization protocol (RESP). The Garnet integration enables you to connect to existing Garnet instances, or create new instances from Aspire with the `ghcr.io/microsoft/garnet` container image.
-
-## Hosting integration
-
 The Garnet hosting integration models a Garnet resource as the `GarnetResource` type. To access this type and APIs, add the [📦 Aspire.Hosting.Garnet](https://www.nuget.org/packages/Aspire.Hosting.Garnet) NuGet package in your AppHost project:
 
 <InstallPackage packageName="Aspire.Hosting.Garnet" />
 
-### Add Garnet resource
+## Add Garnet resource
 
 In your AppHost project, call `AddGarnet` on the builder instance to add a Garnet resource:
 
@@ -48,7 +42,7 @@ When Aspire adds a container image to the AppHost, it creates a new Garnet insta
   `WithReference`, see [Resource dependencies](/get-started/resources/).
 </Aside>
 
-### Add Garnet resource with data volume
+## Add Garnet resource with data volume
 
 To add a data volume to the Garnet resource, call the `WithDataVolume` method:
 
@@ -64,7 +58,7 @@ var myService = builder.AddProject<Projects.ExampleProject>()
 
 The data volume is used to persist the Garnet data outside the lifecycle of its container. The data volume is mounted at the `/data` path in the Garnet container.
 
-### Add Garnet resource with data bind mount
+## Add Garnet resource with data bind mount
 
 To add a data bind mount to the Garnet resource, call the `WithDataBindMount` method:
 
@@ -86,7 +80,7 @@ var myService = builder.AddProject<Projects.ExampleProject>()
   container.
 </Aside>
 
-### Add Garnet resource with persistence
+## Add Garnet resource with persistence
 
 To add persistence to the Garnet resource, call the `WithPersistence` method with either the data volume or data bind mount:
 
@@ -105,11 +99,11 @@ var myService = builder.AddProject<Projects.ExampleProject>()
 
 The preceding code adds persistence to the Garnet resource by taking snapshots of the data at a specified interval and threshold.
 
-### Connection properties
+## Connection properties
 
 When you reference a Garnet resource using `WithReference`, the following connection properties are made available to the consuming project:
 
-#### Garnet
+### Garnet
 
 The Garnet resource exposes the following connection properties:
 
@@ -132,47 +126,6 @@ Uri: redis://:p%40ssw0rd1@localhost:6379
   `cache` becomes `CACHE_URI`.
 </Aside>
 
-### Hosting integration health checks
+## Hosting integration health checks
 
 The Garnet hosting integration automatically adds a health check for the Garnet resource. The health check verifies that the Garnet instance is running and that a connection can be established to it.
-
-## Client integration
-
-Garnet is Redis-compatible, so you use the same Redis client packages. To get started, install the [📦 Aspire.StackExchange.Redis](https://www.nuget.org/packages/Aspire.StackExchange.Redis) NuGet package:
-
-<InstallDotNetPackage packageName="Aspire.StackExchange.Redis" />
-
-### Add Garnet client
-
-In the `Program.cs` file of your client-consuming project, call the `AddRedisClient` extension method to register an `IConnectionMultiplexer`:
-
-```csharp
-builder.AddRedisClient(connectionName: "cache");
-```
-
-<Aside type="tip">
-  The `connectionName` parameter must match the name used when adding the Garnet
-  resource in the AppHost project.
-</Aside>
-
-You can then retrieve the `IConnectionMultiplexer` instance using dependency injection:
-
-```csharp
-public class ExampleService(IConnectionMultiplexer connectionMux)
-{
-    // Use connection multiplexer...
-}
-```
-
-### Configuration and other client features
-
-Since Garnet is Redis-compatible, all Redis client configuration, keyed services, health checks, and observability features work the same way. See the [Redis integration](/integrations/caching/redis/) page for complete client integration documentation.
-
-### Distributed caching and output caching
-
-Garnet also supports Redis distributed caching and output caching. Install the respective packages:
-
-- For distributed caching: [📦 Aspire.StackExchange.Redis.DistributedCaching](https://www.nuget.org/packages/Aspire.StackExchange.Redis.DistributedCaching)
-- For output caching: [📦 Aspire.StackExchange.Redis.OutputCaching](https://www.nuget.org/packages/Aspire.StackExchange.Redis.OutputCaching)
-
-See [Redis Distributed Caching](/integrations/caching/redis-distributed/) and [Redis Output Caching](/integrations/caching/redis-output/) for usage details.

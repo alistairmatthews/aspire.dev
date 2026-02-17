@@ -157,7 +157,7 @@
   },
   {
     "match": "Aspire.Hosting.Garnet",
-    "href": "/integrations/caching/garnet/"
+    "href": "/integrations/caching/garnet/garnet-get-started/"
   },
   {
     "match": "Aspire.Hosting.GitHub.Models",
@@ -245,7 +245,7 @@
   },
   {
     "match": "Aspire.Hosting.Valkey",
-    "href": "/integrations/caching/valkey/"
+    "href": "/integrations/caching/valkey/valkey-get-started/"
   },
   {
     "match": "Aspire.Hosting.Yarp",
