@@ -447,8 +447,16 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
           collapsed: true,
           items: [
             {
-              label: 'Integration overview',
-              slug: 'integrations/caching/redis',
+              label: 'Get started',
+              slug: 'integrations/caching/redis/redis-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/caching/redis/redis-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/caching/redis/redis-client',
             },
             {
               label: 'Community extensions',

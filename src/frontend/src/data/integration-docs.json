@@ -229,7 +229,7 @@
   },
   {
     "match": "Aspire.Hosting.Redis",
-    "href": "/integrations/caching/redis/"
+    "href": "/integrations/caching/redis/redis-get-started/"
   },
   {
     "match": "Aspire.Hosting.Seq",
@@ -337,7 +337,7 @@
   },
   {
     "match": "Aspire.StackExchange.Redis",
-    "href": "/integrations/caching/redis/"
+    "href": "/integrations/caching/redis/redis-get-started/"
   },
   {
     "match": "Aspire.StackExchange.Redis.DistributedCaching",
