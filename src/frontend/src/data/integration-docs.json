@@ -49,7 +49,7 @@
   },
   {
     "match": "Aspire.Confluent.Kafka",
-    "href": "/integrations/messaging/apache-kafka/"
+    "href": "/integrations/messaging/apache-kafka/apache-kafka-get-started/"
   },
   {
     "match": "Aspire.Elastic.Clients.Elasticsearch",
@@ -169,7 +169,7 @@
   },
   {
     "match": "Aspire.Hosting.Kafka",
-    "href": "/integrations/messaging/apache-kafka/"
+    "href": "/integrations/messaging/apache-kafka/apache-kafka-get-started/"
   },
   {
     "match": "Aspire.Hosting.Keycloak",
@@ -197,7 +197,7 @@
   },
   {
     "match": "Aspire.Hosting.Nats",
-    "href": "/integrations/messaging/nats/"
+    "href": "/integrations/messaging/nats/nats-get-started/"
   },
   {
     "match": "Aspire.Hosting.OpenAI",
@@ -225,7 +225,7 @@
   },
   {
     "match": "Aspire.Hosting.RabbitMQ",
-    "href": "/integrations/messaging/rabbitmq/"
+    "href": "/integrations/messaging/rabbitmq/rabbitmq-get-started/"
   },
   {
     "match": "Aspire.Hosting.Redis",
@@ -297,7 +297,7 @@
   },
   {
     "match": "Aspire.NATS.Net",
-    "href": "/integrations/messaging/nats/"
+    "href": "/integrations/messaging/nats/nats-get-started/"
   },
   {
     "match": "Aspire.Npgsql",
@@ -325,11 +325,11 @@
   },
   {
     "match": "Aspire.RabbitMQ.Client",
-    "href": "/integrations/messaging/rabbitmq/"
+    "href": "/integrations/messaging/rabbitmq/rabbitmq-get-started/"
   },
   {
     "match": "Aspire.RabbitMQ.Client.v6",
-    "href": "/integrations/messaging/rabbitmq/"
+    "href": "/integrations/messaging/rabbitmq/rabbitmq-get-started/"
   },
   {
     "match": "Aspire.Seq",

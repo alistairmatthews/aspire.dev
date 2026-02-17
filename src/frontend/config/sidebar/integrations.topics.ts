@@ -943,11 +943,59 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
       items: [
         {
           label: 'Apache Kafka',
-          slug: 'integrations/messaging/apache-kafka',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/messaging/apache-kafka/apache-kafka-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/messaging/apache-kafka/apache-kafka-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/messaging/apache-kafka/apache-kafka-client',
+            },
+          ],
         },
         { label: 'LavinMQ', slug: 'integrations/messaging/lavinmq' },
-        { label: 'NATS', slug: 'integrations/messaging/nats' },
-        { label: 'RabbitMQ', slug: 'integrations/messaging/rabbitmq' },
+        {
+          label: 'NATS',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/messaging/nats/nats-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/messaging/nats/nats-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/messaging/nats/nats-client',
+            },
+          ],
+        },
+        {
+          label: 'RabbitMQ',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/messaging/rabbitmq/rabbitmq-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/messaging/rabbitmq/rabbitmq-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/messaging/rabbitmq/rabbitmq-client',
+            },
+          ],
+        },
       ],
     },
     {
