@@ -116,7 +116,24 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
         'zh-CN': '人工智能 (AI)',
       },
       items: [
-        { label: 'GitHub Models', slug: 'integrations/ai/github-models' },
+        {
+          label: 'GitHub Models',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/ai/github-models/github-models-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/ai/github-models/github-models-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/ai/github-models/github-models-client',
+            },
+          ],
+        },
         { label: 'Ollama', slug: 'integrations/ai/ollama' },
         { label: 'OpenAI', slug: 'integrations/ai/openai' },
       ],
