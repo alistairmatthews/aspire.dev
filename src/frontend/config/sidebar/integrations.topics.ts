@@ -466,11 +466,39 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
         },
         {
           label: 'Redis Distributed Cache',
-          slug: 'integrations/caching/redis-distributed',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/caching/redis-distributed/redis-distributed-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/caching/redis-distributed/redis-distributed-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/caching/redis-distributed/redis-distributed-client',
+            },
+          ],
         },
         {
           label: 'Redis Output Cache',
-          slug: 'integrations/caching/redis-output',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/caching/redis-output/redis-output-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/caching/redis-output/redis-output-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/caching/redis-output/redis-output-client',
+            },
+          ],
         },
         { label: 'Valkey', slug: 'integrations/caching/valkey' },
         { label: 'Garnet', slug: 'integrations/caching/garnet' },

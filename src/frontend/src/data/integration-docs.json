@@ -341,11 +341,11 @@
   },
   {
     "match": "Aspire.StackExchange.Redis.DistributedCaching",
-    "href": "/integrations/caching/redis-distributed/"
+    "href": "/integrations/caching/redis-distributed/redis-distributed-get-started/"
   },
   {
     "match": "Aspire.StackExchange.Redis.OutputCaching",
-    "href": "/integrations/caching/redis-output/"
+    "href": "/integrations/caching/redis-output/redis-output-get-started/"
   },
   {
     "match": "CommunityToolkit.Aspire.GoFeatureFlag",
