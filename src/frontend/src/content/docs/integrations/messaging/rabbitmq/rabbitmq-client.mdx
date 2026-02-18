@@ -67,6 +67,32 @@ public class ExampleService(
 }
 ```
 
+## Connection properties
+
+When you reference a RabbitMQ resource using `WithReference`, the following connection properties are made available to the consuming project:
+
+### RabbitMQ server
+
+The RabbitMQ server resource exposes the following connection properties:
+
+| Property Name | Description |
+|---------------|-------------|
+| `Host` | The hostname or IP address of the RabbitMQ server |
+| `Port` | The port number the RabbitMQ server is listening on |
+| `Username` | The username for authentication |
+| `Password` | The password for authentication |
+| `Uri` | The connection URI, with the format `amqp://{Username}:{Password}@{Host}:{Port}` |
+
+**Example connection string:**
+
+```
+Uri: amqp://guest:p%40ssw0rd1@localhost:5672
+```
+
+<Aside type="note">
+  Aspire exposes each property as an environment variable named `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called `messaging` becomes `MESSAGING_URI`.
+</Aside>
+
 ## Configuration
 
 The Aspire RabbitMQ integration provides multiple options to configure the connection based on the requirements and conventions of your project.

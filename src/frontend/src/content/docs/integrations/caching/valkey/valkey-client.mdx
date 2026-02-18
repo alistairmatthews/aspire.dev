@@ -44,6 +44,33 @@ public class ExampleService(IConnectionMultiplexer connectionMux)
 }
 ```
 
+## Connection properties
+
+When you reference a Valkey resource using `WithReference`, the following connection properties are made available to the consuming project:
+
+### Valkey
+
+The Valkey resource exposes the following connection properties:
+
+| Property Name | Description                                                              |
+| ------------- | ------------------------------------------------------------------------ |
+| `Host`        | The hostname or IP address of the Valkey server                          |
+| `Port`        | The port number the Valkey server is listening on                        |
+| `Password`    | The password for authentication                                          |
+| `Uri`         | The connection URI, with the format `valkey://:{Password}@{Host}:{Port}` |
+
+**Example connection string:**
+
+```
+Uri: valkey://:p%40ssw0rd1@localhost:6379
+```
+
+<Aside type="note">
+  Aspire exposes each property as an environment variable named
+  `[RESOURCE]_[PROPERTY]`. For instance, the `Uri` property of a resource called
+  `cache` becomes `CACHE_URI`.
+</Aside>
+
 ## Configuration and other client features
 
 Since Valkey is Redis-compatible, all Redis client configuration, keyed services, health checks, and observability features work the same way. See the [Redis integration](/integrations/caching/redis/) page for complete client integration documentation.
