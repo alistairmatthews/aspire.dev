@@ -35,7 +35,7 @@ builder.AddRabbitMQClient(connectionName: "messaging");
 ```
 
 <Aside type="tip">
-    The `connectionName` parameter must match the name used when adding the RabbitMQ server resource in the AppHost project. For more information, see [Add RabbitMQ server resource](../rabbitmq-host/#add-rabbitmq-server-resource).
+    The `connectionName` parameter must match the name used when adding the RabbitMQ server resource in the AppHost project. For more information, see [Add RabbitMQ server resource](/integrations/messaging/rabbitmq/rabbitmq-host/#add-rabbitmq-server-resource).
 </Aside>
 
 You can then retrieve the `IConnection` instance using dependency injection. For example, to retrieve the connection from an example service:
