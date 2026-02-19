@@ -111,7 +111,7 @@ You can also configure the [ConfigurationOptions](https://stackexchange.github.i
 ```csharp
 builder.AddRedisOutputCache(
     "cache",
-    static settings => settings.ConnectTimeout = 3_000);
+    configureOptions: options => options.ConnectTimeout = 3000);
 ```
 
 ## Client integration health checks

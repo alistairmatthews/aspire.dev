@@ -40,8 +40,7 @@ Next, in the AppHost project, create instances of GitHub Models resources and pa
 ```csharp title="C# — AppHost.cs"
 var builder = DistributedApplication.CreateBuilder(args);
 
-var model = GitHubModel.OpenAI.OpenAIGpt4oMini;
-var chat = builder.AddGitHubModel("chat", model);
+var chat = builder.AddGitHubModel("chat", "openai/gpt-4o-mini");
 
 builder.AddProject<Projects.ExampleProject>()
        .WithReference(chat);

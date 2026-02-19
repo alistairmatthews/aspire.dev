@@ -17,8 +17,7 @@ To add a `GitHubModelResource` to your AppHost project, call the `AddGitHubModel
 ```csharp title="C# — AppHost.cs"
 var builder = DistributedApplication.CreateBuilder(args);
 
-var model = GitHubModel.OpenAI.OpenAIGpt4oMini;
-var chat = builder.AddGitHubModel("chat", model);
+var chat = builder.AddGitHubModel("chat", "openai/gpt-4o-mini");
 
 builder.AddProject<Projects.ExampleProject>()
        .WithReference(chat);
@@ -44,8 +43,7 @@ For organization-specific requests, you can specify an organization parameter:
 var builder = DistributedApplication.CreateBuilder(args);
 
 var organization = builder.AddParameter("github-org");
-var model = GitHubModel.OpenAI.OpenAIGpt4oMini;
-var chat = builder.AddGitHubModel("chat", model, organization);
+var chat = builder.AddGitHubModel("chat", "openai/gpt-4o-mini", organization);
 
 builder.AddProject<Projects.ExampleProject>()
        .WithReference(chat);
@@ -64,8 +62,7 @@ The GitHub Models integration supports multiple ways to configure authentication
 By default, the integration creates a parameter named `{resource_name}-gh-apikey` that automatically falls back to the `GITHUB_TOKEN` environment variable:
 
 ```csharp
-var model = GitHubModel.OpenAI.OpenAIGpt4oMini;
-var chat = builder.AddGitHubModel("chat", model);
+var chat = builder.AddGitHubModel("chat", "openai/gpt-4o-mini");;
 ```
 
 Then in user secrets:
@@ -84,8 +81,7 @@ You can also specify a custom parameter for the API key:
 
 ```csharp
 var apiKey = builder.AddParameter("my-api-key", secret: true);
-var model = GitHubModel.OpenAI.OpenAIGpt4oMini;
-var chat = builder.AddGitHubModel("chat", model)
+var chat = builder.AddGitHubModel("chat", "openai/gpt-4o-mini")
                   .WithApiKey(apiKey);
 ```
 
@@ -104,8 +100,7 @@ Then in user secrets:
 You can add health checks to verify the GitHub Models endpoint accessibility and API key validity:
 
 ```csharp
-var model = GitHubModel.OpenAI.OpenAIGpt4oMini;
-var chat = builder.AddGitHubModel("chat", model)
+var chat = builder.AddGitHubModel("chat", "openai/gpt-4o-mini")
                   .WithHealthCheck();
 ```
 

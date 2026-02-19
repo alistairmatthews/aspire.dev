@@ -87,7 +87,9 @@ To add NATS with username and password authentication, use the `WithNatsUser` an
 ```csharp title="C# — AppHost.cs"
 var builder = DistributedApplication.CreateBuilder(args);
 
-var nats = builder.AddNats("nats", userName: "nats", password: "pass");
+var user = builder.AddParameter("natsUser");
+var pass = builder.AddParameter("natsPass", secret: true);
+var nats = builder.AddNats("nats", userName: user, password: pass);
 
 builder.AddProject<Projects.ExampleProject>()
        .WithReference(nats);

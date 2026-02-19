@@ -53,18 +53,6 @@ You must accept the [Seq EULA](https://datalust.co/doc/eula-current.pdf) for Seq
 
 Seq shouldn't be part of the Aspire deployment manifest, hence the chained call to `ExcludeFromManifest`. It's recommended you set up a secure production Seq server outside of Aspire for your production environment.
 
-## Persistent logs and traces
-
-Register Seq with a data directory in your AppHost project to retain Seq's data and configuration across application restarts:
-
-```csharp
-var seq = builder.AddSeq("seq", seqDataDirectory: "./seqdata")
-                 .ExcludeFromManifest()
-                 .WithLifetime(ContainerLifetime.Persistent);
-```
-
-The directory specified must already exist.
-
 ## Add a Seq resource with a data volume
 
 To add a data volume to the Seq resource, call the `WithDataVolume` method:
