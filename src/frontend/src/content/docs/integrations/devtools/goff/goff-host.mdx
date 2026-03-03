@@ -1,11 +1,10 @@
 ---
-title: GO Feature Flag integration
+title: GO Feature Flag Hosting integration reference
+description: Learn how to use the Aspire GO Feature Flag hosting integration to orchestrate and configure GO Feature Flag in your Aspire projects.
 ---
 
-import { Badge } from '@astrojs/starlight/components';
-import { Aside } from '@astrojs/starlight/components';
-import InstallPackage from "@components/InstallPackage.astro";
-import InstallDotNetPackage from '@components/InstallDotNetPackage.astro';
+import { Badge, Aside } from '@astrojs/starlight/components';
+import InstallPackage from '@components/InstallPackage.astro';
 import ThemeImage from '@components/ThemeImage.astro';
 import goffIcon from '@assets/icons/go-feature-flag.png';
 
@@ -21,15 +20,13 @@ import goffIcon from '@assets/icons/go-feature-flag.png';
   classOverride="float-inline-left icon"
 />
 
-Feature flags lets you modify system behavior without changing code. Deploy every day, release when you are ready. Reduce risk by releasing your features progressively.
+To get started with the Aspire GO Feature Flag integrations, follow the [Get started with GO Feature Flag integrations](/integrations/devtools/goff/goff-get-started/) guide.
 
-* [GO Feature Flag](https://gofeatureflag.org/) believes in simplicity and offers a simple and lightweight solution to use feature flags.
-* Target individual segments, users, and development environments, use advanced rollout functionality.
-* 100% Opensource, no vendor locking, supports your favorite languages and is pushing for standardisation with the support of OpenFeature.
+This article includes full details about the Aspire GO Feature Flag Hosting integration.
 
-## Hosting integration
+## Installation
 
-To get started with the Aspire GO Feature Flag hosting integration, install the [CommunityToolkit.Aspire.Hosting.GoFeatureFlag](https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.GoFeatureFlag) NuGet package in the app host project.
+To access the types and APIs for expressing GO Feature Flag as a resource in your AppHost project, install the [📦 CommunityToolkit.Aspire.Hosting.GoFeatureFlag](https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.GoFeatureFlag) NuGet package:
 
 <InstallPackage packageName="CommunityToolkit.Aspire.Hosting.GoFeatureFlag" />
 
@@ -124,61 +121,3 @@ The `port` parameter specifies the host port for the goff HTTP endpoint. If this
 The goff hosting integration automatically adds a health check for the goff server resource. The health check verifies that the goff server is running and that a connection can be established to it.
 
 The hosting integration uses the goff `/health` endpoint to perform health checks.
-
-## Client integration
-
-To get started with the Aspire goff client integration, install the [📦 CommunityToolkit.Aspire.GoFeatureFlag](https://nuget.org/packages/CommunityToolkit.Aspire.GoFeatureFlag) NuGet package in the client-consuming project.
-
-<InstallDotNetPackage packageName="CommunityToolkit.Aspire.GoFeatureFlag" />
-
-### Add GO Feature Flag client
-
-In the `Program.cs` file of your client-consuming project, call the `AddGoFeatureFlagClient` extension method to register a `GoFeatureFlagProvider` for use via the dependency injection container. The method takes a connection name parameter.
-
-```csharp
-builder.AddGoFeatureFlagClient(connectionName: "goff");
-```
-
-<Aside type="tip">
-The `connectionName` parameter must match the name used when adding the goff resource in the AppHost project.
-</Aside>
-
-You can then retrieve the `GoFeatureFlagProvider` instance using dependency injection:
-
-```csharp
-public class ExampleService(GoFeatureFlagProvider provider)
-{
-    // Use provider...
-}
-```
-
-### Add keyed GO Feature Flag client
-
-There might be situations where you want to register multiple `GoFeatureFlagProvider` instances with different connection names. To register keyed goff clients, call the `AddKeyedGoFeatureFlagClient` method:
-
-```csharp
-builder.AddKeyedGoFeatureFlagClient(name: "technical");
-builder.AddKeyedGoFeatureFlagClient(name: "business");
-```
-
-Then you can retrieve the `GoFeatureFlagProvider` instances using dependency injection:
-
-```csharp
-public class ExampleService(
-    [FromKeyedServices("technical")] GoFeatureFlagProvider technicalProvider,
-    [FromKeyedServices("business")] GoFeatureFlagProvider businessProvider)
-{
-    // Use providers...
-}
-```
-
-### Client integration health checks
-
-The Aspire goff integration uses the configured client to perform a health check.
-
-## See also
-
-- [GO Feature Flag documentation](https://gofeatureflag.org/)
-- [.NET SDK for GO Feature Flag](https://github.com/open-feature/dotnet-sdk-contrib/tree/main/src/OpenFeature.Providers.GOFeatureFlag)
-- [OpenFeature documentation](https://openfeature.dev)
-- [Aspire Community Toolkit](https://github.com/CommunityToolkit/Aspire)

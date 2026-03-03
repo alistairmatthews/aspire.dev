@@ -1399,7 +1399,24 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
         { label: 'Data API Builder', slug: 'integrations/devtools/dab' },
         { label: 'Dev Tunnels', slug: 'integrations/devtools/dev-tunnels' },
         { label: 'flagd', slug: 'integrations/devtools/flagd' },
-        { label: 'goff', slug: 'integrations/devtools/goff' },
+        {
+          label: 'goff',
+          collapsed: true,
+          items: [
+            {
+              label: 'Get started',
+              slug: 'integrations/devtools/goff/goff-get-started',
+            },
+            {
+              label: 'Hosting integration (AppHost)',
+              slug: 'integrations/devtools/goff/goff-host',
+            },
+            {
+              label: 'Client integration (Your app)',
+              slug: 'integrations/devtools/goff/goff-client',
+            },
+          ],
+        },
         { label: 'k6', slug: 'integrations/devtools/k6' },
         { label: 'MailPit', slug: 'integrations/devtools/mailpit' },
         {
