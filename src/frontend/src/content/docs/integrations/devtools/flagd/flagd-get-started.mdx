@@ -76,6 +76,18 @@ await OpenFeature.Api.Instance.SetProviderAsync(
 var flagClient = OpenFeature.Api.Instance.GetClient();
 ```
 
+You can then use the `flagClient` to evaluate feature flags:
+
+```csharp
+var welcomeBanner = await flagClient.GetBooleanValueAsync(
+    "welcome-banner",
+    defaultValue: false);
+
+var backgroundColor = await flagClient.GetStringValueAsync(
+    "background-color",
+    defaultValue: "#000000");
+```
+
 For full reference details, see [flagd hosting integration](/integrations/devtools/flagd/flagd-host/) and [flagd client integration](/integrations/devtools/flagd/flagd-client/).
 
 ## See also
