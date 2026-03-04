@@ -68,4 +68,13 @@ In the `Program.cs` file of your client-consuming project, call the `AddOllamaAp
 builder.AddOllamaApiClient("llama3");
 ```
 
+After adding `IOllamaClientApi` to the builder, you can get the `IOllamaClientApi` instance using dependency injection. For example, to retrieve your context object from service:
+
+```csharp
+public class ExampleService(IOllamaClientApi ollama)
+{
+    // Use ollama...
+}
+```
+
 For full reference details, see [Ollama hosting integration](/integrations/ai/ollama/ollama-host/) and [Ollama client integration](/integrations/ai/ollama/ollama-client/).
