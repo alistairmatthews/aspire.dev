@@ -19,18 +19,27 @@
           </span>
         </a>
         <p class="eyebrow">Aspire PR Preview</p>
-        <h1>Recent preview window</h1>
-        <p class="collection-summary">Open a route like <code>/prs/{number}/</code> to resolve a PR, prepare its latest frontend artifact, and add it to this window.</p>
+        <h1>Open pull requests</h1>
+        <p class="collection-summary">Browse open PRs, jump straight into <code>/prs/{number}/</code>, and let the preview host resolve the latest frontend artifact on demand while keeping only a small active window warm.</p>
       </div>
       <div class="collection-meta">
         <a class="action-link action-link-github" href="https://github.com/microsoft/aspire.dev" target="_blank" rel="noreferrer noopener">
           <span class="action-icon action-icon-github" aria-hidden="true"></span>
           <span>Repository</span>
         </a>
-        <strong id="window-capacity">Up to 0 PRs</strong>
-        <span id="window-count">Current entries: 0</span>
+        <strong id="window-capacity">Window size: 0</strong>
+        <span id="window-count">Open PRs: 0</span>
       </div>
     </header>
+
+    <section class="collection-controls" aria-label="Catalog filters">
+      <label class="filter-field" for="author-filter">
+        <span class="filter-label">Filter by author</span>
+        <select id="author-filter" class="filter-select">
+          <option value="">All authors</option>
+        </select>
+      </label>
+    </section>
 
     <section id="preview-grid" class="preview-grid" aria-live="polite"></section>
   </main>

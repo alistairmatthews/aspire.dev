@@ -8,4 +8,8 @@
     <InvariantGlobalization>true</InvariantGlobalization>
     <ContainerFamily>noble-chiseled</ContainerFamily>
   </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="GitHubJwt" Version="0.0.6" />
+    <PackageReference Include="Octokit" Version="14.0.0" />
+  </ItemGroup>
 </Project>

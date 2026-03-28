@@ -171,6 +171,21 @@ internal sealed class PreviewStateStore
         }
     }
 
+    public async Task<IReadOnlyDictionary<int, PreviewStatusSnapshot>> ListSnapshotsAsync(CancellationToken cancellationToken)
+    {
+        await _gate.WaitAsync(cancellationToken);
+        try
+        {
+            return _records.Values
+                .Select(static record => record.ToSnapshot())
+                .ToDictionary(static snapshot => snapshot.PullRequestNumber);
+        }
+        finally
+        {
+            _gate.Release();
+        }
+    }
+
     public async Task<PreviewWorkItem?> GetWorkItemAsync(int pullRequestNumber, CancellationToken cancellationToken)
     {
         await _gate.WaitAsync(cancellationToken);
@@ -312,6 +327,34 @@ internal sealed class PreviewStateStore
                     bytesTotal: record.Progress.BytesTotal);
             },
             cancellationToken);
+    }
+
+    public async Task<PreviewStatusSnapshot?> RequeueAsync(int pullRequestNumber, string message, CancellationToken cancellationToken)
+    {
+        PreviewStatusSnapshot? snapshot = null;
+
+        await UpdateRecordAsync(
+            pullRequestNumber,
+            record =>
+            {
+                record.State = PreviewLoadState.Registered;
+                record.LastError = null;
+                record.ActiveDirectoryPath = null;
+                record.ReadyAtUtc = null;
+                record.LastUpdatedAtUtc = DateTimeOffset.UtcNow;
+                record.Progress = NextProgress(
+                    record,
+                    stage: "Registered",
+                    message: message,
+                    percent: 0,
+                    stagePercent: 0,
+                    bytesDownloaded: null,
+                    bytesTotal: null);
+                snapshot = record.ToSnapshot();
+            },
+            cancellationToken);
+
+        return snapshot;
     }
 
     public async Task TouchAsync(int pullRequestNumber, CancellationToken cancellationToken)

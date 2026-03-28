@@ -5,6 +5,7 @@ using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Text.RegularExpressions;
 using Microsoft.AspNetCore.StaticFiles;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Options;
 
 namespace PreviewHost.Previews;
@@ -14,49 +15,41 @@ internal sealed class PreviewRequestDispatcher
     private static readonly JsonSerializerOptions WebJsonOptions = CreateJsonOptions();
     private static readonly string AspireFaviconDataUri = $"data:image/svg+xml,{Uri.EscapeDataString(AspireLogoSvg)}";
     private readonly PreviewStateStore _stateStore;
-    private readonly PreviewCoordinator _coordinator;
     private readonly PreviewHostOptions _options;
+    private readonly string _previewShellRoot;
 
     public PreviewRequestDispatcher(
         PreviewStateStore stateStore,
-        PreviewCoordinator coordinator,
+        IWebHostEnvironment environment,
         IOptions<PreviewHostOptions> options)
     {
         _stateStore = stateStore;
-        _coordinator = coordinator;
         _options = options.Value;
+        _previewShellRoot = Path.Combine(
+            string.IsNullOrWhiteSpace(environment.WebRootPath)
+                ? Path.Combine(AppContext.BaseDirectory, "wwwroot")
+                : environment.WebRootPath,
+            "_preview");
     }
 
     public async Task DispatchIndexAsync(HttpContext context, CancellationToken cancellationToken)
     {
-        var snapshots = await _stateStore.ListRecentSnapshotsAsync(_options.MaxActivePreviews, cancellationToken);
-        await WriteHtmlAsync(context, BuildIndexPage(snapshots, _options.MaxActivePreviews), cancellationToken);
+        await WritePreviewShellAsync(context, "index.html", cancellationToken);
     }
 
     public async Task DispatchAsync(HttpContext context, int pullRequestNumber, string relativePath, CancellationToken cancellationToken)
     {
-        var discovery = await _coordinator.EnsureRegisteredAsync(pullRequestNumber, cancellationToken);
-        var snapshot = discovery.Snapshot;
-        if (snapshot is null)
-        {
-            context.Response.StatusCode = StatusCodes.Status404NotFound;
-            await WriteHtmlAsync(context, BuildInfoPage(
-                title: $"PR #{pullRequestNumber} preview is not available",
-                body: discovery.FailureMessage ?? "The preview host could not find a successful frontend build for this pull request yet."), cancellationToken);
-            return;
-        }
+        var snapshot = await _stateStore.GetSnapshotAsync(pullRequestNumber, cancellationToken);
 
-        if (!snapshot.IsReady || string.IsNullOrWhiteSpace(snapshot.ActiveDirectoryPath))
+        if (snapshot is null || !snapshot.IsReady || string.IsNullOrWhiteSpace(snapshot.ActiveDirectoryPath))
         {
-            _coordinator.EnsureLoading(pullRequestNumber);
-
             if (!string.IsNullOrEmpty(relativePath))
             {
-                context.Response.Redirect(snapshot.PreviewPath);
+                context.Response.Redirect(PreviewRoute.BuildPath(pullRequestNumber));
                 return;
             }
 
-            await WriteHtmlAsync(context, BuildLoaderPage(snapshot), cancellationToken);
+            await WritePreviewShellAsync(context, "status.html", cancellationToken);
             return;
         }
 
@@ -179,6 +172,29 @@ internal sealed class PreviewRequestDispatcher
         context.Response.ContentType = "text/html; charset=utf-8";
         context.Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
         await context.Response.WriteAsync(html, cancellationToken);
+    }
+
+    private async Task WritePreviewShellAsync(HttpContext context, string fileName, CancellationToken cancellationToken)
+    {
+        var filePath = Path.Combine(_previewShellRoot, fileName);
+        if (!File.Exists(filePath))
+        {
+            context.Response.StatusCode = StatusCodes.Status500InternalServerError;
+            await WriteHtmlAsync(
+                context,
+                BuildInfoPage(
+                    title: "Preview shell is unavailable",
+                    body: $"The preview host could not find the '{fileName}' shell asset under '/_preview/'."),
+                cancellationToken);
+            return;
+        }
+
+        await ServeFileAsync(
+            context,
+            filePath,
+            contentType: "text/html; charset=utf-8",
+            cacheControl: "no-cache, no-store, must-revalidate",
+            cancellationToken);
     }
 
     private static string BuildLoaderPage(PreviewStatusSnapshot snapshot)

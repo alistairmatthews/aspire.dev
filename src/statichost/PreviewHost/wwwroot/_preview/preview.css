@@ -1,14 +1,14 @@
 :root {
   color-scheme: dark;
-  --bg: #09111f;
-  --bg-accent: rgba(36, 113, 163, 0.18);
-  --panel: rgba(12, 23, 43, 0.88);
-  --panel-border: rgba(118, 142, 184, 0.28);
-  --text: #eff5ff;
-  --muted: #aebdda;
+  --bg: #1f1e33;
+  --bg-accent: rgba(81, 43, 212, 0.18);
+  --panel: rgba(31, 30, 51, 0.88);
+  --panel-border: rgba(185, 170, 238, 0.28);
+  --text: #ffffff;
+  --muted: #dcd5f6;
   --line: rgba(255, 255, 255, 0.08);
-  --accent: #62d0c4;
-  --accent-strong: #75a5ff;
+  --accent: #b9aaee;
+  --accent-strong: #7455dd;
   --danger: #ef767a;
   --warning: #e9b44c;
   --shadow: rgba(1, 9, 22, 0.45);
@@ -26,12 +26,12 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top, rgba(117, 165, 255, 0.16), transparent 28%),
-    radial-gradient(circle at bottom right, rgba(98, 208, 196, 0.14), transparent 32%),
-    linear-gradient(180deg, rgba(5, 10, 18, 0.35), transparent 24%),
+    radial-gradient(circle at top, rgba(116, 85, 221, 0.2), transparent 28%),
+    radial-gradient(circle at bottom right, rgba(185, 170, 238, 0.16), transparent 34%),
+    linear-gradient(180deg, rgba(81, 43, 212, 0.12), transparent 24%),
     var(--bg);
   color: var(--text);
-  font-family: "Segoe UI", system-ui, sans-serif;
+  font-family: "Poppins", "Segoe UI", system-ui, sans-serif;
 }
 
 body[data-view="status"] {
@@ -105,7 +105,7 @@ body[data-view="index"] {
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
-  border-radius: 999px;
+  border-radius: 0.75rem;
   border: 1px solid var(--panel-border);
   text-decoration: none;
   transition: border-color 0.18s ease, transform 0.18s ease, background 0.18s ease;
@@ -119,10 +119,18 @@ body[data-view="index"] {
   color: var(--text);
   background: rgba(255, 255, 255, 0.04);
   font: inherit;
+  font-weight: 600;
 }
 
 .action-link-github {
   background: rgba(255, 255, 255, 0.06);
+  cursor: pointer;
+}
+
+.action-button.primary {
+  border-color: rgba(185, 170, 238, 0.38);
+  background: linear-gradient(135deg, rgba(81, 43, 212, 0.95), rgba(116, 85, 221, 0.92));
+  box-shadow: 0 1rem 2rem rgba(81, 43, 212, 0.22);
 }
 
 .action-icon {
@@ -169,7 +177,7 @@ body[data-view="index"] {
 .action-button:hover:not(:disabled),
 .preview-link:hover {
   transform: translateY(-1px);
-  border-color: rgba(117, 165, 255, 0.55);
+  border-color: rgba(185, 170, 238, 0.55);
 }
 
 .action-button {
@@ -177,7 +185,7 @@ body[data-view="index"] {
 }
 
 .action-button.secondary {
-  background: rgba(117, 165, 255, 0.08);
+  background: rgba(116, 85, 221, 0.15);
 }
 
 .action-button.danger {
@@ -193,9 +201,11 @@ body[data-view="index"] {
 .status-card,
 .preview-card,
 .empty-card {
-  border-radius: 1.5rem;
+  border-radius: 0.9rem;
   border: 1px solid var(--panel-border);
-  background: var(--panel);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.04), transparent 18%),
+    var(--panel);
   box-shadow: 0 1.5rem 3rem var(--shadow);
   backdrop-filter: blur(12px);
 }
@@ -241,6 +251,11 @@ body[data-view="index"] {
   font-weight: 600;
   letter-spacing: 0.18em;
   text-transform: uppercase;
+}
+
+.preview-title {
+  margin-top: 0.35rem;
+  font-size: 1.35rem;
 }
 
 h1,
@@ -313,7 +328,7 @@ p {
 }
 
 .progress-track.stage .progress-bar {
-  background: linear-gradient(90deg, rgba(233, 180, 76, 0.95), rgba(98, 208, 196, 0.85));
+  background: linear-gradient(90deg, rgba(233, 180, 76, 0.95), rgba(185, 170, 238, 0.9));
 }
 
 .terminal-section {
@@ -377,12 +392,12 @@ p {
 }
 
 .status-chip.ready {
-  background: rgba(98, 208, 196, 0.16);
+  background: rgba(185, 170, 238, 0.22);
 }
 
 .status-chip.loading,
 .status-chip.registered {
-  background: rgba(117, 165, 255, 0.18);
+  background: rgba(116, 85, 221, 0.24);
 }
 
 .status-chip.failed,
@@ -395,11 +410,57 @@ p {
   background: rgba(233, 180, 76, 0.18);
 }
 
+.status-chip.outdated,
+.status-chip.draft {
+  background: rgba(233, 180, 76, 0.18);
+}
+
 .collection-meta {
   display: grid;
   justify-items: end;
   gap: 0.35rem;
   text-align: right;
+}
+
+.collection-controls {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.filter-field {
+  display: grid;
+  gap: 0.45rem;
+  width: min(17rem, 100%);
+}
+
+.filter-label {
+  color: var(--muted);
+  font-size: 0.75rem;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.filter-select {
+  min-height: 2.75rem;
+  border-radius: 0.75rem;
+  border: 1px solid var(--panel-border);
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--text);
+  padding: 0.7rem 0.9rem;
+  font: inherit;
+  cursor: pointer;
+}
+
+.filter-select:focus {
+  outline: 2px solid rgba(185, 170, 238, 0.42);
+  outline-offset: 2px;
+}
+
+.filter-select option {
+  background: #1f1e33;
+  color: var(--text);
 }
 
 .preview-grid {
@@ -421,6 +482,19 @@ p {
   align-items: flex-start;
 }
 
+.preview-card-heading {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.preview-title-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.6rem;
+  margin-top: 0.35rem;
+}
+
 .preview-link {
   color: var(--text);
   background: transparent;
@@ -432,10 +506,54 @@ p {
   justify-content: flex-start;
 }
 
-.preview-summary {
-  min-height: 3.25rem;
-  margin: 0.9rem 0 1rem;
+.preview-path {
+  margin: 0.45rem 0 0;
   color: var(--muted);
+  font-family: "Fira Code", "Cascadia Code", Consolas, monospace;
+  font-size: 0.92rem;
+}
+
+.preview-card-subtitle {
+  margin: 0;
+  color: var(--muted);
+  font-size: 0.9rem;
+}
+
+.preview-summary {
+  min-height: 0;
+  margin: 0.85rem 0 0;
+  color: var(--muted);
+}
+
+.preview-card-footer {
+  display: grid;
+  gap: 0.9rem;
+  margin-top: 1rem;
+}
+
+.preview-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+}
+
+.preview-meta-pill {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2rem;
+  padding: 0.35rem 0.7rem;
+  border-radius: 0.6rem;
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--muted);
+  font-size: 0.88rem;
+}
+
+.preview-card-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  margin-bottom: 0;
 }
 
 .preview-meta {
@@ -473,6 +591,7 @@ code {
 
   .card-actions,
   .card-utility-actions,
+  .collection-controls,
   .collection-meta {
     justify-content: flex-start;
     justify-items: start;

@@ -19,6 +19,12 @@ internal sealed class PreviewHostOptions
 
     public string GitHubToken { get; set; } = string.Empty;
 
+    public int GitHubAppId { get; set; }
+
+    public long GitHubAppInstallationId { get; set; }
+
+    public string GitHubAppPrivateKey { get; set; } = string.Empty;
+
     public string GitHubApiBaseUrl { get; set; } = "https://api.github.com/";
 }
 
@@ -120,6 +126,7 @@ internal sealed class PreviewRecord
             RepositoryOwner = RepositoryOwner,
             RepositoryName = RepositoryName,
             PullRequestNumber = PullRequestNumber,
+            HeadSha = HeadSha,
             State = State,
             Stage = Progress.Stage,
             Message = Progress.Message,
@@ -142,6 +149,8 @@ internal sealed class PreviewStatusSnapshot
     public string RepositoryName { get; init; } = string.Empty;
 
     public int PullRequestNumber { get; init; }
+
+    public string HeadSha { get; init; } = string.Empty;
 
     public PreviewLoadState State { get; init; }
 
@@ -194,6 +203,17 @@ internal sealed record GitHubArtifactDescriptor(
     string RepositoryName,
     long ArtifactId,
     string ArtifactName,
-    DateTimeOffset ExpiresAtUtc);
+    DateTimeOffset ExpiresAtUtc,
+    long? SizeInBytes = null);
 
 internal sealed record PreviewDiscoveryResult(PreviewStatusSnapshot? Snapshot, string? FailureMessage = null);
+
+internal sealed record GitHubPullRequestSummary(
+    int PullRequestNumber,
+    string Title,
+    string HtmlUrl,
+    string HeadSha,
+    string? AuthorLogin,
+    bool IsDraft,
+    DateTimeOffset CreatedAtUtc,
+    DateTimeOffset UpdatedAtUtc);

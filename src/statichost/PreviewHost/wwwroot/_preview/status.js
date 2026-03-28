@@ -24,18 +24,22 @@ const retryButton = document.getElementById("retry-button");
 const retryButtonLabel = retryButton?.querySelector(".button-label");
 
 const numberFormatter = new Intl.NumberFormat();
-const timeFormatter = new Intl.DateTimeFormat(undefined, {
+const dateFormatter = new Intl.DateTimeFormat(undefined, {
+  month: "short",
+  day: "numeric",
+});
+const clockFormatter = new Intl.DateTimeFormat(undefined, {
   hour: "numeric",
   minute: "2-digit",
   second: "2-digit",
-  month: "short",
-  day: "numeric",
 });
 
 let currentState = null;
 let eventSource = null;
 let retryInFlight = false;
 let cancelInFlight = false;
+
+initializeShell();
 
 bootstrap().catch((error) => {
   applyState(buildFailureState(error instanceof Error ? error.message : "The preview host could not load the preview status."));
@@ -194,6 +198,20 @@ function applyState(snapshot) {
   updateActionButtons();
 }
 
+function initializeShell() {
+  if (!pullRequestNumber) {
+    return;
+  }
+
+  const initialTitle = `Preparing PR #${pullRequestNumber}`;
+  document.title = initialTitle;
+  pageTitle.textContent = initialTitle;
+  message.textContent = "Checking GitHub for the latest successful frontend artifact.";
+  message.hidden = false;
+  previewPath.textContent = refreshTarget;
+  hint.textContent = "This page starts loading the preview automatically when a build is available.";
+}
+
 function updateOpenPrLink(snapshot) {
   const repositoryOwner = snapshot.repositoryOwner;
   const repositoryName = snapshot.repositoryName;
@@ -317,5 +335,7 @@ function formatMessage(text) {
 
 function formatUpdated(value) {
   const date = new Date(value);
-  return Number.isNaN(date.getTime()) ? value : timeFormatter.format(date).replace(",", " -");
+  return Number.isNaN(date.getTime())
+    ? value
+    : `${dateFormatter.format(date)} · ${clockFormatter.format(date)}`;
 }

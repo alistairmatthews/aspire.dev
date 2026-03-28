@@ -53,6 +53,57 @@ internal sealed class PreviewCoordinator
             this);
     }
 
+    public async Task<PreviewDiscoveryResult> BootstrapAsync(int pullRequestNumber, CancellationToken cancellationToken)
+    {
+        var snapshot = await _stateStore.GetSnapshotAsync(pullRequestNumber, cancellationToken);
+        if (snapshot is null)
+        {
+            var discovery = await EnsureRegisteredAsync(pullRequestNumber, cancellationToken);
+            snapshot = discovery.Snapshot;
+            if (snapshot is null)
+            {
+                return discovery;
+            }
+        }
+
+        if (snapshot.State is PreviewLoadState.Cancelled or PreviewLoadState.Failed or PreviewLoadState.Evicted)
+        {
+            snapshot = await _stateStore.RequeueAsync(
+                pullRequestNumber,
+                "Retrying preview preparation.",
+                cancellationToken) ?? snapshot;
+        }
+
+        if (!snapshot.IsReady)
+        {
+            EnsureLoading(pullRequestNumber);
+            snapshot = await _stateStore.GetSnapshotAsync(pullRequestNumber, cancellationToken) ?? snapshot;
+        }
+
+        return new PreviewDiscoveryResult(snapshot);
+    }
+
+    public async Task<PreviewDiscoveryResult> RetryAsync(int pullRequestNumber, CancellationToken cancellationToken)
+    {
+        var snapshot = await _stateStore.GetSnapshotAsync(pullRequestNumber, cancellationToken);
+        if (snapshot is null)
+        {
+            return await BootstrapAsync(pullRequestNumber, cancellationToken);
+        }
+
+        if (!snapshot.IsReady)
+        {
+            snapshot = await _stateStore.RequeueAsync(
+                pullRequestNumber,
+                "Retrying preview preparation.",
+                cancellationToken) ?? snapshot;
+        }
+
+        EnsureLoading(pullRequestNumber);
+        snapshot = await _stateStore.GetSnapshotAsync(pullRequestNumber, cancellationToken) ?? snapshot;
+        return new PreviewDiscoveryResult(snapshot);
+    }
+
     public async Task<PreviewStatusSnapshot?> CancelAsync(int pullRequestNumber, CancellationToken cancellationToken)
     {
         var snapshot = await _stateStore.GetSnapshotAsync(pullRequestNumber, cancellationToken);
@@ -435,24 +486,26 @@ internal sealed class PreviewCoordinator
 
     private static string BuildFriendlyErrorMessage(Exception exception)
     {
-        if (exception is InvalidOperationException invalidOperationException)
-        {
-            if (invalidOperationException.Message.Contains("GitHubToken", StringComparison.Ordinal))
+            if (exception is InvalidOperationException invalidOperationException)
             {
-                return "The preview host is missing its GitHub artifact-read credential.";
-            }
+                if (invalidOperationException.Message.Contains("GitHubToken", StringComparison.Ordinal)
+                    || invalidOperationException.Message.Contains("GitHubAppId", StringComparison.Ordinal)
+                    || invalidOperationException.Message.Contains("GitHubAppPrivateKey", StringComparison.Ordinal))
+                {
+                    return "The preview host is missing its GitHub artifact-read credential.";
+                }
 
-            if (invalidOperationException.Message.Contains("RepositoryOwner", StringComparison.Ordinal)
-                || invalidOperationException.Message.Contains("RepositoryName", StringComparison.Ordinal))
-            {
-                return "The preview host is missing its GitHub repository configuration.";
-            }
+                if (invalidOperationException.Message.Contains("RepositoryOwner", StringComparison.Ordinal)
+                    || invalidOperationException.Message.Contains("RepositoryName", StringComparison.Ordinal))
+                {
+                    return "The preview host is missing its GitHub repository configuration.";
+                }
 
-            if (invalidOperationException.Message.Contains("artifact", StringComparison.OrdinalIgnoreCase))
-            {
-                return "The requested preview artifact could not be found or is no longer available.";
+                if (invalidOperationException.Message.Contains("artifact", StringComparison.OrdinalIgnoreCase))
+                {
+                    return "The requested preview artifact could not be found or is no longer available.";
+                }
             }
-        }
 
         if (exception is HttpRequestException httpRequestException && httpRequestException.StatusCode == HttpStatusCode.Unauthorized)
         {

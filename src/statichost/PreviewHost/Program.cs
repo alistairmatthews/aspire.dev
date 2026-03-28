@@ -20,7 +20,7 @@ builder.Services.ConfigureHttpJsonOptions(static options =>
 builder.Services
     .AddOptions<PreviewHostOptions>()
     .Bind(builder.Configuration.GetSection(PreviewHostOptions.SectionName));
-builder.Services.AddHttpClient<GitHubArtifactClient>();
+builder.Services.AddSingleton<GitHubArtifactClient>();
 builder.Services.AddSingleton<PreviewStateStore>();
 builder.Services.AddSingleton<PreviewCoordinator>();
 builder.Services.AddSingleton<PreviewRequestDispatcher>();
@@ -37,6 +37,16 @@ if (!app.Environment.IsDevelopment())
 
 app.UseHttpsRedirection();
 app.UseExceptionHandler();
+app.UseStaticFiles(new StaticFileOptions
+{
+    OnPrepareResponse = static context =>
+    {
+        if (context.Context.Request.Path.StartsWithSegments("/_preview", StringComparison.OrdinalIgnoreCase))
+        {
+            context.Context.Response.Headers.CacheControl = "no-cache, no-store, must-revalidate";
+        }
+    }
+});
 
 app.Use(async (context, next) =>
 {
@@ -73,6 +83,53 @@ app.MapHealthChecks("/healthz", new HealthCheckOptions
 });
 
 app.MapGet(
+    "/api/previews/recent",
+    async (PreviewStateStore stateStore, IOptions<PreviewHostOptions> options, CancellationToken cancellationToken) =>
+    {
+        var snapshots = await stateStore.ListRecentSnapshotsAsync(options.Value.MaxActivePreviews, cancellationToken);
+        return Results.Json(new
+        {
+            updatedAtUtc = DateTimeOffset.UtcNow,
+            maxActivePreviews = options.Value.MaxActivePreviews,
+            snapshots
+        });
+    });
+
+app.MapGet(
+    "/api/previews/catalog",
+    async (GitHubArtifactClient gitHubArtifactClient, PreviewStateStore stateStore, IOptions<PreviewHostOptions> options, CancellationToken cancellationToken) =>
+    {
+        var openPullRequests = await gitHubArtifactClient.ListOpenPullRequestsAsync(cancellationToken);
+        var trackedSnapshots = await stateStore.ListSnapshotsAsync(cancellationToken);
+        var activePreviewCount = trackedSnapshots.Values.Count(static snapshot => snapshot.State is PreviewLoadState.Loading or PreviewLoadState.Ready);
+
+        var entries = openPullRequests
+            .Select(pullRequest => new
+            {
+                pullRequestNumber = pullRequest.PullRequestNumber,
+                title = pullRequest.Title,
+                pullRequestUrl = pullRequest.HtmlUrl,
+                previewPath = PreviewRoute.BuildPath(pullRequest.PullRequestNumber),
+                authorLogin = pullRequest.AuthorLogin,
+                isDraft = pullRequest.IsDraft,
+                headSha = pullRequest.HeadSha,
+                createdAtUtc = pullRequest.CreatedAtUtc,
+                updatedAtUtc = pullRequest.UpdatedAtUtc,
+                preview = trackedSnapshots.TryGetValue(pullRequest.PullRequestNumber, out var snapshot) ? snapshot : null
+            })
+            .ToArray();
+
+        return Results.Json(new
+        {
+            updatedAtUtc = DateTimeOffset.UtcNow,
+            openPullRequestCount = entries.Length,
+            maxActivePreviews = options.Value.MaxActivePreviews,
+            activePreviewCount,
+            entries
+        });
+    });
+
+app.MapGet(
     "/api/previews/{pullRequestNumber:int}",
     async (int pullRequestNumber, PreviewStateStore stateStore, CancellationToken cancellationToken) =>
     {
@@ -80,6 +137,24 @@ app.MapGet(
         return snapshot is null
             ? Results.NotFound()
             : Results.Json(snapshot);
+    });
+
+app.MapGet(
+    "/api/previews/{pullRequestNumber:int}/bootstrap",
+    async (int pullRequestNumber, PreviewCoordinator coordinator, CancellationToken cancellationToken) =>
+    {
+        var result = await coordinator.BootstrapAsync(pullRequestNumber, cancellationToken);
+        return result.Snapshot is null
+            ? Results.NotFound(new
+            {
+                pullRequestNumber,
+                state = "Missing",
+                stage = "Missing",
+                failureMessage = result.FailureMessage ?? "The preview host could not find a successful frontend build for this pull request yet.",
+                previewPath = PreviewRoute.BuildPath(pullRequestNumber),
+                updatedAtUtc = DateTimeOffset.UtcNow
+            })
+            : Results.Json(result.Snapshot);
     });
 
 app.MapGet(
@@ -144,6 +219,24 @@ app.MapPost(
         return snapshot is null
             ? Results.NotFound()
             : Results.Json(snapshot);
+    });
+
+app.MapPost(
+    "/api/previews/{pullRequestNumber:int}/retry",
+    async (int pullRequestNumber, PreviewCoordinator coordinator, CancellationToken cancellationToken) =>
+    {
+        var result = await coordinator.RetryAsync(pullRequestNumber, cancellationToken);
+        return result.Snapshot is null
+            ? Results.NotFound(new
+            {
+                pullRequestNumber,
+                state = "Missing",
+                stage = "Missing",
+                failureMessage = result.FailureMessage ?? "The preview host could not find a successful frontend build for this pull request yet.",
+                previewPath = PreviewRoute.BuildPath(pullRequestNumber),
+                updatedAtUtc = DateTimeOffset.UtcNow
+            })
+            : Results.Json(result.Snapshot);
     });
 
 app.MapPost(
