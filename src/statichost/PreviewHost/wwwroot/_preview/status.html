@@ -17,18 +17,8 @@
 
   <main class="page-shell">
     <section class="status-card">
-      <div class="card-toolbar">
-        <button id="cancel-button" class="action-button danger" type="button" hidden>Cancel prep</button>
-        <div class="card-utility-actions">
-          <a id="open-pr-link" class="action-link action-link-github" href="#" target="_blank" rel="noreferrer noopener" hidden>
-            <span class="action-icon action-icon-github" aria-hidden="true"></span>
-            <span>Open PR</span>
-          </a>
-          <button id="retry-button" class="action-button secondary" type="button" hidden>
-            <span class="action-icon action-icon-retry" aria-hidden="true"></span>
-            <span class="button-label">Retry prep</span>
-          </button>
-        </div>
+      <div id="card-busy-indicator" class="card-busy-indicator" hidden aria-hidden="true">
+        <span class="card-spinner"></span>
       </div>
 
       <header class="card-header">
@@ -90,9 +80,33 @@
           <dt>Updated</dt>
           <dd id="updated-at">Waiting</dd>
         </div>
+        <div id="download-detail-group" hidden>
+          <dt>Download</dt>
+          <dd id="download-detail">Waiting</dd>
+        </div>
+        <div id="extract-detail-group" hidden>
+          <dt>Preview files</dt>
+          <dd id="extract-detail">Waiting</dd>
+        </div>
       </dl>
 
       <p id="hint" class="hint-text"></p>
+
+      <footer id="status-card-actions" class="status-card-actions" hidden>
+        <div class="status-card-secondary-actions">
+          <a id="open-pr-link" class="action-link action-link-github" href="#" target="_blank" rel="noreferrer noopener" hidden>
+            <span class="action-icon action-icon-github" aria-hidden="true"></span>
+            <span>Open PR</span>
+          </a>
+        </div>
+        <div class="status-card-primary-actions">
+          <button id="retry-button" class="action-button primary" type="button" hidden>
+            <span class="action-icon action-icon-retry" aria-hidden="true"></span>
+            <span class="button-label">Retry prep</span>
+          </button>
+          <button id="cancel-button" class="action-button danger" type="button" hidden>Cancel prep</button>
+        </div>
+      </footer>
     </section>
   </main>
 

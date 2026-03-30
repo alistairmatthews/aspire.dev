@@ -113,7 +113,10 @@ internal sealed class PreviewStateStore
                 percent: 0,
                 stagePercent: 0,
                 bytesDownloaded: null,
-                bytesTotal: null);
+                bytesTotal: null,
+                itemsCompleted: null,
+                itemsTotal: null,
+                itemsLabel: null);
 
             _records[request.PullRequestNumber] = record;
             await SaveLockedAsync(cancellationToken);
@@ -237,7 +240,7 @@ internal sealed class PreviewStateStore
                 record.State = PreviewLoadState.Loading;
                 record.LastError = null;
                 record.LastUpdatedAtUtc = DateTimeOffset.UtcNow;
-                record.Progress = NextProgress(record, stage, message, percent, stagePercent, null, null);
+                record.Progress = NextProgress(record, stage, message, percent, stagePercent, null, null, null, null, null);
             },
             cancellationToken,
             persist: false);
@@ -251,6 +254,9 @@ internal sealed class PreviewStateStore
         int stagePercent,
         long? bytesDownloaded,
         long? bytesTotal,
+        int? itemsCompleted,
+        int? itemsTotal,
+        string? itemsLabel,
         CancellationToken cancellationToken)
     {
         await UpdateRecordAsync(
@@ -259,7 +265,7 @@ internal sealed class PreviewStateStore
             {
                 record.State = PreviewLoadState.Loading;
                 record.LastUpdatedAtUtc = DateTimeOffset.UtcNow;
-                record.Progress = NextProgress(record, stage, message, percent, stagePercent, bytesDownloaded, bytesTotal);
+                record.Progress = NextProgress(record, stage, message, percent, stagePercent, bytesDownloaded, bytesTotal, itemsCompleted, itemsTotal, itemsLabel);
             },
             cancellationToken,
             persist: false);
@@ -284,7 +290,10 @@ internal sealed class PreviewStateStore
                     percent: 100,
                     stagePercent: 100,
                     bytesDownloaded: record.Progress.BytesDownloaded,
-                    bytesTotal: record.Progress.BytesTotal);
+                    bytesTotal: record.Progress.BytesTotal,
+                    itemsCompleted: record.Progress.ItemsCompleted,
+                    itemsTotal: record.Progress.ItemsTotal,
+                    itemsLabel: record.Progress.ItemsLabel);
             },
             cancellationToken);
     }
@@ -300,7 +309,7 @@ internal sealed class PreviewStateStore
                 record.ActiveDirectoryPath = null;
                 record.ReadyAtUtc = null;
                 record.LastUpdatedAtUtc = DateTimeOffset.UtcNow;
-                record.Progress = NextProgress(record, "Failed", error, record.Progress.Percent, record.Progress.StagePercent, record.Progress.BytesDownloaded, record.Progress.BytesTotal);
+                record.Progress = NextProgress(record, "Failed", error, record.Progress.Percent, record.Progress.StagePercent, record.Progress.BytesDownloaded, record.Progress.BytesTotal, record.Progress.ItemsCompleted, record.Progress.ItemsTotal, record.Progress.ItemsLabel);
             },
             cancellationToken);
     }
@@ -323,7 +332,10 @@ internal sealed class PreviewStateStore
                     percent: record.Progress.Percent,
                     stagePercent: record.Progress.StagePercent,
                     bytesDownloaded: record.Progress.BytesDownloaded,
-                    bytesTotal: record.Progress.BytesTotal);
+                    bytesTotal: record.Progress.BytesTotal,
+                    itemsCompleted: record.Progress.ItemsCompleted,
+                    itemsTotal: record.Progress.ItemsTotal,
+                    itemsLabel: record.Progress.ItemsLabel);
             },
             cancellationToken);
     }
@@ -348,7 +360,10 @@ internal sealed class PreviewStateStore
                     percent: 0,
                     stagePercent: 0,
                     bytesDownloaded: null,
-                    bytesTotal: null);
+                    bytesTotal: null,
+                    itemsCompleted: null,
+                    itemsTotal: null,
+                    itemsLabel: null);
                 snapshot = record.ToSnapshot();
             },
             cancellationToken);
@@ -407,7 +422,7 @@ internal sealed class PreviewStateStore
             record.ReadyAtUtc = null;
             record.LastError = null;
             record.LastUpdatedAtUtc = DateTimeOffset.UtcNow;
-            record.Progress = NextProgress(record, "Evicted", reason, 0, 0, null, null);
+            record.Progress = NextProgress(record, "Evicted", reason, 0, 0, null, null, null, null, null);
             await SaveLockedAsync(cancellationToken);
         }
         finally
@@ -489,7 +504,10 @@ internal sealed class PreviewStateStore
         int percent,
         int stagePercent,
         long? bytesDownloaded,
-        long? bytesTotal) =>
+        long? bytesTotal,
+        int? itemsCompleted,
+        int? itemsTotal,
+        string? itemsLabel) =>
         new()
         {
             Version = record.Progress.Version + 1,
@@ -499,6 +517,9 @@ internal sealed class PreviewStateStore
             StagePercent = Math.Clamp(stagePercent, 0, 100),
             BytesDownloaded = bytesDownloaded,
             BytesTotal = bytesTotal,
+            ItemsCompleted = itemsCompleted,
+            ItemsTotal = itemsTotal,
+            ItemsLabel = itemsLabel,
             UpdatedAtUtc = DateTimeOffset.UtcNow
         };
 

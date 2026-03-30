@@ -5,7 +5,7 @@ using Octokit;
 
 namespace PreviewHost.Previews;
 
-internal sealed class GitHubArtifactClient
+internal sealed class GitHubArtifactClient(IOptions<PreviewHostOptions> options, ILogger<GitHubArtifactClient> logger)
 {
     private static readonly ApiOptions SinglePageApiOptions = new()
     {
@@ -14,20 +14,17 @@ internal sealed class GitHubArtifactClient
         PageSize = 100
     };
 
+    private static readonly TimeSpan DownloadProgressPublishInterval = TimeSpan.FromSeconds(1);
     private const string CiWorkflowPath = ".github/workflows/ci.yml";
     private const string DefaultPreviewArtifactName = "frontend-dist";
     private readonly SemaphoreSlim _installationTokenGate = new(1, 1);
     private readonly SemaphoreSlim _pullRequestCatalogGate = new(1, 1);
-    private readonly PreviewHostOptions _options;
+    private readonly PreviewHostOptions _options = options.Value;
+    private readonly ILogger<GitHubArtifactClient> _logger = logger;
     private AccessToken? _cachedInstallationToken;
     private long? _cachedInstallationId;
     private IReadOnlyList<GitHubPullRequestSummary>? _cachedOpenPullRequests;
     private DateTimeOffset _cachedOpenPullRequestsExpiresAtUtc;
-
-    public GitHubArtifactClient(IOptions<PreviewHostOptions> options)
-    {
-        _options = options.Value;
-    }
 
     public async Task<PreviewRegistrationRequest?> TryResolveLatestPreviewRegistrationAsync(int pullRequestNumber, CancellationToken cancellationToken)
     {
@@ -216,6 +213,7 @@ internal sealed class GitHubArtifactClient
     {
         EnsureCredentialsConfigured();
         Directory.CreateDirectory(Path.GetDirectoryName(destinationZipPath)!);
+        var bufferSettings = PreviewBufferSettings.Resolve();
 
         var repositoryClient = await CreateRepositoryClientAsync(
             artifact.RepositoryOwner,
@@ -234,9 +232,27 @@ internal sealed class GitHubArtifactClient
             totalBytes = sourceStream.Length;
         }
 
-        await using var destinationStream = File.Create(destinationZipPath);
+        await using var destinationStream = new FileStream(
+            destinationZipPath,
+            System.IO.FileMode.Create,
+            System.IO.FileAccess.Write,
+            System.IO.FileShare.None,
+            bufferSize: bufferSettings.DownloadFileBufferSize,
+            options: System.IO.FileOptions.Asynchronous);
 
-        var buffer = ArrayPool<byte>.Shared.Rent(1024 * 1024);
+        _logger.LogInformation(
+            "Downloading preview artifact {ArtifactName} with adaptive buffers: copy {CopyBufferSizeMiB} MiB, file {FileBufferSizeMiB} MiB (~{AvailableMemoryMiB} MiB headroom)",
+            artifact.ArtifactName,
+            bufferSettings.DownloadCopyBufferMiB,
+            bufferSettings.DownloadFileBufferMiB,
+            bufferSettings.AvailableMemoryMiB);
+
+        await using var progressPublisher = new DownloadProgressPublisher(
+            totalBytes, 
+            progressCallback, 
+            cancellationToken);
+
+        var buffer = ArrayPool<byte>.Shared.Rent(bufferSettings.DownloadCopyBufferSize);
         long downloadedBytes = 0;
 
         try
@@ -252,8 +268,11 @@ internal sealed class GitHubArtifactClient
 
                 await destinationStream.WriteAsync(buffer.AsMemory(0, read), cancellationToken);
                 downloadedBytes += read;
-                await progressCallback(new PreviewDownloadProgress(downloadedBytes, totalBytes), cancellationToken);
+                progressPublisher.Report(downloadedBytes);
             }
+
+            await destinationStream.FlushAsync(cancellationToken);
+            await progressPublisher.CompleteAsync(downloadedBytes);
         }
         finally
         {
@@ -261,7 +280,7 @@ internal sealed class GitHubArtifactClient
         }
     }
 
-    private async Task<ListArtifactsResponse> GetArtifactsAsync(
+    private static async Task<ListArtifactsResponse> GetArtifactsAsync(
         GitHubClient repositoryClient,
         string repositoryOwner,
         string repositoryName,
@@ -281,7 +300,7 @@ internal sealed class GitHubArtifactClient
             });
     }
 
-    private async Task<WorkflowRun?> GetLatestSuccessfulPreviewRunAsync(
+    private static async Task<WorkflowRun?> GetLatestSuccessfulPreviewRunAsync(
         GitHubClient repositoryClient,
         string repositoryOwner,
         string repositoryName,
@@ -445,6 +464,100 @@ internal sealed class GitHubArtifactClient
         }
 
         return null;
+    }
+
+    private sealed class DownloadProgressPublisher : IAsyncDisposable
+    {
+        private readonly Func<PreviewDownloadProgress, CancellationToken, ValueTask> _progressCallback;
+        private readonly CancellationTokenSource _publisherCancellationSource;
+        private readonly SemaphoreSlim _publishGate = new(1, 1);
+        private readonly Task _publisherTask;
+        private readonly long? _totalBytes;
+        private long _latestBytes;
+        private long _publishedBytes = -1;
+        private int _completed;
+
+        public DownloadProgressPublisher(
+            long? totalBytes,
+            Func<PreviewDownloadProgress, CancellationToken, ValueTask> progressCallback,
+            CancellationToken cancellationToken)
+        {
+            _totalBytes = totalBytes;
+            _progressCallback = progressCallback;
+            _publisherCancellationSource = CancellationTokenSource.CreateLinkedTokenSource(cancellationToken);
+            _publisherTask = Task.Run(() => PublishLoopAsync(_publisherCancellationSource.Token), CancellationToken.None);
+        }
+
+        public void Report(long downloadedBytes) => Interlocked.Exchange(ref _latestBytes, downloadedBytes);
+
+        public async Task CompleteAsync(long downloadedBytes)
+        {
+            Report(downloadedBytes);
+
+            if (Interlocked.Exchange(ref _completed, 1) != 0)
+            {
+                return;
+            }
+
+            await PublishLatestAsync(CancellationToken.None);
+            await StopAsync();
+        }
+
+        public async ValueTask DisposeAsync()
+        {
+            await StopAsync();
+            _publishGate.Dispose();
+            _publisherCancellationSource.Dispose();
+        }
+
+        private async Task PublishLoopAsync(CancellationToken cancellationToken)
+        {
+            using var timer = new PeriodicTimer(DownloadProgressPublishInterval);
+
+            try
+            {
+                while (await timer.WaitForNextTickAsync(cancellationToken))
+                {
+                    await PublishLatestAsync(cancellationToken);
+                }
+            }
+            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+            {
+            }
+        }
+
+        private async Task PublishLatestAsync(CancellationToken cancellationToken)
+        {
+            await _publishGate.WaitAsync(cancellationToken);
+            try
+            {
+                var latestBytes = Interlocked.Read(ref _latestBytes);
+                if (latestBytes == _publishedBytes)
+                {
+                    return;
+                }
+
+                await _progressCallback(new PreviewDownloadProgress(latestBytes, _totalBytes), cancellationToken);
+                _publishedBytes = latestBytes;
+            }
+            finally
+            {
+                _publishGate.Release();
+            }
+        }
+
+        private async Task StopAsync()
+        {
+            _publisherCancellationSource.Cancel();
+
+            try
+            {
+                await _publisherTask;
+            }
+            catch (OperationCanceledException) when (_publisherCancellationSource.IsCancellationRequested)
+            {
+            }
+        }
     }
 
     private static string NormalizePrivateKey(string privateKey)

@@ -213,22 +213,34 @@ body[data-view="index"] {
 }
 
 .status-card {
+  position: relative;
   padding: 1.75rem;
 }
 
-.card-toolbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 1rem;
-  margin-bottom: 1.25rem;
+.card-busy-indicator {
+  position: absolute;
+  top: 1.5rem;
+  right: 1.5rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 999px;
+  border: 1px solid var(--line);
+  background: rgba(24, 24, 37, 0.88);
+  box-shadow: 0 0.75rem 1.5rem rgba(10, 11, 20, 0.24);
+  pointer-events: none;
 }
 
-.card-utility-actions {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: flex-end;
-  gap: 0.75rem;
+.card-spinner {
+  width: 1rem;
+  height: 1rem;
+  border-radius: 999px;
+  border: 2px solid rgba(198, 194, 242, 0.2);
+  border-top-color: var(--accent);
+  border-right-color: var(--accent-soft);
+  animation: status-spinner 0.9s linear infinite;
 }
 
 .card-header,
@@ -376,6 +388,28 @@ p {
   margin-top: 1.25rem;
 }
 
+.status-card-actions {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  gap: 1rem;
+  margin-top: 1.5rem;
+  padding-top: 1.25rem;
+  border-top: 1px solid var(--line);
+}
+
+.status-card-secondary-actions,
+.status-card-primary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.status-card-primary-actions {
+  margin-left: auto;
+  justify-content: flex-end;
+}
+
 .status-chip {
   display: inline-flex;
   align-items: center;
@@ -480,6 +514,14 @@ p {
   color: var(--text);
 }
 
+.filter-pill-loading {
+  position: relative;
+  overflow: hidden;
+  cursor: wait;
+  color: var(--muted);
+  opacity: 0.9;
+}
+
 .preview-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
@@ -500,6 +542,16 @@ p {
   transform: translateY(-1px);
   border-color: rgba(198, 194, 242, 0.36);
   box-shadow: 0 1rem 2rem rgba(10, 11, 20, 0.34);
+}
+
+.preview-card-skeleton {
+  pointer-events: none;
+}
+
+.preview-card-skeleton:hover {
+  transform: none;
+  border-color: var(--panel-border);
+  box-shadow: 0 1.5rem 3rem var(--shadow);
 }
 
 .preview-card-topline {
@@ -545,6 +597,60 @@ p {
 
 .preview-card-link:hover .preview-title {
   color: var(--accent);
+}
+
+.skeleton-line,
+.skeleton-chip {
+  position: relative;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(198, 194, 242, 0.09);
+}
+
+.skeleton-line::after,
+.skeleton-chip::after,
+.filter-pill-loading::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  transform: translateX(-100%);
+  background: linear-gradient(
+    90deg,
+    transparent 0%,
+    rgba(198, 194, 242, 0.08) 30%,
+    rgba(198, 194, 242, 0.22) 50%,
+    rgba(198, 194, 242, 0.08) 70%,
+    transparent 100%
+  );
+  animation: skeleton-shimmer 1.35s ease-in-out infinite;
+}
+
+.skeleton-line-eyebrow {
+  width: 5.5rem;
+  height: 0.9rem;
+}
+
+.skeleton-line-title {
+  width: 82%;
+  height: 1.35rem;
+  margin-top: 0.35rem;
+}
+
+.skeleton-line-subtitle {
+  width: 70%;
+  height: 0.95rem;
+  margin-top: 0.85rem;
+}
+
+.skeleton-line-status {
+  width: 52%;
+  height: 0.95rem;
+}
+
+.skeleton-chip {
+  width: 4.75rem;
+  height: 2rem;
+  flex: none;
 }
 
 .preview-title-row {
@@ -636,6 +742,18 @@ code {
   font-family: Consolas, "Cascadia Code", monospace;
 }
 
+@keyframes skeleton-shimmer {
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@keyframes status-spinner {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
 @media (max-width: 640px) {
   body[data-view="status"],
   body[data-view="index"] {
@@ -646,22 +764,42 @@ code {
     padding: 1.25rem;
   }
 
+  .card-busy-indicator {
+    top: 1rem;
+    right: 1rem;
+  }
+
   .card-header,
   .collection-header {
     flex-direction: column;
   }
 
-  .card-toolbar {
-    flex-direction: column;
-  }
-
   .card-actions,
-  .card-utility-actions,
   .collection-controls,
   .collection-meta {
     justify-content: flex-start;
     justify-items: start;
     text-align: left;
+  }
+
+  .status-card-actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .status-card-secondary-actions,
+  .status-card-primary-actions {
+    width: 100%;
+  }
+
+  .status-card-primary-actions {
+    margin-left: 0;
+    justify-content: flex-start;
+  }
+
+  .status-card-actions .action-link,
+  .status-card-actions .action-button {
+    width: 100%;
   }
 
   .detail-grid,

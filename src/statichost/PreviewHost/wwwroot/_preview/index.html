@@ -27,19 +27,64 @@
           <span class="action-icon action-icon-github" aria-hidden="true"></span>
           <span>Repository</span>
         </a>
-        <strong id="window-capacity">Window size: 0</strong>
-        <span id="window-count">Open PRs: 0</span>
+        <strong id="window-capacity">Loading warm window...</strong>
+        <span id="window-count">Loading open pull requests...</span>
       </div>
     </header>
 
     <section class="collection-controls" aria-label="Catalog filters">
       <div class="filter-stack">
         <span class="filter-label">Authors</span>
-        <div id="author-filter-bar" class="filter-pills"></div>
+        <div id="author-filter-bar" class="filter-pills" aria-busy="true">
+          <span class="filter-pill filter-pill-loading">Loading authors...</span>
+        </div>
       </div>
     </section>
 
-    <section id="preview-grid" class="preview-grid" aria-live="polite"></section>
+    <section id="preview-grid" class="preview-grid" aria-live="polite" aria-busy="true">
+      <article class="preview-card preview-card-skeleton" aria-hidden="true">
+        <div class="preview-card-topline">
+          <div class="skeleton-line skeleton-line-eyebrow"></div>
+          <div class="skeleton-chip"></div>
+        </div>
+        <div class="preview-card-link">
+          <div class="skeleton-line skeleton-line-title"></div>
+          <div class="skeleton-line skeleton-line-subtitle"></div>
+          <div class="preview-card-status-row">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-line skeleton-line-status"></div>
+          </div>
+        </div>
+      </article>
+      <article class="preview-card preview-card-skeleton" aria-hidden="true">
+        <div class="preview-card-topline">
+          <div class="skeleton-line skeleton-line-eyebrow"></div>
+          <div class="skeleton-chip"></div>
+        </div>
+        <div class="preview-card-link">
+          <div class="skeleton-line skeleton-line-title"></div>
+          <div class="skeleton-line skeleton-line-subtitle"></div>
+          <div class="preview-card-status-row">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-line skeleton-line-status"></div>
+          </div>
+        </div>
+      </article>
+      <article class="preview-card preview-card-skeleton" aria-hidden="true">
+        <div class="preview-card-topline">
+          <div class="skeleton-line skeleton-line-eyebrow"></div>
+          <div class="skeleton-chip"></div>
+        </div>
+        <div class="preview-card-link">
+          <div class="skeleton-line skeleton-line-title"></div>
+          <div class="skeleton-line skeleton-line-subtitle"></div>
+          <div class="preview-card-status-row">
+            <div class="skeleton-chip"></div>
+            <div class="skeleton-line skeleton-line-status"></div>
+          </div>
+        </div>
+      </article>
+    </section>
   </main>
 
   <script type="module" src="/_preview/index.js"></script>

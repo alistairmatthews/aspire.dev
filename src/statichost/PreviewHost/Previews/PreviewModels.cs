@@ -27,6 +27,8 @@ internal sealed class PreviewHostOptions
 
     public string GitHubApiBaseUrl { get; set; } = "https://api.github.com/";
 
+    public string ExtractionMode { get; set; } = "managed";
+
     [JsonIgnore]
     public bool HasGitHubToken => !string.IsNullOrWhiteSpace(GitHubToken);
 
@@ -35,12 +37,34 @@ internal sealed class PreviewHostOptions
         GitHubAppId > 0
         && !string.IsNullOrWhiteSpace(GitHubAppPrivateKey);
 
+    [JsonIgnore]
+    public bool HasValidExtractionMode =>
+        string.Equals(ExtractionMode, "managed", StringComparison.OrdinalIgnoreCase)
+        || string.Equals(ExtractionMode, "command-line", StringComparison.OrdinalIgnoreCase);
+
+    [JsonIgnore]
+    public bool UseCommandLineExtraction =>
+        string.Equals(ExtractionMode, "command-line", StringComparison.OrdinalIgnoreCase);
+
+    [JsonIgnore]
+    public string ExtractionToolDescription =>
+        UseCommandLineExtraction
+            ? OperatingSystem.IsWindows()
+                ? "tar.exe"
+                : "unzip"
+            : "ZipArchive.ExtractToDirectoryAsync";
+
     public string GetGitHubAuthenticationMode() =>
         HasGitHubToken
             ? "personal-access-token"
             : HasGitHubAppConfiguration
                 ? "github-app"
                 : "unconfigured";
+
+    public string GetExtractionModeDescription() =>
+        UseCommandLineExtraction
+            ? $"command-line ({ExtractionToolDescription})"
+            : $"managed ({ExtractionToolDescription})";
 }
 
 internal sealed class PreviewRegistrationRequest
@@ -94,6 +118,12 @@ internal sealed class PreviewProgress
     public long? BytesDownloaded { get; set; }
 
     public long? BytesTotal { get; set; }
+
+    public int? ItemsCompleted { get; set; }
+
+    public int? ItemsTotal { get; set; }
+
+    public string? ItemsLabel { get; set; }
 
     public DateTimeOffset UpdatedAtUtc { get; set; } = DateTimeOffset.UtcNow;
 }
@@ -150,6 +180,9 @@ internal sealed class PreviewRecord
             Version = Progress.Version,
             BytesDownloaded = Progress.BytesDownloaded,
             BytesTotal = Progress.BytesTotal,
+            ItemsCompleted = Progress.ItemsCompleted,
+            ItemsTotal = Progress.ItemsTotal,
+            ItemsLabel = Progress.ItemsLabel,
             Error = LastError,
             UpdatedAtUtc = Progress.UpdatedAtUtc,
             PreviewPath = PreviewPath,
@@ -182,6 +215,12 @@ internal sealed class PreviewStatusSnapshot
     public long? BytesDownloaded { get; init; }
 
     public long? BytesTotal { get; init; }
+
+    public int? ItemsCompleted { get; init; }
+
+    public int? ItemsTotal { get; init; }
+
+    public string? ItemsLabel { get; init; }
 
     public string? Error { get; init; }
 

@@ -23,6 +23,9 @@ builder.Services
     .Validate(
         static options => options.HasGitHubToken || options.HasGitHubAppConfiguration,
         $"Either '{PreviewHostOptions.SectionName}:GitHubToken' or both '{PreviewHostOptions.SectionName}:GitHubAppId' and '{PreviewHostOptions.SectionName}:GitHubAppPrivateKey' must be configured.")
+    .Validate(
+        static options => options.HasValidExtractionMode,
+        $"The '{PreviewHostOptions.SectionName}:ExtractionMode' setting must be either 'managed' or 'command-line'.")
     .ValidateOnStart();
 builder.Services.AddSingleton<GitHubArtifactClient>();
 builder.Services.AddSingleton<PreviewStateStore>();
@@ -37,6 +40,9 @@ await previewStateStore.InitializeAsync(CancellationToken.None);
 app.Logger.LogInformation(
     "PreviewHost GitHub authentication mode: {GitHubAuthenticationMode}",
     previewHostOptions.GetGitHubAuthenticationMode());
+app.Logger.LogInformation(
+    "PreviewHost artifact extraction mode: {ExtractionMode}",
+    previewHostOptions.GetExtractionModeDescription());
 
 if (!app.Environment.IsDevelopment())
 {

@@ -1,10 +1,12 @@
 var builder = DistributedApplication.CreateBuilder(args);
 
 var registrationToken = builder.AddParameter("registration-token", secret: true);
+var extractionMode = builder.AddParameter("extraction-mode", value: "command-line");
 
 var previewHost = builder.AddProject<Projects.PreviewHost>("previewhost")
     .WithExternalHttpEndpoints()
-    .WithEnvironment("PreviewHost__RegistrationToken", registrationToken);
+    .WithEnvironment("PreviewHost__RegistrationToken", registrationToken)
+    .WithEnvironment("PreviewHost__ExtractionMode", extractionMode);
 
 if (!string.IsNullOrWhiteSpace(builder.Configuration["PreviewHost:GitHubToken"]))
 {

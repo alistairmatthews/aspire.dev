@@ -31,6 +31,8 @@ authorFilterBar.addEventListener("click", (event) => {
 });
 
 loadCatalog().catch((error) => {
+  previewGrid.setAttribute("aria-busy", "false");
+  authorFilterBar.setAttribute("aria-busy", "false");
   renderEmptyState(error instanceof Error ? error.message : "The preview host could not load open pull requests.");
 });
 
@@ -61,6 +63,9 @@ async function loadCatalog() {
 
 function renderCatalog() {
   const filteredEntries = applyAuthorFilter(catalogEntries);
+
+  previewGrid.setAttribute("aria-busy", "false");
+  authorFilterBar.setAttribute("aria-busy", "false");
 
   windowCapacity.textContent = `Warm window: ${numberFormatter.format(activePreviewCount)} / ${numberFormatter.format(maxActivePreviews)}`;
   windowCount.textContent = selectedAuthor
@@ -117,6 +122,7 @@ function renderPreviewCard(entry) {
 }
 
 function renderEmptyState(message) {
+  previewGrid.setAttribute("aria-busy", "false");
   previewGrid.innerHTML = `
     <article class="empty-card">
       <h2>${escapeHtml(message)}</h2>

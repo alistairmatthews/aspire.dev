@@ -10,27 +10,19 @@ using Microsoft.Extensions.Options;
 
 namespace PreviewHost.Previews;
 
-internal sealed class PreviewRequestDispatcher
+internal sealed class PreviewRequestDispatcher(
+    PreviewStateStore stateStore,
+    IWebHostEnvironment environment,
+    IOptions<PreviewHostOptions> options)
 {
     private static readonly JsonSerializerOptions WebJsonOptions = CreateJsonOptions();
     private static readonly string AspireFaviconDataUri = $"data:image/svg+xml,{Uri.EscapeDataString(AspireLogoSvg)}";
-    private readonly PreviewStateStore _stateStore;
-    private readonly PreviewHostOptions _options;
-    private readonly string _previewShellRoot;
-
-    public PreviewRequestDispatcher(
-        PreviewStateStore stateStore,
-        IWebHostEnvironment environment,
-        IOptions<PreviewHostOptions> options)
-    {
-        _stateStore = stateStore;
-        _options = options.Value;
-        _previewShellRoot = Path.Combine(
+    private readonly PreviewHostOptions _options = options.Value;
+    private readonly string _previewShellRoot = Path.Combine(
             string.IsNullOrWhiteSpace(environment.WebRootPath)
                 ? Path.Combine(AppContext.BaseDirectory, "wwwroot")
                 : environment.WebRootPath,
             "_preview");
-    }
 
     public async Task DispatchIndexAsync(HttpContext context, CancellationToken cancellationToken)
     {
@@ -39,7 +31,7 @@ internal sealed class PreviewRequestDispatcher
 
     public async Task DispatchAsync(HttpContext context, int pullRequestNumber, string relativePath, CancellationToken cancellationToken)
     {
-        var snapshot = await _stateStore.GetSnapshotAsync(pullRequestNumber, cancellationToken);
+        var snapshot = await stateStore.GetSnapshotAsync(pullRequestNumber, cancellationToken);
 
         if (snapshot is null || !snapshot.IsReady || string.IsNullOrWhiteSpace(snapshot.ActiveDirectoryPath))
         {
@@ -53,7 +45,7 @@ internal sealed class PreviewRequestDispatcher
             return;
         }
 
-        await _stateStore.TouchAsync(pullRequestNumber, cancellationToken);
+        await stateStore.TouchAsync(pullRequestNumber, cancellationToken);
 
         var resolvedFile = ResolvePreviewFile(snapshot.ActiveDirectoryPath, relativePath);
         if (resolvedFile is null)
@@ -76,7 +68,7 @@ internal sealed class PreviewRequestDispatcher
         await ServeResolvedFileAsync(context, snapshot, resolvedFile, cancellationToken);
     }
 
-    private async Task ServeFileAsync(
+    private static async Task ServeFileAsync(
         HttpContext context,
         string filePath,
         string contentType,
