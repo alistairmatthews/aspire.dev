@@ -30,8 +30,6 @@ jobs:
         if: ${{ steps.config.outputs.configured == 'true' }}
         id: metadata
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
-        env:
-          PREVIEW_BASE_URL: ${{ vars.PR_PREVIEW_BASE_URL }}
         with:
           script: |
             const run = context.payload.workflow_run;
@@ -60,8 +58,6 @@ jobs:
               return;
             }
 
-            const previewUrl = new URL(`/prs/${pullRequest.number}`, process.env.PREVIEW_BASE_URL).toString();
-
             core.setOutput('should_register', 'true');
             core.setOutput('pr_number', String(pullRequest.number));
             core.setOutput('artifact_name', artifactName);
@@ -69,7 +65,6 @@ jobs:
             core.setOutput('run_id', String(run.id));
             core.setOutput('run_attempt', String(run.run_attempt));
             core.setOutput('completed_at', run.updated_at ?? run.created_at);
-            core.setOutput('preview_url', previewUrl);
 
       - name: Register preview build
         if: ${{ steps.config.outputs.configured == 'true' && steps.metadata.outputs.should_register == 'true' }}
@@ -116,15 +111,15 @@ jobs:
         if: ${{ steps.config.outputs.configured == 'true' && steps.metadata.outputs.should_register == 'true' }}
         uses: actions/github-script@ed597411d8f924073f98dfc5c65a23a2325f34cd # v8
         env:
-          PREVIEW_URL: ${{ steps.metadata.outputs.preview_url }}
+          PREVIEW_BASE_URL: ${{ vars.PR_PREVIEW_BASE_URL }}
           PR_NUMBER: ${{ steps.metadata.outputs.pr_number }}
-          RUN_ID: ${{ steps.metadata.outputs.run_id }}
-          RUN_ATTEMPT: ${{ steps.metadata.outputs.run_attempt }}
         with:
           script: |
             const markerStart = '<!-- pr-preview:start -->';
             const markerEnd = '<!-- pr-preview:end -->';
             const prNumber = Number(process.env.PR_NUMBER);
+            const previewUrl = new URL(`/prs/${prNumber}/`, process.env.PREVIEW_BASE_URL).toString();
+            const badgeUrl = `https://img.shields.io/badge/aspire.dev-${encodeURIComponent(`PR #${prNumber}`)}-512BD4?style=for-the-badge&labelColor=512BD4&color=555555`;
 
             const pullRequest = await github.rest.pulls.get({
               owner: context.repo.owner,
@@ -135,12 +130,9 @@ jobs:
             const existingBody = pullRequest.data.body ?? '';
             const previewBlock = [
               markerStart,
-              '## PR Preview',
+              '## 🌐 Preview',
               '',
-              `Preview: [Open the latest PR preview](${process.env.PREVIEW_URL})`,
-              '',
-              `- CI run: [#${process.env.RUN_ID}](https://github.com/${context.repo.owner}/${context.repo.repo}/actions/runs/${process.env.RUN_ID})`,
-              `- Run attempt: ${process.env.RUN_ATTEMPT}`,
+              `[![](${badgeUrl})](${previewUrl})`,
               markerEnd,
             ].join('\n');
 
