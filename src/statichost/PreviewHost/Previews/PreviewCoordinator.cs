@@ -6,9 +6,14 @@ using Microsoft.Extensions.Options;
 
 namespace PreviewHost.Previews;
 
-internal sealed class PreviewCoordinator
+internal sealed class PreviewCoordinator(
+    PreviewStateStore stateStore,
+    GitHubArtifactClient artifactClient,
+    IOptions<PreviewHostOptions> options,
+    ILogger<PreviewCoordinator> logger)
 {
     private static readonly TimeSpan ProgressUpdateInterval = TimeSpan.FromSeconds(1);
+    private static readonly TimeSpan ExtractionProgressReconciliationInterval = TimeSpan.FromSeconds(15);
     private const long DownloadProgressByteStride = 32L * 1024 * 1024;
     private const int ExtractionProgressUnitStride = 100;
     private const int PreparingWeight = 6;
@@ -24,22 +29,10 @@ internal sealed class PreviewCoordinator
     private readonly ConcurrentDictionary<int, Task<PreviewDiscoveryResult>> _activeDiscovery = [];
     private readonly ConcurrentDictionary<int, CancellationTokenSource> _activeLoadCancellations = [];
     private readonly ConcurrentDictionary<int, Task> _activeLoads = [];
-    private readonly PreviewStateStore _stateStore;
-    private readonly GitHubArtifactClient _artifactClient;
-    private readonly ILogger<PreviewCoordinator> _logger;
-    private readonly PreviewHostOptions _options;
-
-    public PreviewCoordinator(
-        PreviewStateStore stateStore,
-        GitHubArtifactClient artifactClient,
-        IOptions<PreviewHostOptions> options,
-        ILogger<PreviewCoordinator> logger)
-    {
-        _stateStore = stateStore;
-        _artifactClient = artifactClient;
-        _logger = logger;
-        _options = options.Value;
-    }
+    private readonly PreviewStateStore _stateStore = stateStore;
+    private readonly GitHubArtifactClient _artifactClient = artifactClient;
+    private readonly ILogger<PreviewCoordinator> _logger = logger;
+    private readonly PreviewHostOptions _options = options.Value;
 
     public void EnsureLoading(int pullRequestNumber)
     {
@@ -424,7 +417,7 @@ internal sealed class PreviewCoordinator
         }
         finally
         {
-            extractionProgressState.ReconcileWithFilesystem(destinationDirectory);
+            extractionProgressState.ReconcileWithFilesystem(destinationDirectory, force: true);
             extractionReportingCancellation.Cancel();
             await AwaitBackgroundWorkAsync(extractionReportingTask);
         }
@@ -491,7 +484,7 @@ internal sealed class PreviewCoordinator
             toolDescription,
             cancellationToken,
             "-o",
-            "-q",
+            "-qq",
             zipPath,
             "-d",
             destinationDirectory);
@@ -625,7 +618,7 @@ internal sealed class PreviewCoordinator
         {
             while (await timer.WaitForNextTickAsync(cancellationToken))
             {
-                extractionProgressState.ReconcileWithFilesystem(destinationDirectory);
+                extractionProgressState.ReconcileWithFilesystem(destinationDirectory, force: false);
                 var completedFiles = extractionProgressState.GetCompletedFiles();
                 var stagePercent = CalculateExtractionStagePercent(completedFiles, extractionProgressState.TotalFiles);
                 var percent = CalculateWeightedPercent(ExtractingStart, ExtractingWeight, stagePercent);
@@ -824,16 +817,11 @@ internal sealed class PreviewCoordinator
         }
     }
 
-    private sealed class ProcessOutputTail
+    private sealed class ProcessOutputTail(int maxLines)
     {
         private readonly object _gate = new();
         private readonly Queue<string> _lines = new();
-        private readonly int _maxLines;
-
-        public ProcessOutputTail(int maxLines)
-        {
-            _maxLines = maxLines;
-        }
+        private readonly int _maxLines = maxLines;
 
         public void Add(string streamName, string line)
         {
@@ -856,18 +844,14 @@ internal sealed class PreviewCoordinator
         }
     }
 
-    private sealed class ExtractionProgressState : IDisposable
+    private sealed class ExtractionProgressState(int totalFiles) : IDisposable
     {
         private readonly object _gate = new();
         private readonly HashSet<string> _seenFiles = new(OperatingSystem.IsWindows() ? StringComparer.OrdinalIgnoreCase : StringComparer.Ordinal);
         private int _needsReconciliation;
+        private DateTimeOffset _lastReconciledAtUtc = DateTimeOffset.MinValue;
 
-        public ExtractionProgressState(int totalFiles)
-        {
-            TotalFiles = totalFiles;
-        }
-
-        public int TotalFiles { get; }
+        public int TotalFiles { get; } = totalFiles;
 
         public int GetCompletedFiles()
         {
@@ -892,9 +876,19 @@ internal sealed class PreviewCoordinator
 
         public void MarkNeedsReconciliation() => Interlocked.Exchange(ref _needsReconciliation, 1);
 
-        public void ReconcileWithFilesystem(string destinationDirectory)
+        public void ReconcileWithFilesystem(string destinationDirectory, bool force)
         {
-            if (Interlocked.Exchange(ref _needsReconciliation, 0) == 0 && GetCompletedFiles() >= TotalFiles)
+            var needsReconciliation = Interlocked.Exchange(ref _needsReconciliation, 0) != 0;
+            var now = DateTimeOffset.UtcNow;
+
+            if (!force
+                && !needsReconciliation
+                && now - _lastReconciledAtUtc < ExtractionProgressReconciliationInterval)
+            {
+                return;
+            }
+
+            if (!force && GetCompletedFiles() >= TotalFiles)
             {
                 return;
             }
@@ -911,6 +905,8 @@ internal sealed class PreviewCoordinator
                     _seenFiles.Add(file);
                 }
             }
+
+            _lastReconciledAtUtc = now;
         }
 
         public void Dispose()

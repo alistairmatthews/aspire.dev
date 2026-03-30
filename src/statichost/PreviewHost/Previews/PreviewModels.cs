@@ -9,6 +9,8 @@ internal sealed class PreviewHostOptions
 
     public string? DataRoot { get; set; }
 
+    public string? ContentRoot { get; set; }
+
     public string RepositoryOwner { get; set; } = "microsoft";
 
     public string RepositoryName { get; set; } = "aspire.dev";
@@ -53,6 +55,14 @@ internal sealed class PreviewHostOptions
                 ? "tar.exe"
                 : "unzip"
             : "ZipArchive.ExtractToDirectoryAsync";
+
+    [JsonIgnore]
+    public string? CommandLineExtractionCommandName =>
+        UseCommandLineExtraction
+            ? OperatingSystem.IsWindows()
+                ? "tar.exe"
+                : "unzip"
+            : null;
 
     public string GetGitHubAuthenticationMode() =>
         HasGitHubToken

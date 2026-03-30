@@ -22,18 +22,25 @@ internal sealed class PreviewStateStore
         _logger = logger;
 
         var configuredRoot = options.Value.DataRoot;
-        DataRoot = string.IsNullOrWhiteSpace(configuredRoot)
-            ? ResolveDefaultRoot()
+        StateRoot = string.IsNullOrWhiteSpace(configuredRoot)
+            ? ResolveDefaultStateRoot()
             : configuredRoot;
+        var configuredContentRoot = options.Value.ContentRoot;
+        ContentRoot = string.IsNullOrWhiteSpace(configuredContentRoot)
+            ? ResolveDefaultContentRoot(StateRoot)
+            : configuredContentRoot;
 
-        _registryPath = Path.Combine(DataRoot, "registry.json");
+        _registryPath = Path.Combine(StateRoot, "registry.json");
     }
 
-    public string DataRoot { get; }
+    public string StateRoot { get; }
+
+    public string ContentRoot { get; }
 
     public async Task InitializeAsync(CancellationToken cancellationToken)
     {
-        Directory.CreateDirectory(DataRoot);
+        Directory.CreateDirectory(StateRoot);
+        Directory.CreateDirectory(ContentRoot);
 
         if (!File.Exists(_registryPath))
         {
@@ -52,9 +59,16 @@ internal sealed class PreviewStateStore
                 return;
             }
 
+            var requiresSave = false;
             foreach (var pair in records)
             {
+                requiresSave |= NormalizeLoadedRecord(pair.Value);
                 _records[pair.Key] = pair.Value;
+            }
+
+            if (requiresSave)
+            {
+                await SaveLockedAsync(cancellationToken);
             }
         }
         finally
@@ -460,13 +474,13 @@ internal sealed class PreviewStateStore
         }
     }
 
-    public string GetActiveDirectoryPath(int pullRequestNumber) => Path.Combine(DataRoot, "active", $"pr-{pullRequestNumber}");
+    public string GetActiveDirectoryPath(int pullRequestNumber) => Path.Combine(ContentRoot, "active", $"pr-{pullRequestNumber}");
 
     public string GetTemporaryZipPath(PreviewWorkItem workItem) =>
-        Path.Combine(DataRoot, "downloads", $"pr-{workItem.PullRequestNumber}-{workItem.RunId}-{workItem.RunAttempt}.zip");
+        Path.Combine(ContentRoot, "downloads", $"pr-{workItem.PullRequestNumber}-{workItem.RunId}-{workItem.RunAttempt}.zip");
 
     public string GetStagingDirectoryPath(PreviewWorkItem workItem) =>
-        Path.Combine(DataRoot, "staging", $"pr-{workItem.PullRequestNumber}-{workItem.RunId}-{workItem.RunAttempt}");
+        Path.Combine(ContentRoot, "staging", $"pr-{workItem.PullRequestNumber}-{workItem.RunId}-{workItem.RunAttempt}");
 
     private async Task UpdateRecordAsync(int pullRequestNumber, Action<PreviewRecord> update, CancellationToken cancellationToken, bool persist = true)
     {
@@ -492,9 +506,58 @@ internal sealed class PreviewStateStore
 
     private async Task SaveLockedAsync(CancellationToken cancellationToken)
     {
-        Directory.CreateDirectory(DataRoot);
+        Directory.CreateDirectory(StateRoot);
         var json = JsonSerializer.Serialize(_records, JsonOptions);
         await File.WriteAllTextAsync(_registryPath, json, cancellationToken);
+    }
+
+    private bool NormalizeLoadedRecord(PreviewRecord record)
+    {
+        if (record.State == PreviewLoadState.Ready
+            && !string.IsNullOrWhiteSpace(record.ActiveDirectoryPath)
+            && !Directory.Exists(record.ActiveDirectoryPath))
+        {
+            record.State = PreviewLoadState.Registered;
+            record.ActiveDirectoryPath = null;
+            record.ReadyAtUtc = null;
+            record.LastError = null;
+            record.LastUpdatedAtUtc = DateTimeOffset.UtcNow;
+            record.Progress = NextProgress(
+                record,
+                stage: "Registered",
+                message: "The local preview cache was cleared and will reload on the next request.",
+                percent: 0,
+                stagePercent: 0,
+                bytesDownloaded: null,
+                bytesTotal: null,
+                itemsCompleted: null,
+                itemsTotal: null,
+                itemsLabel: null);
+            return true;
+        }
+
+        if (record.State == PreviewLoadState.Loading)
+        {
+            record.State = PreviewLoadState.Registered;
+            record.ActiveDirectoryPath = null;
+            record.ReadyAtUtc = null;
+            record.LastError = null;
+            record.LastUpdatedAtUtc = DateTimeOffset.UtcNow;
+            record.Progress = NextProgress(
+                record,
+                stage: "Registered",
+                message: "Preview preparation was interrupted and will restart on the next request.",
+                percent: 0,
+                stagePercent: 0,
+                bytesDownloaded: null,
+                bytesTotal: null,
+                itemsCompleted: null,
+                itemsTotal: null,
+                itemsLabel: null);
+            return true;
+        }
+
+        return false;
     }
 
     private static PreviewProgress NextProgress(
@@ -548,7 +611,7 @@ internal sealed class PreviewStateStore
         return request.RunAttempt > existing.RunAttempt;
     }
 
-    private static string ResolveDefaultRoot()
+    private static string ResolveDefaultStateRoot()
     {
         var home = Environment.GetEnvironmentVariable("HOME");
         if (!string.IsNullOrWhiteSpace(home))
@@ -557,6 +620,16 @@ internal sealed class PreviewStateStore
         }
 
         return Path.Combine(AppContext.BaseDirectory, "pr-preview-data");
+    }
+
+    private static string ResolveDefaultContentRoot(string stateRoot)
+    {
+        if (string.Equals(Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER"), "true", StringComparison.OrdinalIgnoreCase))
+        {
+            return Path.Combine(Path.GetTempPath(), "pr-preview-data");
+        }
+
+        return stateRoot;
     }
 
     private void DeleteDirectoryIfPresent(string path)

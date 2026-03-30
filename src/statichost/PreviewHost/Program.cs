@@ -26,6 +26,9 @@ builder.Services
     .Validate(
         static options => options.HasValidExtractionMode,
         $"The '{PreviewHostOptions.SectionName}:ExtractionMode' setting must be either 'managed' or 'command-line'.")
+    .Validate(
+        static options => CommandLineExtractionSupport.IsConfigurationSupported(options),
+        CommandLineExtractionSupport.GetConfigurationValidationMessage())
     .ValidateOnStart();
 builder.Services.AddSingleton<GitHubArtifactClient>();
 builder.Services.AddSingleton<PreviewStateStore>();
@@ -43,6 +46,17 @@ app.Logger.LogInformation(
 app.Logger.LogInformation(
     "PreviewHost artifact extraction mode: {ExtractionMode}",
     previewHostOptions.GetExtractionModeDescription());
+app.Logger.LogInformation(
+    "PreviewHost storage roots: state {StateRoot}, content {ContentRoot}",
+    previewStateStore.StateRoot,
+    previewStateStore.ContentRoot);
+if (previewHostOptions.UseCommandLineExtraction
+    && CommandLineExtractionSupport.TryResolveConfiguredTool(previewHostOptions, out var extractionToolPath))
+{
+    app.Logger.LogInformation(
+        "PreviewHost command-line extractor resolved to: {ExtractionToolPath}",
+        extractionToolPath);
+}
 
 if (!app.Environment.IsDevelopment())
 {

@@ -4,6 +4,7 @@ var registrationToken = builder.AddParameter("registration-token", secret: true)
 var extractionMode = builder.AddParameter("extraction-mode", value: "command-line");
 
 var previewHost = builder.AddProject<Projects.PreviewHost>("previewhost")
+    .PublishAsDockerFile()
     .WithExternalHttpEndpoints()
     .WithEnvironment("PreviewHost__RegistrationToken", registrationToken)
     .WithEnvironment("PreviewHost__ExtractionMode", extractionMode);
@@ -27,6 +28,7 @@ else
 
 if (!builder.ExecutionContext.IsRunMode)
 {
+    previewHost.WithEnvironment("PreviewHost__ContentRoot", "/tmp/pr-preview-data");
     builder.AddAzureAppServiceEnvironment("preview");
 }
 
