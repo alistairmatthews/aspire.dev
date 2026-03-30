@@ -20,7 +20,7 @@
         </a>
         <p class="eyebrow">Aspire PR Preview</p>
         <h1>Open pull requests</h1>
-        <p class="collection-summary">Browse open PRs, jump straight into <code>/prs/{number}/</code>, and let the preview host resolve the latest frontend artifact on demand while keeping only a small active window warm.</p>
+        <p class="collection-summary">Pick any open PR and the preview host will warm the latest frontend build on demand while keeping only a small window hot.</p>
       </div>
       <div class="collection-meta">
         <a class="action-link action-link-github" href="https://github.com/microsoft/aspire.dev" target="_blank" rel="noreferrer noopener">
@@ -33,12 +33,10 @@
     </header>
 
     <section class="collection-controls" aria-label="Catalog filters">
-      <label class="filter-field" for="author-filter">
-        <span class="filter-label">Filter by author</span>
-        <select id="author-filter" class="filter-select">
-          <option value="">All authors</option>
-        </select>
-      </label>
+      <div class="filter-stack">
+        <span class="filter-label">Authors</span>
+        <div id="author-filter-bar" class="filter-pills"></div>
+      </div>
     </section>
 
     <section id="preview-grid" class="preview-grid" aria-live="polite"></section>
