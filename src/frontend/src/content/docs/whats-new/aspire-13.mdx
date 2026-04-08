@@ -353,9 +353,9 @@ This template includes:
 - **Redis caching** (optional): A distributed cache across requests.
 - **Container files**: Frontend static files served by the Python backend.
 
-Build a full-stack multi-language app—Python back end + JavaScript front end—fast. Explore it, customize it, ship it. [Create one now](/get-started/first-app/?lang=python) and [deploy it today](/get-started/deploy-first-app/?lang=python)!
+Build a full-stack multi-language app—Python backend + JavaScript frontend—fast. Explore it, customize it, ship it. [Create one now](/get-started/first-app/?lang=python) and [deploy it today](/get-started/deploy-first-app/?lang=python)!
 
-The React front end communicates with the FastAPI back end via HTTP endpoints, demonstrating seamless integration between the two languages within a single Aspire application. The new template has a modern UX:
+The React frontend communicates with the FastAPI backend via HTTP endpoints, demonstrating seamless integration between the two languages within a single Aspire application. The new template has a modern UX:
 
 import pythonStarterDarkPng from '@assets/get-started/python-starter-dark.png';
 import pythonStarterLightPng from '@assets/get-started/python-starter-light.png';
@@ -866,7 +866,7 @@ api.PublishWithContainerFiles(frontend, "./static");
 **How it works:**
 
 1. The `frontend` resource builds inside its container, producing output files.
-2. Aspire extracts those files from the frontend container.
+2. Aspire extracts those files from the `frontend` container.
 3. The files are copied into the `api` container at `./static`.
 4. The final `api` container contains both the API code and the frontend static files.
 
@@ -874,7 +874,7 @@ api.PublishWithContainerFiles(frontend, "./static");
 
 The FastAPI app can serve the static files:
 
-```python title="Python — Serving front end from back end"
+```python title="Python — Serving frontend from backend"
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 

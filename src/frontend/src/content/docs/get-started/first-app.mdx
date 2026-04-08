@@ -39,7 +39,7 @@ The following diagram shows the architecture of the sample app you're creating:
 architecture-beta
 
   service api(logos:dotnet)[API service]
-  service frontend(aspire:blazor)[Blazor front end]
+  service frontend(aspire:blazor)[Blazor frontend]
 
   frontend:L --> R:api
 ```
@@ -59,7 +59,7 @@ The following diagram shows the architecture of the sample app you're creating:
 ```mermaid
 architecture-beta
   service api(logos:nodejs-icon)[API service]
-  service frontend(logos:react)[React front end]
+  service frontend(logos:react)[React frontend]
 
   frontend:L --> R:api
 ```
@@ -157,7 +157,7 @@ To create your first Aspire application, use the [Aspire CLI](/get-started/insta
     - AspireApp.ServiceDefaults
         - Extensions.cs
         - AspireApp.ServiceDefaults.csproj
-    - AspireApp.Web  ASP.NET Core Blazor front end
+    - AspireApp.Web  ASP.NET Core Blazor frontend
         - Properties/
         - wwwroot/
         - appsettings.Development.json
@@ -217,7 +217,7 @@ To create your first Aspire application, use the [Aspire CLI](/get-started/insta
                 - instrumentation.ts
             - package.json
             - tsconfig.json
-        - frontend/  Vite + React web front end
+        - frontend/  Vite + React web frontend
             - public/
                 - Aspire.png
                 - github.svg

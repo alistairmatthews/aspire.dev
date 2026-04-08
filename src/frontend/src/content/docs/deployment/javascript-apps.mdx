@@ -52,8 +52,8 @@ If you only add a Vite or JavaScript app and reference backend services, Aspire 
 
 | Model                                  | Production entrypoint      | Aspire publish API          | Best for                                                                          |
 | -------------------------------------- | -------------------------- | --------------------------- | --------------------------------------------------------------------------------- |
-| Backend serves frontend                | API or web server          | `PublishWithContainerFiles` | Apps where one service serves both the API and the frontend                       |
-| Reverse proxy serves frontend          | Reverse proxy              | `PublishWithStaticFiles`    | Apps that want a gateway or BFF in front of APIs and static frontend assets       |
+| Backend serves frontend               | API or web server          | `PublishWithContainerFiles` | Apps where one service serves both the API and the frontend                      |
+| Reverse proxy serves frontend         | Reverse proxy              | `PublishWithStaticFiles`    | Apps that want a gateway or BFF in front of APIs and static frontend assets      |
 | Static frontend calls backend directly | Static site + separate API | Custom / less integrated    | Apps that intentionally keep frontend hosting separate and can manage CORS/config |
 
 <Aside type="caution">

@@ -364,7 +364,7 @@ await builder.build().run();
 In this example:
 
 1. The `frontend` resource builds inside its container, producing compiled JavaScript, CSS, and HTML.
-2. During publish, Aspire copies those files from the frontend container into the `api` container at `./wwwroot`.
+2. During publish, Aspire copies those files from the `frontend` container into the `api` container at `./wwwroot`.
 3. The resulting `api` container includes both the API code and the frontend static assets, ready to serve the full application.
 
 ### Serve a frontend from YARP
