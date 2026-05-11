@@ -17,15 +17,12 @@ import FeatureShowcase from '@components/FeatureShowcase.astro';
 import ImageShowcase from '@components/ImageShowcase.astro';
 import CapabilityGrid from '@components/CapabilityGrid.astro';
 import CTABanner from '@components/CTABanner.astro';
-
 import OsAwareTabs from '@components/OsAwareTabs.astro';
 
 import projectsImage from '@assets/dashboard/explore/resources-filtered-containers.png';
 import tracesImage from '@assets/dashboard/explore/trace-span-details.png';
 import metricsImage from '@assets/dashboard/explore/metrics-view.png';
 import structuredLogsImage from '@assets/dashboard/explore/structured-logs-errors-view.png';
-import copilotChatImage from '@assets/dashboard/copilot/copilot-chatquestion.png';
-import copilotExplainImage from '@assets/dashboard/copilot/structuredlogs-explainerror.png';
 import mcpDialogImage from '@assets/dashboard/mcp-server/mcp-dialog.png';
 
 <TopicHero
@@ -76,7 +73,15 @@ The Aspire Dashboard is your command center during development. Powered by [Open
 
 ## Run the dashboard standalone
 
-The dashboard starts automatically with your Aspire app, but it can also run standalone as a Docker container to monitor any application that sends OpenTelemetry data. Start it with a single command:
+The dashboard starts automatically with your Aspire app, but it can also run standalone to monitor any application that sends OpenTelemetry data.
+
+Install the [Aspire CLI](/get-started/install-cli/), then start the dashboard:
+
+```bash title="Aspire CLI"
+aspire dashboard run
+```
+
+Or run the same standalone dashboard from its container image:
 
 <OsAwareTabs syncKey="terminal">
 <div slot="unix">
@@ -97,26 +102,9 @@ docker run --rm -it -p 18888:18888 -p 4317:18889 -p 4318:18890 -d --name aspire-
 </div>
 </OsAwareTabs>
 
-Navigate to `http://localhost:18888` to open the dashboard, and point your apps' OTLP exporter to `http://localhost:4317`. For more details, see the [standalone dashboard guide](/dashboard/standalone/).
+Open the dashboard URL, then point your apps' OTLP exporter to `http://localhost:4317`. For prerequisites, login details, and additional options, see the [standalone dashboard guide](/dashboard/standalone/).
 
 ## AI-powered debugging
-
-<ImageShowcase
-  title="GitHub Copilot, built in"
-  description="Ask Copilot to summarize resources, explain errors, and debug traces — directly in the dashboard. AI-powered insights give you faster answers without leaving your workflow."
-  image={copilotChatImage}
-  imageAlt="Aspire Dashboard with GitHub Copilot open, showing an AI chat conversation answering questions about application resources."
-  imagePosition="left"
-  cta={{ label: 'Learn about Copilot', href: '/dashboard/copilot/' }}
-/>
-
-<ImageShowcase
-  title="Explain errors with AI"
-  description="Select any error log and ask Copilot to explain it. Get instant, contextual explanations with suggested fixes — no more searching through documentation."
-  image={copilotExplainImage}
-  imageAlt="Aspire Dashboard structured logs view with Copilot explaining an error and suggesting a fix."
-  cta={{ label: 'Get started with Copilot', href: '/dashboard/copilot/' }}
-/>
 
 <ImageShowcase
   title="MCP server for AI agents"
@@ -124,7 +112,7 @@ Navigate to `http://localhost:18888` to open the dashboard, and point your apps'
   image={mcpDialogImage}
   imageAlt="Aspire Dashboard MCP server configuration dialog showing connection details for AI assistants."
   imagePosition="left"
-  cta={{ label: 'Configure MCP server', href: '/dashboard/mcp-server/' }}
+  cta={{ label: 'Configure MCP server', href: '/get-started/aspire-mcp-server/' }}
 />
 
 ## Key capabilities
@@ -170,7 +158,7 @@ Navigate to `http://localhost:18888` to open the dashboard, and point your apps'
       icon: 'laptop',
       title: 'Standalone mode',
       description:
-        'Use the dashboard independently as a Docker container to monitor any application that sends OpenTelemetry data.',
+        'Use the dashboard independently to monitor any application that sends OpenTelemetry data.',
       href: '/dashboard/standalone/',
     },
   ]}
@@ -185,7 +173,7 @@ Navigate to `http://localhost:18888` to open the dashboard, and point your apps'
       title: 'MCP server',
       description:
         'Expose dashboard data to AI agents and coding assistants via the Model Context Protocol. Your AI tools get full observability context.',
-      href: '/dashboard/mcp-server/',
+      href: '/get-started/aspire-mcp-server/',
       label: 'Configure MCP',
       accent: 'purple',
     },

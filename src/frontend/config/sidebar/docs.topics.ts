@@ -91,6 +91,10 @@ export const docsTopics: StarlightSidebarTopicsUserConfig = {
       collapsed: true,
       items: [
         {
+          label: 'Aspire 13.3',
+          slug: 'whats-new/aspire-13-3',
+        },
+        {
           label: 'Aspire 13.2',
           slug: 'whats-new/aspire-13-2',
         },
@@ -633,6 +637,27 @@ export const docsTopics: StarlightSidebarTopicsUserConfig = {
                 'zh-CN': '网络概述',
               },
             },
+            {
+              label: 'Container networking',
+              slug: 'fundamentals/container-networking',
+              translations: {
+                da: 'Containernetværk',
+                de: 'Containernetzwerke',
+                en: 'Container networking',
+                es: 'Redes de contenedores',
+                fr: 'Réseau de conteneurs',
+                hi: 'कंटेनर नेटवर्किंग',
+                id: 'Jaringan kontainer',
+                it: 'Rete dei container',
+                ja: 'コンテナー ネットワーキング',
+                ko: '컨테이너 네트워킹',
+                'pt-BR': 'Rede de contêineres',
+                ru: 'Сеть контейнеров',
+                tr: 'Konteyner ağı',
+                uk: 'Мережа контейнерів',
+                'zh-CN': '容器网络',
+              },
+            },
           ],
         },
         {
@@ -843,6 +868,27 @@ export const docsTopics: StarlightSidebarTopicsUserConfig = {
           },
         },
         {
+          label: 'Hot Reload and watch',
+          slug: 'app-host/hot-reload-and-watch',
+          translations: {
+            da: 'Hot Reload and watch',
+            de: 'Hot Reload and watch',
+            en: 'Hot Reload and watch',
+            es: 'Hot Reload and watch',
+            fr: 'Hot Reload and watch',
+            hi: 'Hot Reload and watch',
+            id: 'Hot Reload and watch',
+            it: 'Hot Reload and watch',
+            ja: 'Hot Reload and watch',
+            ko: 'Hot Reload and watch',
+            'pt-BR': 'Hot Reload and watch',
+            ru: 'Hot Reload and watch',
+            tr: 'Hot Reload and watch',
+            uk: 'Hot Reload and watch',
+            'zh-CN': 'Hot Reload and watch',
+          },
+        },
+        {
           label: 'Eventing',
           slug: 'app-host/eventing',
           translations: {
@@ -871,10 +917,10 @@ export const docsTopics: StarlightSidebarTopicsUserConfig = {
               },
             },
             {
-          label: 'Container files',
-          slug: 'app-host/container-files',
-        },
-        {
+              label: 'Container files',
+              slug: 'app-host/container-files',
+            },
+            {
               label: 'Executable resources',
               slug: 'app-host/executable-resources',
               translations: {
