@@ -300,6 +300,17 @@ If existing pages are being renamed or restructured, add redirect entries in `sr
 3. Ensure the sidebar entries use the correct slugs.
 4. Run the site locally if possible to verify rendering.
 
+### 9. Run the doc-tester skill
+
+After all pages have been written and validated, invoke the **doc-tester** skill to audit the newly created documentation. Pass it the URLs (or file paths) of the pages you just created so it can verify:
+
+- The documentation is accurate and teaches effectively.
+- Code examples are correct and runnable.
+- Cross-links resolve properly on the rendered site.
+- No knowledge gaps exist that would block a new user.
+
+If the doc-tester reports issues, fix them before considering the redesign complete.
+
 ## Content quality guidelines
 
 ### Connection properties
@@ -351,3 +362,4 @@ Before considering the work complete, verify:
 - [ ] Icons import existing files from `@assets/icons/`
 - [ ] No PostgreSQL-specific content leaked into the target integration
 - [ ] Connection properties are verified, not guessed
+- [ ] Doc-tester skill has been run against the new pages and all reported issues resolved
