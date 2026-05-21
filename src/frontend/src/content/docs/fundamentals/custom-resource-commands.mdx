@@ -218,7 +218,7 @@ The TypeScript callback is typically defined inline as an async arrow function. 
 async (context: ExecuteCommandContext): Promise<ExecuteCommandResult> => {
     const endpoint = await cache.getEndpoint("http");
     const url = await endpoint.url.get();
-    const cancellation = await context.cancellationToken.get();
+    const cancellation = await context.cancellationToken();
 
     const res = await fetch(`${url}/admin/cache/clear`, {
         method: "POST",
@@ -353,7 +353,7 @@ await cache.withCommand(
     async (context) => {
         const endpoint = await cache.getEndpoint("http");
         const url = await endpoint.url.get();
-        const cancellation = await context.cancellationToken.get();
+        const cancellation = await context.cancellationToken();
 
         const res = await fetch(`${url}/admin/cache/clear`, {
             method: "POST",
@@ -418,7 +418,7 @@ In addition to executing commands through the [Aspire dashboard](/dashboard/over
 - Automate command execution as part of a workflow
 - Build custom tooling that needs to control resources
 
-The most common scenario is to call commands from within other custom command implementations. The `ExecuteCommandContext` provides access to the `IServiceProvider` (C#) or `serviceProvider()` helper (TypeScript), which you can use to retrieve the `ResourceCommandService`.
+The most common scenario is to call commands from within other custom command implementations. The `ExecuteCommandContext` provides access to `ServiceProvider` in C# and a `serviceProvider` async accessor in TypeScript, which you can use to retrieve the `ResourceCommandService`.
 
 ### Execute commands from a custom command
 
@@ -491,7 +491,7 @@ await database.withCommand("restart", "Restart Database", async () => {
     return { success: true };
 });
 
-const api = await builder.addProject("api", { projectPath: "../Api/Api.csproj" });
+const api = await builder.addProject("api", "../Api/Api.csproj");
 await api.withReference(cache);
 await api.withReference(database);
 await api.withCommand("reset-all", "Reset Everything", async (ctx) => {
@@ -529,7 +529,10 @@ In this example:
 
 You can also execute a command using the resource ID or resource name. The resource ID is the unique identifier for a resource instance, while the resource name is the display name (which must be unique to use this approach):
 
-```csharp
+<Tabs syncKey="aspire-lang">
+<TabItem id="csharp" label="C#">
+
+```csharp title="AppHost.cs"
 var result = await commandService.ExecuteCommandAsync(
     resourceId: "cache", 
     commandName: "clear-cache",
@@ -549,21 +552,47 @@ else
 }
 ```
 
-The `resourceId` parameter can be either:
+</TabItem>
+<TabItem id="typescript" label="TypeScript">
+
+```typescript title="apphost.ts"
+const result = await commandService.executeCommandAsync(
+    "cache",
+    "clear-cache",
+    { cancellationToken });
+
+if (result.success) {
+    console.log("Command executed successfully");
+}
+else if (result.canceled) {
+    console.warn("Command was canceled");
+}
+else {
+    console.error(`Command failed: ${result.message}`);
+}
+```
+
+</TabItem>
+</Tabs>
+
+The resource identifier argument (`resourceId` in C#, or the first argument in TypeScript) can be either:
+
 - The unique ID of the resource (e.g., `cache-abcdwxyz` for a resource with replicas)
 - The display name (e.g., `cache`) if there are no duplicate names
 
 ### Execute commands on resources with replicas
 
-When executing a command on a resource with multiple replicas using the `IResource` overload, the command runs in parallel on all instances:
+When executing a command on a resource with multiple replicas using the C# `IResource` overload, the command runs in parallel on all instances:
 
-```csharp
+```csharp title="AppHost.cs"
 // For a resource with replicas, the command executes on all instances
 var result = await commandService.ExecuteCommandAsync(
     resource: cache.Resource,
     commandName: "clear-cache",
     cancellationToken: cancellationToken);
 ```
+
+In TypeScript, use the resource identifier overload shown earlier: pass a specific replica ID to target one instance, or pass a unique resource name when there are no duplicate names.
 
 The behavior when executing on multiple replicas:
 - The command runs in parallel on all instances
