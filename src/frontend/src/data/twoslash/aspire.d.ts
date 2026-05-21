@@ -24,6 +24,34 @@ export type PropertyAccessor<T> = (T extends object ? T : unknown) & (() => Prom
 
 // ---- enums ----
 /**
+ * Enum Aspire.Hosting.ApplicationModel.InputType
+ */
+export type InputType = "Text" | "Number" | "Choice" | "SecretText";
+export declare const InputType: {
+  readonly Text: "Text";
+  readonly Number: "Number";
+  readonly Choice: "Choice";
+  readonly SecretText: "SecretText";
+};
+
+export interface ParameterCustomInputOptions {
+  inputType?: InputType;
+  label?: string;
+  placeholder?: string;
+  options?: Record<string, string>;
+}
+
+export interface BeforePublishEvent extends IDistributedApplicationEvent {
+  model: PropertyAccessor<DistributedApplicationModel>;
+  services: PropertyAccessor<IServiceProvider>;
+}
+
+export interface AfterPublishEvent extends IDistributedApplicationEvent {
+  model: PropertyAccessor<DistributedApplicationModel>;
+  services: PropertyAccessor<IServiceProvider>;
+}
+
+/**
  * Enum Aspire.Hosting.ApplicationModel.CertificateTrustScope
  */
 
@@ -2145,7 +2173,7 @@ export interface IResourceWithWaitSupport {
    * Waits for another resource to be ready
    */
 
-  waitFor(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitFor(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Waits for the dependency resource to enter the Exited or Finished state before starting the resource.
    */
@@ -2155,7 +2183,7 @@ export interface IResourceWithWaitSupport {
    * Waits for another resource to start
    */
 
-  waitForStart(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitForStart(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
 }
 
 /**
@@ -11002,7 +11030,7 @@ export interface ContainerResource {
    * Waits for another resource to be ready
    */
 
-  waitFor(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitFor(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Waits for the dependency resource to enter the Exited or Finished state before starting the resource.
    */
@@ -11012,7 +11040,7 @@ export interface ContainerResource {
    * Waits for another resource to start
    */
 
-  waitForStart(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitForStart(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Adds arguments to be passed to a resource that supports arguments when it is launched.
    */
@@ -11546,7 +11574,7 @@ export interface CSharpAppResource {
    * Waits for another resource to be ready
    */
 
-  waitFor(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitFor(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Waits for the dependency resource to enter the Exited or Finished state before starting the resource.
    */
@@ -11556,7 +11584,7 @@ export interface CSharpAppResource {
    * Waits for another resource to start
    */
 
-  waitForStart(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitForStart(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Adds arguments to be passed to a resource that supports arguments when it is launched.
    */
@@ -12118,7 +12146,7 @@ export interface DotnetToolResource {
    * Waits for another resource to be ready
    */
 
-  waitFor(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitFor(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Waits for the dependency resource to enter the Exited or Finished state before starting the resource.
    */
@@ -12128,7 +12156,7 @@ export interface DotnetToolResource {
    * Waits for another resource to start
    */
 
-  waitForStart(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitForStart(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Adds arguments to be passed to a resource that supports arguments when it is launched.
    */
@@ -12652,7 +12680,7 @@ export interface ExecutableResource {
    * Waits for another resource to be ready
    */
 
-  waitFor(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitFor(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Waits for the dependency resource to enter the Exited or Finished state before starting the resource.
    */
@@ -12662,7 +12690,7 @@ export interface ExecutableResource {
    * Waits for another resource to start
    */
 
-  waitForStart(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitForStart(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Adds arguments to be passed to a resource that supports arguments when it is launched.
    */
@@ -14298,7 +14326,7 @@ export interface ProjectResource {
    * Waits for another resource to be ready
    */
 
-  waitFor(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitFor(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Waits for the dependency resource to enter the Exited or Finished state before starting the resource.
    */
@@ -14308,7 +14336,7 @@ export interface ProjectResource {
    * Waits for another resource to start
    */
 
-  waitForStart(dependency: IResource, waitBehavior?: WaitBehavior): this;
+  waitForStart(dependency: IResource | IResourceWithConnectionString, waitBehavior?: WaitBehavior): this;
   /**
    * Adds arguments to be passed to a resource that supports arguments when it is launched.
    */
@@ -14920,6 +14948,62 @@ export interface ViteAppResource {
  */
 
 export declare function createBuilder(): IDistributedApplicationBuilder;
+
+/**
+ * Creates a reference expression from a tagged template literal
+ */
+export declare function refExpr(strings: TemplateStringsArray, ...values: unknown[]): ReferenceExpression;
+
+// ---- confirmed post-snapshot API augmentations ----
+export interface IDistributedApplicationBuilder {
+  /**
+   * Subscribes to the BeforePublish event
+   */
+  subscribeBeforePublish(callback: (arg: BeforePublishEvent) => Promise<void>): DistributedApplicationEventSubscription;
+  /**
+   * Subscribes to the AfterPublish event
+   */
+  subscribeAfterPublish(callback: (arg: AfterPublishEvent) => Promise<void>): DistributedApplicationEventSubscription;
+}
+
+export interface EventingSubscriberRegistrationContext {
+  /**
+   * Subscribes an eventing subscriber to the BeforePublish event
+   */
+  onBeforePublish(callback: (arg: BeforePublishEvent) => Promise<void>): DistributedApplicationEventSubscription;
+  /**
+   * Subscribes an eventing subscriber to the AfterPublish event
+   */
+  onAfterPublish(callback: (arg: AfterPublishEvent) => Promise<void>): DistributedApplicationEventSubscription;
+}
+
+export interface IResource {
+  /**
+   * Assigns Microsoft Foundry roles for this resource
+   */
+  withFoundryRoleAssignments(target: FoundryResource, roles: FoundryRole[]): this;
+}
+
+export interface ParameterResource {
+  /**
+   * Customizes the parameter input shown by the dashboard
+   */
+  withCustomInput(options: ParameterCustomInputOptions): this;
+}
+
+export interface ComposeFile {
+  /**
+   * Adds a top-level Docker Compose volume
+   */
+  addVolume(name: string, options?: { driver?: string; configure?: (volume: Volume) => Promise<void> }): Promise<Volume>;
+}
+
+export interface Service {
+  /**
+   * Adds a Docker Compose volume mount to a service
+   */
+  addVolume(source: string, target: string, options?: { isReadOnly?: boolean }): Promise<Volume>;
+}
 
 // ---- stubs for referenced SDK types not otherwise described ----
 export interface ContainerAppJob {}
