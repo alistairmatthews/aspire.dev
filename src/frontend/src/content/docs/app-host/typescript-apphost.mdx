@@ -179,7 +179,7 @@ The scaffolded `package.json` includes convenience scripts and the required Node
     "lint": "eslint apphost.ts"
   },
   "engines": {
-    "node": "^20.19.0 || ^22.13.0 || >=24"
+    "node": "^22.13.0 || ^24.0.0"
   }
 }
 ```
@@ -193,16 +193,15 @@ Aspire 13.4 TypeScript AppHosts target the Node.js engine range that `aspire ini
 ```json title="package.json — supported engines.node"
 {
   "engines": {
-    "node": "^20.19.0 || ^22.13.0 || >=24"
+    "node": "^22.13.0 || ^24.0.0"
   }
 }
 ```
 
 The supported ranges are:
 
-- **Node.js 20.19+** (LTS) — supported.
-- **Node.js 22.13+** (LTS) — supported.
-- **Node.js 24+** — supported; this is the range the scaffolded `engines.node` constraint allows out of the box.
+- **Node.js 22.13+** (22.x LTS) — supported.
+- **Node.js 24.x** (LTS) — supported; this is the range the scaffolded `engines.node` constraint allows out of the box.
 
 Older Node.js versions are not supported. Package managers may enforce `engines.node` on install (for example, pnpm does by default, while npm only does when `engine-strict` is configured), so unsupported runtimes are best treated as blocked even when a given toolchain only warns.
 
