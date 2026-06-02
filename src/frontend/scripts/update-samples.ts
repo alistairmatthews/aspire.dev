@@ -54,20 +54,45 @@ interface GitHubContentEntry {
   name: string;
 }
 
+interface GitTreeEntry {
+  path: string;
+  type: string;
+}
+
+interface GitTreeResponse {
+  tree: GitTreeEntry[];
+  truncated?: boolean;
+}
+
 interface SampleResult {
   name: string;
   title: string;
   description: string | null;
   href: string;
   readme: string;
+  readmeRaw: string;
   tags: string[];
   thumbnail: string | null;
+  appHost: AppHostKind | null;
+  appHostPath: string | null;
+  appHostCode: string | null;
+}
+
+type AppHostKind = 'typescript' | 'csproj' | 'file-based';
+
+interface AppHostInfo {
+  kind: AppHostKind;
+  entryPath: string;
 }
 
 const TAG_RULES: TagRule[] = [
   { tag: 'csharp', patterns: [/\bC#\b/i, /\.NET\b/i, /\bcsproj\b/i] },
   { tag: 'python', patterns: [/\bPython\b/i, /\.py\b/] },
   { tag: 'javascript', patterns: [/\bJavaScript\b/i, /\bJS\b/, /\.js\b/] },
+  {
+    tag: 'typescript',
+    patterns: [/\bTypeScript\b/i, /\bts-node\b/i, /\bapphost\.m?ts\b/i, /\.m?tsx?\b/],
+  },
   { tag: 'node', patterns: [/\bNode\.?js\b/i, /\bnpm\b/i] },
   {
     tag: 'go',
@@ -109,7 +134,7 @@ function getErrorMessage(error: unknown): string {
   return error instanceof Error ? error.message : String(error);
 }
 
-function detectTags(name: string, readme: string): string[] {
+function detectTags(name: string, readme: string, appHost: AppHostKind | null): string[] {
   const corpus = `${name} ${readme}`;
   const tags = new Set<string>();
 
@@ -122,7 +147,54 @@ function detectTags(name: string, readme: string): string[] {
     }
   }
 
+  // Knowing the AppHost kind is a stronger signal than README text. The
+  // language used to define the AppHost is always part of the sample's
+  // tech stack, so promote it to a tag if not already present.
+  if (appHost === 'typescript') {
+    tags.add('typescript');
+  } else if (appHost === 'csproj' || appHost === 'file-based') {
+    tags.add('csharp');
+  }
+
   return [...tags].sort();
+}
+
+function detectAppHost(paths: readonly string[]): AppHostInfo | null {
+  // Priority: TypeScript apphost wins because the file-based AppHost.cs
+  // detection would otherwise catch sample mirrors that include both shapes.
+  // Aspire 13.4 renamed the entry point from `apphost.ts` to `apphost.mts`
+  // (with the generated SDK moving from `./.modules/` to `./.aspire/modules/`).
+  // Both layouts continue to work and either may appear in samples, so the
+  // regex accepts the legacy `.ts` extension and the current `.mts` one.
+  for (const p of paths) {
+    if (/(?:^|\/)apphost\.m?ts$/i.test(p)) {
+      return { kind: 'typescript', entryPath: p };
+    }
+  }
+
+  // csproj: locate the *AppHost.csproj and prefer its sibling entry-point .cs
+  // file (AppHost.cs > Program.cs) because that's the code authors care about.
+  // The .csproj XML itself is mostly boilerplate.
+  for (const p of paths) {
+    if (/(?:^|\/)[^/]*apphost\.csproj$/i.test(p)) {
+      const dir = p.slice(0, p.lastIndexOf('/') + 1);
+      const siblings = paths.filter(
+        (q) => q.startsWith(dir) && !q.slice(dir.length).includes('/')
+      );
+      const appHostCs = siblings.find((q) => /(?:^|\/)apphost\.cs$/i.test(q));
+      const programCs = siblings.find((q) => /(?:^|\/)program\.cs$/i.test(q));
+      return { kind: 'csproj', entryPath: appHostCs ?? programCs ?? p };
+    }
+  }
+
+  // file-based: a standalone AppHost.cs not paired with a *.AppHost.csproj.
+  for (const p of paths) {
+    if (/(?:^|\/)apphost\.cs$/i.test(p)) {
+      return { kind: 'file-based', entryPath: p };
+    }
+  }
+
+  return null;
 }
 
 function extractTitle(readme: string): string | null {
@@ -301,12 +373,68 @@ async function listSampleDirs(): Promise<string[]> {
     .sort();
 }
 
+/**
+ * Fetch every blob path under `samples/` in a single recursive tree call so we
+ * can inspect each sample's file layout (AppHost kind, project shape, etc.)
+ * without making per-sample API requests.
+ */
+async function fetchSamplePaths(): Promise<Map<string, string[]>> {
+  const tree = await fetchJson<GitTreeResponse>(
+    `${GITHUB_API}/repos/${REPO}/git/trees/${BRANCH}?recursive=1`
+  );
+
+  if (tree.truncated) {
+    console.warn(
+      '⚠️  GitHub returned a truncated git tree; AppHost detection may be incomplete.'
+    );
+  }
+
+  const prefix = `${SAMPLES_DIR}/`;
+  const bySample = new Map<string, string[]>();
+
+  for (const entry of tree.tree) {
+    if (entry.type !== 'blob') continue;
+    if (!entry.path.startsWith(prefix)) continue;
+
+    const relative = entry.path.slice(prefix.length);
+    const slashIndex = relative.indexOf('/');
+    if (slashIndex === -1) continue;
+
+    const sampleName = relative.slice(0, slashIndex);
+    const filePath = relative.slice(slashIndex + 1);
+
+    const existing = bySample.get(sampleName);
+    if (existing) {
+      existing.push(filePath);
+    } else {
+      bySample.set(sampleName, [filePath]);
+    }
+  }
+
+  return bySample;
+}
+
 async function fetchReadme(sampleName: string): Promise<string | null> {
   const url = `${RAW_BASE}/${SAMPLES_DIR}/${sampleName}/README.md`;
   return fetchText(url);
 }
 
-async function processSample(name: string): Promise<SampleResult | null> {
+async function fetchAppHostCode(
+  sampleName: string,
+  entryPath: string
+): Promise<string | null> {
+  const url = `${RAW_BASE}/${SAMPLES_DIR}/${sampleName}/${entryPath}`;
+  const content = await fetchText(url);
+  if (!content) return null;
+  // Normalize line endings and trim trailing whitespace per line so the
+  // rendered code block is stable across runs.
+  return content.replace(/\r\n/g, '\n').replace(/[ \t]+\n/g, '\n').trimEnd();
+}
+
+async function processSample(
+  name: string,
+  filePaths: readonly string[]
+): Promise<SampleResult | null> {
   const rawReadme = await fetchReadme(name);
   if (!rawReadme) {
     console.warn(`⚠️  No README.md found for sample: ${name}`);
@@ -316,9 +444,14 @@ async function processSample(name: string): Promise<SampleResult | null> {
   const { readme: imageRewrittenReadme } = await downloadAndRewriteImages(name, rawReadme);
   const readme = rewriteAspireDocLinks(imageRewrittenReadme);
 
+  const appHostInfo = detectAppHost(filePaths);
+  const appHostCode = appHostInfo
+    ? await fetchAppHostCode(name, appHostInfo.entryPath)
+    : null;
+
   const title = extractTitle(readme) || name;
   const description = extractDescription(readme);
-  const tags = detectTags(name, readme);
+  const tags = detectTags(name, readme, appHostInfo?.kind ?? null);
   const thumbnail = extractThumbnail(name, readme);
   const href = `${TREE_BASE}/${SAMPLES_DIR}/${name}`;
 
@@ -328,24 +461,31 @@ async function processSample(name: string): Promise<SampleResult | null> {
     description,
     href,
     readme,
+    readmeRaw: rawReadme,
     tags,
     thumbnail,
+    appHost: appHostInfo?.kind ?? null,
+    appHostPath: appHostInfo?.entryPath ?? null,
+    appHostCode,
   };
 }
 
 async function main(): Promise<void> {
   console.log(`📦 Fetching sample directories from ${REPO}...`);
-  const dirs = await listSampleDirs();
+  const [dirs, pathsBySample] = await Promise.all([listSampleDirs(), fetchSamplePaths()]);
   console.log(`📂 Found ${dirs.length} sample directories`);
 
   const results: SampleResult[] = [];
   for (let index = 0; index < dirs.length; index += CONCURRENCY) {
     const batch = dirs.slice(index, index + CONCURRENCY);
-    const batchResults = await Promise.all(batch.map((name) => processSample(name)));
+    const batchResults = await Promise.all(
+      batch.map((name) => processSample(name, pathsBySample.get(name) ?? []))
+    );
     for (const result of batchResults) {
       if (result) {
         results.push(result);
-        console.log(`  ✅ ${result.name} — ${result.tags.length} tags`);
+        const appHostLabel = result.appHost ? ` · AppHost: ${result.appHost}` : '';
+        console.log(`  ✅ ${result.name} — ${result.tags.length} tags${appHostLabel}`);
       }
     }
   }
