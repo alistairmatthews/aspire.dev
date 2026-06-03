@@ -27,7 +27,7 @@ We'd love to hear what you think. Drop by [<Icon name="discord" class='d-inline'
 This release introduces:
 
 - **C# and TypeScript AppHosts are first class and supported** with stronger TypeScript startup validation, more complete SDK generation, new TypeScript samples, and documentation parity with C# AppHost examples.
-- **Go and Bun hosting integrations** with new AppHost APIs for [Go](/integrations/frameworks/go/go-get-started/) (`AddGoApp`) and [Bun](/integrations/frameworks/bun-apps/) (`AddBunApp`).
+- **Go and Bun hosting integrations** with new AppHost APIs for [Go](/integrations/frameworks/go/go-get-started/) (`AddGoApp`) and first-party Bun support in `Aspire.Hosting.JavaScript` for [Bun](/integrations/frameworks/bun-apps/) (`AddBunApp`).
 - **Kubernetes and AKS deployment improvements** including [cert-manager integration, Gateway API and Azure Application Gateway for Containers (AGC) support](/deployment/kubernetes/aks/#expose-your-app-to-the-internet), Kubernetes manifest resources, external Helm charts, and consolidated Helm chart configuration.
 - **AI agent readiness** with Aspire workflow skills moving into the new [`microsoft/aspire-skills`](https://github.com/microsoft/aspire-skills) bundle, clearer separation between first-run setup, lifecycle orchestration, monitoring, AppHost wiring, and deployment guidance, and eval-driven iteration on agent routing.
 - **Richer resource commands** with typed arguments, visibility controls, immediate result display, named CLI options, resource-scoped help, built-in parameter command options, and the experimental `WithProcessCommand` API.
@@ -201,7 +201,7 @@ await builder.build().run();
 
 ### 🥟 Bun apps
 
-Aspire 13.4 adds `AddBunApp` for orchestrating [Bun](https://bun.sh/) applications alongside the rest of your resources, so JavaScript and TypeScript apps that run on the Bun runtime can participate in the app model just like Node.js apps.
+Aspire 13.4 adds `AddBunApp` / `addBunApp` for orchestrating [Bun](https://bun.sh/) applications alongside the rest of your resources. Bun support is now part of `Aspire.Hosting.JavaScript`.
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -209,7 +209,7 @@ Aspire 13.4 adds `AddBunApp` for orchestrating [Bun](https://bun.sh/) applicatio
 ```csharp title="AppHost.cs"
 var builder = DistributedApplication.CreateBuilder(args);
 
-var bunApi = builder.AddBunApp("bun-api", "../bun-app")
+var bunApi = builder.AddBunApp("bun-api", "../bun-app", "server.ts")
   .WithHttpEndpoint(port: 3000, env: "PORT");
 
 builder.Build().Run();
@@ -223,7 +223,7 @@ import { createBuilder } from "./.aspire/modules/aspire.mjs";
 
 const builder = await createBuilder();
 
-const bunApi = await builder.addBunApp("bun-api", "../bun-app");
+const bunApi = await builder.addBunApp("bun-api", "../bun-app", "server.ts");
 await bunApi.withHttpEndpoint({ port: 3000, env: "PORT" });
 
 await builder.build().run();
