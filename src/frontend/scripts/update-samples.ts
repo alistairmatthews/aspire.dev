@@ -1,8 +1,11 @@
 import fs from 'fs';
 import path from 'path';
 import { pipeline } from 'stream/promises';
+import { fileURLToPath } from 'url';
 
 import fetch from 'node-fetch';
+
+import { normalizeAspireTerminology } from './aspire-terminology';
 
 const REPO = 'microsoft/aspire-samples';
 const DEFAULT_BRANCH = 'main';
@@ -97,7 +100,7 @@ interface GitTreeResponse {
   truncated?: boolean;
 }
 
-interface SampleResult {
+export interface SampleResult {
   name: string;
   title: string;
   description: string | null;
@@ -109,6 +112,20 @@ interface SampleResult {
   appHost: AppHostKind | null;
   appHostPath: string | null;
   appHostCode: string | null;
+}
+
+// `appHostCode` is intentionally excluded: it is rendered as C# (not prose), so
+// rewriting terminology inside identifiers, string literals, or comments would
+// risk corrupting compilable code without fixing any user-facing prose.
+export function normalizeSampleTerminology(sample: SampleResult): SampleResult {
+  return {
+    ...sample,
+    title: normalizeAspireTerminology(sample.title),
+    description:
+      sample.description === null ? null : normalizeAspireTerminology(sample.description),
+    readme: normalizeAspireTerminology(sample.readme),
+    readmeRaw: normalizeAspireTerminology(sample.readmeRaw),
+  };
 }
 
 type AppHostKind = 'typescript' | 'csproj' | 'file-based';
@@ -531,7 +548,7 @@ async function processSample(
   const thumbnail = extractThumbnail(name, readme);
   const href = `${TREE_BASE}/${SAMPLES_DIR}/${name}`;
 
-  return {
+  return normalizeSampleTerminology({
     name,
     title,
     description,
@@ -543,7 +560,7 @@ async function processSample(
     appHost: appHostInfo?.kind ?? null,
     appHostPath: appHostInfo?.entryPath ?? null,
     appHostCode,
-  };
+  });
 }
 
 async function main(): Promise<void> {
@@ -577,7 +594,13 @@ async function main(): Promise<void> {
   console.log(`\n✅ Saved ${results.length} samples to ${OUTPUT_PATH}`);
 }
 
-main().catch((error: unknown) => {
-  console.error('❌ Error:', getErrorMessage(error));
-  process.exit(1);
-});
+const isMainModule = process.argv[1]
+  ? path.resolve(process.argv[1]) === fileURLToPath(import.meta.url)
+  : false;
+
+if (isMainModule) {
+  void main().catch((error: unknown) => {
+    console.error('❌ Error:', getErrorMessage(error));
+    process.exitCode = 1;
+  });
+}
