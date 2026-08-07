@@ -493,6 +493,22 @@ await builder.build().run();
   doesn't natively support appending certificates to the default trust store.
 </Aside>
 
+<Aside type="note" title="Linux system trust preservation">
+  On Linux, executable resources configured with Append mode preserve access
+  to the system's OpenSSL certificate roots in addition to Aspire's generated
+  development certificate. If `SSL_CERT_DIR` is set in the AppHost process
+  environment, Aspire adds those directories after its generated certificate
+  directory. An explicitly empty value is preserved by not inferring system
+  directories. If `SSL_CERT_DIR` is unset, Aspire adds any well-known system
+  certificate directories that exist on the machine (for example,
+  `/etc/ssl/certs`) after its own. Aspire reads this value from the AppHost
+  process environment, not from an individual resource's configured
+  environment. This avoids a scenario where Linux workloads launched with
+  `dotnet run` or an IDE lose OpenSSL's implicit system certificate roots and
+  fail outbound HTTPS requests once Aspire configures the resource with only
+  its generated certificate directory.
+</Aside>
+
 #### Override mode
 
 Attempts to override a resource to only trust the configured certificates, replacing the default trusted certificates entirely. This mode is useful when you need strict control over which certificates are trusted.
