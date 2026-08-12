@@ -694,7 +694,7 @@ Aspire 13.3 closes most of the remaining functional gap between C# AppHosts and 
 
 ### Unified `withEnvironment` API
 
-Aspire 13.3 introduces a unified `withEnvironment(name, value)` API for polyglot AppHosts (TypeScript, Java, Python, Go, Rust). Previously, environment variable injection required separate methods for each value kind (`withEnvironmentEndpoint`, `withEnvironmentParameter`, `withEnvironmentConnectionString`, and so on). Now, a single call handles all value types:
+Aspire 13.3 introduces a unified `withEnvironment(name, value)` API for [polyglot](/get-started/glossary/#polyglot) AppHosts (TypeScript, Java, Python, Go, Rust). Previously, environment variable injection required separate methods for each value kind (`withEnvironmentEndpoint`, `withEnvironmentParameter`, `withEnvironmentConnectionString`, and so on). Now, a single call handles all value types:
 
 ```typescript title="apphost.mts"
 const api = await builder.addProject('api', '../Api/Api.csproj');
