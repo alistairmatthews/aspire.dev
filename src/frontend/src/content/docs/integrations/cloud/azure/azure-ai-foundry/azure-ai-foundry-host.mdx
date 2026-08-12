@@ -472,7 +472,7 @@ For C# AppHosts, the parameterless `AsHostedAgent()` overload reuses an existing
 <TabItem id='csharp' label='C#'>
 
 ```csharp
-builder.AddPythonApp("agent-python", "..\\agent", "main:app")
+builder.AddPythonApp("agent-python", "../agent", "main:app")
     .WithReference(project)
     .WithReference(chat)
     .AsHostedAgent(project, HostedAgentProtocol.Invocations, "1.0.0");
