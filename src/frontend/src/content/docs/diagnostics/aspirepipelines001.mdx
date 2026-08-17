@@ -26,10 +26,13 @@ This diagnostic applies to the following pipeline infrastructure APIs:
 - `IPipelineActivityReporter` - Interface for reporting pipeline activities
 - `IReportingStep` - Interface for managing pipeline steps
 - `IReportingTask` - Interface for managing tasks within a step
-- `CompletionState` - Enumeration for tracking completion status
 - `PublishingContext` - Context for publishing operations
 - `PublishingCallbackAnnotation` - Annotation for publishing callbacks
 - Related extension methods and implementations
+
+:::note
+The `CompletionState` enumeration has graduated from experimental and no longer requires suppressing this diagnostic.
+:::
 
 ## To correct this error
 
