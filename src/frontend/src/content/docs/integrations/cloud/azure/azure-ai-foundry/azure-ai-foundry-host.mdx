@@ -466,7 +466,7 @@ For C# AppHosts, the parameterless `AsHostedAgent()` overload reuses an existing
 
 ### Select a hosted agent protocol
 
-`AsHostedAgent` defaults to the Responses protocol version `2.0.0`. If your hosted agent implements a different protocol or protocol version, use `AsHostedAgentWithProtocol` or pass a protocol and version explicitly. For example, some  Microsoft Agent Framework (MAF) agents use the Invocations protocol:
+`AsHostedAgent` defaults to the Responses protocol version `2.0.0`. If your hosted agent implements a different protocol or protocol version, use the C# `AsHostedAgent(project, protocol, version)` overload or the polyglot/TypeScript `asHostedAgentWithProtocol` export. For example, some Microsoft Agent Framework (MAF) agents use the Invocations protocol:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
