@@ -15,8 +15,8 @@
       "inference",
       "ai-search"
     ],
-    "downloads": 116081,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 107909,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Azure.AI.OpenAI",
@@ -33,8 +33,8 @@
       "ai",
       "openai"
     ],
-    "downloads": 741855,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 723533,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Azure.Data.Tables",
@@ -50,10 +50,11 @@
       "azure",
       "tables",
       "table",
-      "storage"
+      "storage",
+      "cloud"
     ],
-    "downloads": 3874731,
-    "version": "13.4.6"
+    "downloads": 3843635,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Messaging.EventHubs",
@@ -70,10 +71,11 @@
       "eventhubs",
       "amqp",
       "messaging",
-      "eventing"
+      "eventing",
+      "cloud"
     ],
-    "downloads": 693013,
-    "version": "13.4.6"
+    "downloads": 673266,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Messaging.ServiceBus",
@@ -90,10 +92,11 @@
       "servicebus",
       "amqp",
       "messaging",
-      "eventing"
+      "eventing",
+      "cloud"
     ],
-    "downloads": 1679550,
-    "version": "13.4.6"
+    "downloads": 1613897,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Messaging.WebPubSub",
@@ -110,10 +113,11 @@
       "webpubsub",
       "websocket",
       "pubsub",
-      "messaging"
+      "messaging",
+      "cloud"
     ],
-    "downloads": 66081,
-    "version": "13.4.6"
+    "downloads": 64736,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Npgsql",
@@ -132,10 +136,11 @@
       "npgsql",
       "sql",
       "database",
-      "data"
+      "data",
+      "cloud"
     ],
-    "downloads": 132440,
-    "version": "13.4.6"
+    "downloads": 122721,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Npgsql.EntityFrameworkCore.PostgreSQL",
@@ -159,10 +164,11 @@
       "postgresql",
       "postgres",
       "npgsql",
-      "sql"
+      "sql",
+      "cloud"
     ],
-    "downloads": 365980,
-    "version": "13.4.6"
+    "downloads": 345922,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Search.Documents",
@@ -176,12 +182,13 @@
       "component",
       "cloud",
       "azure",
+      "azure",
       "search",
       "ai",
       "ai-search"
     ],
-    "downloads": 425362,
-    "version": "13.4.6"
+    "downloads": 416435,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Security.KeyVault",
@@ -197,10 +204,11 @@
       "azure",
       "keyvault",
       "secrets",
-      "security"
+      "security",
+      "cloud"
     ],
-    "downloads": 1467453,
-    "version": "13.4.6"
+    "downloads": 1417484,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Storage.Blobs",
@@ -216,10 +224,11 @@
       "azure",
       "storage",
       "blobs",
-      "blob"
+      "blob",
+      "cloud"
     ],
-    "downloads": 6516550,
-    "version": "13.4.6"
+    "downloads": 6365659,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Azure.Storage.Files.DataLake",
@@ -237,8 +246,8 @@
       "files",
       "datalake"
     ],
-    "downloads": 4583,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 4279,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Azure.Storage.Queues",
@@ -255,10 +264,11 @@
       "storage",
       "queue",
       "queues",
-      "messaging"
+      "messaging",
+      "cloud"
     ],
-    "downloads": 1795861,
-    "version": "13.4.6"
+    "downloads": 1765647,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Confluent.Kafka",
@@ -275,8 +285,8 @@
       "messaging",
       "eventing"
     ],
-    "downloads": 2614846,
-    "version": "13.4.6"
+    "downloads": 2600696,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Elastic.Clients.Elasticsearch",
@@ -291,7 +301,7 @@
       "cloud",
       "elasticsearch"
     ],
-    "downloads": 74993,
+    "downloads": 73344,
     "version": "13.3.0"
   },
   {
@@ -302,15 +312,16 @@
     "tags": [
       "aspire",
       "hosting",
-      "orchestration"
+      "orchestration",
+      "polyglot"
     ],
-    "downloads": 32062463,
-    "version": "13.4.6"
+    "downloads": 30663328,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.AgentFramework.DevUI",
     "description": "Microsoft Agent Framework DevUI support for Aspire.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.agentframework.devui/1.17.0-preview.260804.1/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.agentframework.devui/1.16.0-preview.260730.1/icon",
     "href": "https://www.nuget.org/packages/Aspire.Hosting.AgentFramework.DevUI",
     "tags": [
       "aspire",
@@ -321,13 +332,13 @@
       "ai",
       "agents"
     ],
-    "downloads": 3112,
-    "version": "1.17.0-preview.260804.1"
+    "downloads": 2812,
+    "version": "1.16.0-preview.260730.1"
   },
   {
     "title": "Aspire.Hosting.AWS",
     "description": "Add support for provisioning AWS application resources and configuring the AWS SDK for .NET.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.aws/13.6.0/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.aws/13.5.0/icon",
     "href": "https://www.nuget.org/packages/Aspire.Hosting.AWS",
     "tags": [
       "aspire",
@@ -335,8 +346,8 @@
       "hosting",
       "aws"
     ],
-    "downloads": 703969,
-    "version": "13.6.0"
+    "downloads": 667233,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure",
@@ -349,10 +360,11 @@
       "azure",
       "cloud",
       "provisioning",
-      "orchestration"
+      "orchestration",
+      "polyglot"
     ],
-    "downloads": 8017775,
-    "version": "13.4.6"
+    "downloads": 7660869,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.AppConfiguration",
@@ -365,10 +377,11 @@
       "hosting",
       "azure",
       "configuration",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 528479,
-    "version": "13.4.6"
+    "downloads": 501252,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.AppContainers",
@@ -382,10 +395,11 @@
       "azure",
       "container",
       "cloud",
-      "appcontainers"
+      "appcontainers",
+      "polyglot"
     ],
-    "downloads": 1076383,
-    "version": "13.4.6"
+    "downloads": 1022857,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.ApplicationInsights",
@@ -400,10 +414,11 @@
       "monitoring",
       "observability",
       "cloud",
-      "applicationinsights"
+      "applicationinsights",
+      "polyglot"
     ],
-    "downloads": 872170,
-    "version": "13.4.6"
+    "downloads": 838358,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.AppService",
@@ -416,10 +431,11 @@
       "hosting",
       "azure",
       "cloud",
-      "appservice"
+      "appservice",
+      "polyglot"
     ],
-    "downloads": 76479,
-    "version": "13.4.6"
+    "downloads": 71748,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.CognitiveServices",
@@ -436,10 +452,11 @@
       "cognitiveservices",
       "cognitive",
       "services",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 772183,
-    "version": "13.4.6"
+    "downloads": 750157,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.ContainerRegistry",
@@ -453,10 +470,11 @@
       "azure",
       "container",
       "registry",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 761994,
-    "version": "13.4.6"
+    "downloads": 706262,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.CosmosDB",
@@ -472,10 +490,11 @@
       "database",
       "cloud",
       "data",
-      "nosql"
+      "nosql",
+      "polyglot"
     ],
-    "downloads": 1429576,
-    "version": "13.4.6"
+    "downloads": 1362979,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.EventHubs",
@@ -490,10 +509,11 @@
       "eventhubs",
       "messaging",
       "eventing",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 542666,
-    "version": "13.4.6"
+    "downloads": 505669,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.FrontDoor",
@@ -507,10 +527,11 @@
       "azure",
       "front-door",
       "cdn",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 7538,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 6567,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Azure.Functions",
@@ -524,10 +545,11 @@
       "azure",
       "functions",
       "serverless",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 1540064,
-    "version": "13.4.6"
+    "downloads": 1464733,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.KeyVault",
@@ -542,10 +564,11 @@
       "keyvault",
       "security",
       "secrets",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 2943472,
-    "version": "13.4.6"
+    "downloads": 2796945,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.Kubernetes",
@@ -558,10 +581,11 @@
       "hosting",
       "azure",
       "kubernetes",
-      "aks"
+      "aks",
+      "polyglot"
     ],
-    "downloads": 1975,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 1647,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Azure.Kusto",
@@ -576,10 +600,11 @@
       "kusto",
       "database",
       "data",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 8087,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 7650,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Azure.Network",
@@ -597,10 +622,11 @@
       "subnet",
       "nat-gateway",
       "public-ip",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 319526,
-    "version": "13.4.6"
+    "downloads": 287434,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.OperationalInsights",
@@ -614,10 +640,11 @@
       "azure",
       "monitoring",
       "observability",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 1440437,
-    "version": "13.4.6"
+    "downloads": 1375507,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.PostgreSQL",
@@ -632,10 +659,11 @@
       "postgresql",
       "database",
       "data",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 704574,
-    "version": "13.4.6"
+    "downloads": 666669,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.Redis",
@@ -650,10 +678,11 @@
       "redis",
       "cache",
       "caching",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 561502,
-    "version": "13.4.6"
+    "downloads": 539841,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.Search",
@@ -668,10 +697,11 @@
       "search",
       "ai",
       "ai-search",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 273112,
-    "version": "13.4.6"
+    "downloads": 263294,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.ServiceBus",
@@ -686,10 +716,11 @@
       "servicebus",
       "messaging",
       "eventing",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 2145908,
-    "version": "13.4.6"
+    "downloads": 2033377,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.SignalR",
@@ -703,10 +734,11 @@
       "azure",
       "signalr",
       "realtime",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 283215,
-    "version": "13.4.6"
+    "downloads": 261607,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.Sql",
@@ -721,10 +753,11 @@
       "sql",
       "database",
       "data",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 840548,
-    "version": "13.4.6"
+    "downloads": 805203,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.Storage",
@@ -740,10 +773,11 @@
       "blob",
       "queue",
       "table",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 5536104,
-    "version": "13.4.6"
+    "downloads": 5264774,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Azure.WebPubSub",
@@ -759,10 +793,11 @@
       "pubsub",
       "websocket",
       "messaging",
-      "cloud"
+      "cloud",
+      "polyglot"
     ],
-    "downloads": 35918,
-    "version": "13.4.6"
+    "downloads": 34830,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Blazor",
@@ -775,10 +810,11 @@
       "hosting",
       "blazor",
       "webassembly",
-      "gateway"
+      "gateway",
+      "polyglot"
     ],
-    "downloads": 2517,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 2049,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Browsers",
@@ -792,10 +828,11 @@
       "browser",
       "browsers",
       "logs",
-      "diagnostics"
+      "diagnostics",
+      "polyglot"
     ],
-    "downloads": 129529,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 116844,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.ClickHouse",
@@ -810,7 +847,7 @@
       "database",
       "data"
     ],
-    "downloads": 18474,
+    "downloads": 15122,
     "version": "13.4.6"
   },
   {
@@ -819,8 +856,8 @@
     "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.codegeneration.go/13.4.6/icon",
     "href": "https://www.nuget.org/packages/Aspire.Hosting.CodeGeneration.Go",
     "tags": [],
-    "downloads": 7573,
-    "version": "13.4.6"
+    "downloads": 6853,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.CodeGeneration.Java",
@@ -828,8 +865,8 @@
     "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.codegeneration.java/13.4.6/icon",
     "href": "https://www.nuget.org/packages/Aspire.Hosting.CodeGeneration.Java",
     "tags": [],
-    "downloads": 2298,
-    "version": "13.4.6"
+    "downloads": 2238,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.CodeGeneration.Python",
@@ -837,8 +874,8 @@
     "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.codegeneration.python/13.4.6/icon",
     "href": "https://www.nuget.org/packages/Aspire.Hosting.CodeGeneration.Python",
     "tags": [],
-    "downloads": 2298,
-    "version": "13.4.6"
+    "downloads": 2241,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.CodeGeneration.Rust",
@@ -846,8 +883,8 @@
     "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.codegeneration.rust/13.4.6/icon",
     "href": "https://www.nuget.org/packages/Aspire.Hosting.CodeGeneration.Rust",
     "tags": [],
-    "downloads": 2249,
-    "version": "13.4.6"
+    "downloads": 2190,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.CodeGeneration.TypeScript",
@@ -855,8 +892,8 @@
     "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.codegeneration.typescript/13.4.6/icon",
     "href": "https://www.nuget.org/packages/Aspire.Hosting.CodeGeneration.TypeScript",
     "tags": [],
-    "downloads": 52028,
-    "version": "13.4.6"
+    "downloads": 43892,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.DevTunnels",
@@ -866,10 +903,11 @@
     "tags": [
       "aspire",
       "hosting",
-      "devtunnels"
+      "devtunnels",
+      "polyglot"
     ],
-    "downloads": 455070,
-    "version": "13.4.6"
+    "downloads": 426271,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Docker",
@@ -880,10 +918,11 @@
       "aspire",
       "hosting",
       "docker",
-      "docker-compose"
+      "docker-compose",
+      "polyglot"
     ],
-    "downloads": 602697,
-    "version": "13.4.6"
+    "downloads": 567826,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.DocumentDB",
@@ -900,8 +939,25 @@
       "azure",
       "database"
     ],
-    "downloads": 1047,
+    "downloads": 999,
     "version": "0.114.1"
+  },
+  {
+    "title": "Aspire.Hosting.Dotnet",
+    "description": "C# and .NET application support for Aspire.",
+    "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.dotnet/13.5.0-preview.1.26417.7/icon",
+    "href": "https://www.nuget.org/packages/Aspire.Hosting.Dotnet",
+    "tags": [
+      "aspire",
+      "integration",
+      "hosting",
+      "dotnet",
+      "csharp",
+      "framework",
+      "runtime",
+      "polyglot"
+    ],
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Elasticsearch",
@@ -914,7 +970,7 @@
       "hosting",
       "elasticsearch"
     ],
-    "downloads": 396760,
+    "downloads": 383091,
     "version": "13.3.0"
   },
   {
@@ -930,10 +986,11 @@
       "efcore",
       "entityframeworkcore",
       "migrations",
-      "database"
+      "database",
+      "polyglot"
     ],
-    "downloads": 17898,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 14300,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Foundry",
@@ -952,7 +1009,7 @@
       "ai-search",
       "cloud"
     ],
-    "downloads": 36495,
+    "downloads": 32599,
     "version": "13.4.6-preview.1.26319.6"
   },
   {
@@ -966,10 +1023,11 @@
       "hosting",
       "garnet",
       "cache",
-      "caching"
+      "caching",
+      "polyglot"
     ],
-    "downloads": 102151,
-    "version": "13.4.6"
+    "downloads": 97323,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.GitHub.Models",
@@ -982,10 +1040,11 @@
       "hosting",
       "github",
       "models",
-      "ai"
+      "ai",
+      "polyglot"
     ],
-    "downloads": 27686,
-    "version": "13.4.6"
+    "downloads": 27084,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Go",
@@ -999,10 +1058,11 @@
       "go",
       "golang",
       "framework",
-      "runtime"
+      "runtime",
+      "polyglot"
     ],
-    "downloads": 2774,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 2382,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Integration.Analyzers",
@@ -1013,12 +1073,10 @@
       "aspire",
       "hosting",
       "analyzers",
-      "ats",
-      "polyglot",
-      "integration"
+      "ats"
     ],
-    "downloads": 3795,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 3326,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.JavaScript",
@@ -1033,10 +1091,11 @@
       "nodejs",
       "javascript",
       "framework",
-      "runtime"
+      "runtime",
+      "polyglot"
     ],
-    "downloads": 3098334,
-    "version": "13.4.6"
+    "downloads": 2823725,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Kafka",
@@ -1049,10 +1108,11 @@
       "hosting",
       "kafka",
       "messaging",
-      "eventing"
+      "eventing",
+      "polyglot"
     ],
-    "downloads": 1171527,
-    "version": "13.4.6"
+    "downloads": 1120374,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Keycloak",
@@ -1066,10 +1126,11 @@
       "keycloak",
       "authentication",
       "identity",
-      "security"
+      "security",
+      "polyglot"
     ],
-    "downloads": 778114,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 740212,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Kubernetes",
@@ -1079,10 +1140,11 @@
     "tags": [
       "aspire",
       "hosting",
-      "kubernetes"
+      "kubernetes",
+      "polyglot"
     ],
-    "downloads": 202740,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 187879,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Maui",
@@ -1092,10 +1154,11 @@
     "tags": [
       "aspire",
       "maui",
-      "hosting"
+      "hosting",
+      "polyglot"
     ],
-    "downloads": 33522,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 31400,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Milvus",
@@ -1111,10 +1174,11 @@
       "vector",
       "search",
       "data",
-      "ai-search"
+      "ai-search",
+      "polyglot"
     ],
-    "downloads": 12921,
-    "version": "13.4.6"
+    "downloads": 12778,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.MongoDB",
@@ -1127,10 +1191,11 @@
       "hosting",
       "mongodb",
       "database",
-      "data"
+      "data",
+      "polyglot"
     ],
-    "downloads": 920333,
-    "version": "13.4.6"
+    "downloads": 882318,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.MySql",
@@ -1143,10 +1208,11 @@
       "hosting",
       "mysql",
       "database",
-      "data"
+      "data",
+      "polyglot"
     ],
-    "downloads": 352429,
-    "version": "13.4.6"
+    "downloads": 337848,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Nats",
@@ -1159,10 +1225,11 @@
       "hosting",
       "nats",
       "messaging",
-      "eventing"
+      "eventing",
+      "polyglot"
     ],
-    "downloads": 204389,
-    "version": "13.4.6"
+    "downloads": 195257,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.OpenAI",
@@ -1174,10 +1241,11 @@
       "integration",
       "hosting",
       "openai",
-      "ai"
+      "ai",
+      "polyglot"
     ],
-    "downloads": 40479,
-    "version": "13.4.6"
+    "downloads": 39377,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Oracle",
@@ -1191,10 +1259,11 @@
       "oracle",
       "sql",
       "database",
-      "data"
+      "data",
+      "polyglot"
     ],
-    "downloads": 84940,
-    "version": "13.4.6"
+    "downloads": 80980,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Orleans",
@@ -1207,10 +1276,11 @@
       "hosting",
       "orleans",
       "messaging",
-      "eventing"
+      "eventing",
+      "polyglot"
     ],
-    "downloads": 326765,
-    "version": "13.4.6"
+    "downloads": 314175,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.PostgreSQL",
@@ -1226,10 +1296,11 @@
       "npgsql",
       "sql",
       "database",
-      "data"
+      "data",
+      "polyglot"
     ],
-    "downloads": 6805210,
-    "version": "13.4.6"
+    "downloads": 6451999,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Python",
@@ -1242,10 +1313,11 @@
       "hosting",
       "python",
       "framework",
-      "runtime"
+      "runtime",
+      "polyglot"
     ],
-    "downloads": 333696,
-    "version": "13.4.6"
+    "downloads": 319425,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Qdrant",
@@ -1260,10 +1332,11 @@
       "vector",
       "database",
       "ai-search",
-      "data"
+      "data",
+      "polyglot"
     ],
-    "downloads": 143328,
-    "version": "13.4.6"
+    "downloads": 141012,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.RabbitMQ",
@@ -1276,10 +1349,27 @@
       "hosting",
       "rabbitmq",
       "messaging",
-      "eventing"
+      "eventing",
+      "polyglot"
     ],
-    "downloads": 2750372,
-    "version": "13.4.6"
+    "downloads": 2611760,
+    "version": "13.5.0"
+  },
+  {
+    "title": "Aspire.Hosting.Radius",
+    "description": "Provides extensions and resource definitions for an Aspire AppHost to publish and deploy applications to a Radius (radapp.io) compute environment.",
+    "icon": "https://api.nuget.org/v3-flatcontainer/aspire.hosting.radius/13.5.0-preview.1.26417.7/icon",
+    "href": "https://www.nuget.org/packages/Aspire.Hosting.Radius",
+    "tags": [
+      "aspire",
+      "integration",
+      "hosting",
+      "radius",
+      "radapp",
+      "deployment",
+      "polyglot"
+    ],
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Hosting.Redis",
@@ -1292,10 +1382,11 @@
       "hosting",
       "redis",
       "cache",
-      "caching"
+      "caching",
+      "polyglot"
     ],
-    "downloads": 6755073,
-    "version": "13.4.6"
+    "downloads": 6412937,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Seq",
@@ -1308,10 +1399,11 @@
       "hosting",
       "seq",
       "observability",
-      "logging"
+      "logging",
+      "polyglot"
     ],
-    "downloads": 496960,
-    "version": "13.4.6"
+    "downloads": 476808,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.SqlServer",
@@ -1325,10 +1417,11 @@
       "sqlserver",
       "sql",
       "database",
-      "data"
+      "data",
+      "polyglot"
     ],
-    "downloads": 6784001,
-    "version": "13.4.6"
+    "downloads": 6444732,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Valkey",
@@ -1341,10 +1434,11 @@
       "hosting",
       "valkey",
       "cache",
-      "caching"
+      "caching",
+      "polyglot"
     ],
-    "downloads": 596593,
-    "version": "13.4.6"
+    "downloads": 550910,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Hosting.Yarp",
@@ -1357,10 +1451,11 @@
       "hosting",
       "yarp",
       "reverse-proxy",
-      "api"
+      "api",
+      "polyglot"
     ],
-    "downloads": 443504,
-    "version": "13.4.6"
+    "downloads": 414489,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Keycloak.Authentication",
@@ -1378,8 +1473,8 @@
       "identity",
       "security"
     ],
-    "downloads": 558474,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 537869,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Microsoft.Azure.Cosmos",
@@ -1398,10 +1493,11 @@
       "data",
       "database",
       "db",
-      "nosql"
+      "nosql",
+      "cloud"
     ],
-    "downloads": 1362579,
-    "version": "13.4.6"
+    "downloads": 1319447,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Microsoft.Azure.StackExchangeRedis",
@@ -1416,11 +1512,13 @@
       "cloud",
       "azure",
       "redis",
+      "azure",
       "cache",
-      "caching"
+      "caching",
+      "cloud"
     ],
-    "downloads": 98214,
-    "version": "13.4.6"
+    "downloads": 91383,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Microsoft.Data.SqlClient",
@@ -1438,8 +1536,8 @@
       "sqlserver",
       "sql"
     ],
-    "downloads": 1851504,
-    "version": "13.4.6"
+    "downloads": 1823861,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Microsoft.EntityFrameworkCore.Cosmos",
@@ -1463,10 +1561,11 @@
       "azure",
       "cosmos",
       "cosmosdb",
-      "nosql"
+      "nosql",
+      "cloud"
     ],
-    "downloads": 217873,
-    "version": "13.4.6"
+    "downloads": 211353,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Microsoft.EntityFrameworkCore.SqlServer",
@@ -1490,8 +1589,8 @@
       "sqlserver",
       "sql"
     ],
-    "downloads": 5619838,
-    "version": "13.4.6"
+    "downloads": 5445270,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Microsoft.Extensions.Configuration.AzureAppConfiguration",
@@ -1506,10 +1605,11 @@
       "cloud",
       "azure",
       "configuration",
-      "appconfiguration"
+      "appconfiguration",
+      "cloud"
     ],
-    "downloads": 623121,
-    "version": "13.4.6"
+    "downloads": 574752,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Milvus.Client",
@@ -1528,8 +1628,8 @@
       "search",
       "ai-search"
     ],
-    "downloads": 9018,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 8930,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.MongoDB.Driver",
@@ -1546,8 +1646,8 @@
       "database",
       "mongodb"
     ],
-    "downloads": 375965,
-    "version": "13.4.6"
+    "downloads": 363103,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.MongoDB.Driver.v2",
@@ -1564,8 +1664,8 @@
       "database",
       "mongodb"
     ],
-    "downloads": 4278,
-    "version": "13.4.6"
+    "downloads": 4222,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.MongoDB.EntityFrameworkCore",
@@ -1588,8 +1688,8 @@
       "o/rm",
       "mongodb"
     ],
-    "downloads": 5287,
-    "version": "13.4.6"
+    "downloads": 4847,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.MySqlConnector",
@@ -1608,8 +1708,8 @@
       "mysql",
       "sql"
     ],
-    "downloads": 2466045,
-    "version": "13.4.6"
+    "downloads": 2464320,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.NATS.Net",
@@ -1626,8 +1726,8 @@
       "messaging",
       "eventing"
     ],
-    "downloads": 164687,
-    "version": "13.4.6"
+    "downloads": 157740,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Npgsql",
@@ -1647,8 +1747,8 @@
       "npgsql",
       "sql"
     ],
-    "downloads": 3380880,
-    "version": "13.4.6"
+    "downloads": 3320615,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Npgsql.EntityFrameworkCore.PostgreSQL",
@@ -1674,8 +1774,8 @@
       "npgsql",
       "sql"
     ],
-    "downloads": 6469395,
-    "version": "13.4.6"
+    "downloads": 6277806,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.OpenAI",
@@ -1691,8 +1791,8 @@
       "ai",
       "openai"
     ],
-    "downloads": 664288,
-    "version": "13.4.6-preview.1.26319.6"
+    "downloads": 643283,
+    "version": "13.5.0-preview.1.26417.7"
   },
   {
     "title": "Aspire.Oracle.EntityFrameworkCore",
@@ -1716,8 +1816,8 @@
       "oracle",
       "sql"
     ],
-    "downloads": 243068,
-    "version": "13.4.6"
+    "downloads": 240666,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Pomelo.EntityFrameworkCore.MySql",
@@ -1742,8 +1842,8 @@
       "mysql",
       "sql"
     ],
-    "downloads": 413467,
-    "version": "13.4.6"
+    "downloads": 410972,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Qdrant.Client",
@@ -1761,8 +1861,8 @@
       "database",
       "ai-search"
     ],
-    "downloads": 115457,
-    "version": "13.4.6"
+    "downloads": 111838,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.RabbitMQ.Client",
@@ -1782,8 +1882,8 @@
       "messaging",
       "eventing"
     ],
-    "downloads": 1085040,
-    "version": "13.4.6"
+    "downloads": 1044493,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.RabbitMQ.Client.v6",
@@ -1803,8 +1903,8 @@
       "messaging",
       "eventing"
     ],
-    "downloads": 4637,
-    "version": "13.4.6"
+    "downloads": 4586,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.Seq",
@@ -1821,8 +1921,8 @@
       "observability",
       "logging"
     ],
-    "downloads": 500449,
-    "version": "13.4.6"
+    "downloads": 485590,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.StackExchange.Redis",
@@ -1839,8 +1939,8 @@
       "caching",
       "redis"
     ],
-    "downloads": 11168292,
-    "version": "13.4.6"
+    "downloads": 10961575,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.StackExchange.Redis.DistributedCaching",
@@ -1859,8 +1959,8 @@
       "distributedcache",
       "redis"
     ],
-    "downloads": 3066938,
-    "version": "13.4.6"
+    "downloads": 2957866,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.StackExchange.Redis.OutputCaching",
@@ -1880,8 +1980,8 @@
       "outputcache",
       "redis"
     ],
-    "downloads": 923457,
-    "version": "13.4.6"
+    "downloads": 902322,
+    "version": "13.5.0"
   },
   {
     "title": "Aspire.TypeSystem",
@@ -1894,13 +1994,13 @@
       "typesystem",
       "polyglot"
     ],
-    "downloads": 59262,
-    "version": "13.4.6"
+    "downloads": 50154,
+    "version": "13.5.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Bitwarden.SecretManager",
     "description": "An Aspire client integration for Bitwarden Secrets Manager.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.bitwarden.secretmanager/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.bitwarden.secretmanager/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Bitwarden.SecretManager",
     "tags": [
       "aspire",
@@ -1912,13 +2012,13 @@
       "secret-manager",
       "client"
     ],
-    "downloads": 630,
-    "version": "13.4.1-beta.706"
+    "downloads": 396,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.DuckDB.NET.Data",
     "description": "An Aspire client integration for the DuckDB.NET.Data package.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.duckdb.net.data/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.duckdb.net.data/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.DuckDB.NET.Data",
     "tags": [
       "aspire",
@@ -1931,8 +2031,8 @@
       "olap",
       "ado.net"
     ],
-    "downloads": 956,
-    "version": "13.4.1-beta.706"
+    "downloads": 699,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.GoFeatureFlag",
@@ -1947,7 +2047,7 @@
       "gofeatureflag",
       "client"
     ],
-    "downloads": 49054,
+    "downloads": 48635,
     "version": "13.4.0"
   },
   {
@@ -1963,7 +2063,7 @@
       "hosting",
       "activemq"
     ],
-    "downloads": 71437,
+    "downloads": 70097,
     "version": "13.4.0"
   },
   {
@@ -1979,7 +2079,7 @@
       "hosting",
       "adminer"
     ],
-    "downloads": 228088,
+    "downloads": 214987,
     "version": "13.4.0"
   },
   {
@@ -1996,7 +2096,7 @@
       "dapr",
       "azure"
     ],
-    "downloads": 80000,
+    "downloads": 78262,
     "version": "13.0.0"
   },
   {
@@ -2016,7 +2116,7 @@
       "state-store",
       "pubsub"
     ],
-    "downloads": 51654,
+    "downloads": 50650,
     "version": "13.0.0"
   },
   {
@@ -2033,7 +2133,7 @@
       "dataapibuilder",
       "hosting"
     ],
-    "downloads": 67428,
+    "downloads": 66583,
     "version": "13.4.0"
   },
   {
@@ -2050,13 +2150,13 @@
       "azure",
       "extensions"
     ],
-    "downloads": 5317,
+    "downloads": 4936,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Bitwarden.SecretManager",
     "description": "An Aspire hosting integration for Bitwarden Secrets Manager.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.bitwarden.secretmanager/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.bitwarden.secretmanager/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.Bitwarden.SecretManager",
     "tags": [
       "aspire",
@@ -2068,8 +2168,8 @@
       "secrets",
       "secret-manager"
     ],
-    "downloads": 631,
-    "version": "13.4.1-beta.706"
+    "downloads": 396,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Bun",
@@ -2086,7 +2186,7 @@
       "javascript",
       "deprecated"
     ],
-    "downloads": 100382,
+    "downloads": 97766,
     "version": "13.3.0"
   },
   {
@@ -2102,7 +2202,7 @@
       "hosting",
       "dapr"
     ],
-    "downloads": 651866,
+    "downloads": 629133,
     "version": "13.0.0"
   },
   {
@@ -2116,7 +2216,7 @@
       "communitytoolkit",
       "dotnetcommunitytoolkit"
     ],
-    "downloads": 4570,
+    "downloads": 4494,
     "version": "9.1.1-beta.197"
   },
   {
@@ -2132,13 +2232,13 @@
       "hosting",
       "dbgate"
     ],
-    "downloads": 280587,
+    "downloads": 266171,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Dbx",
     "description": "An Aspire hosting integration for the Dbx database management container.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.dbx/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.dbx/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.Dbx",
     "tags": [
       "aspire",
@@ -2148,8 +2248,8 @@
       "hosting",
       "dbx"
     ],
-    "downloads": 1428,
-    "version": "13.4.1-beta.706"
+    "downloads": 932,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Deno",
@@ -2164,13 +2264,13 @@
       "hosting",
       "deno"
     ],
-    "downloads": 67717,
+    "downloads": 66268,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.DuckDB",
     "description": "An Aspire hosting integration for providing a DuckDB database connection.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.duckdb/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.duckdb/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.DuckDB",
     "tags": [
       "aspire",
@@ -2182,8 +2282,8 @@
       "analytics",
       "olap"
     ],
-    "downloads": 954,
-    "version": "13.4.1-beta.706"
+    "downloads": 692,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Elasticsearch.Extensions",
@@ -2199,7 +2299,7 @@
       "elasticsearch",
       "elasticvue"
     ],
-    "downloads": 5694,
+    "downloads": 5312,
     "version": "13.4.0"
   },
   {
@@ -2217,7 +2317,7 @@
       "feature-flags",
       "openfeature"
     ],
-    "downloads": 23060,
+    "downloads": 21591,
     "version": "13.4.0"
   },
   {
@@ -2234,7 +2334,7 @@
       "flyway",
       "migration"
     ],
-    "downloads": 40543,
+    "downloads": 37222,
     "version": "13.4.0"
   },
   {
@@ -2250,7 +2350,7 @@
       "hosting",
       "gofeatureflag"
     ],
-    "downloads": 47385,
+    "downloads": 47026,
     "version": "13.4.0"
   },
   {
@@ -2266,7 +2366,7 @@
       "hosting",
       "java"
     ],
-    "downloads": 75099,
+    "downloads": 74339,
     "version": "13.4.0"
   },
   {
@@ -2286,13 +2386,13 @@
       "pnpm",
       "npm"
     ],
-    "downloads": 140763,
+    "downloads": 132352,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.K3s",
     "description": "An Aspire hosting integration for k3s. Provides AddK3sCluster, AddHelmRelease (via alpine/helm), AddK8sManifest with Kustomize support (via alpine/kubectl), and AddServiceEndpoint for in-process WebSocket port-forwarding. No host-side kubectl or helm required.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.k3s/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.k3s/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.K3s",
     "tags": [
       "aspire",
@@ -2304,8 +2404,8 @@
       "hosting",
       "cluster"
     ],
-    "downloads": 714,
-    "version": "13.4.1-beta.706"
+    "downloads": 457,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.k6",
@@ -2320,13 +2420,13 @@
       "hosting",
       "k6"
     ],
-    "downloads": 60366,
+    "downloads": 58826,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Keycloak.Extensions",
     "description": "Aspire hosting extensions for Keycloak (includes PostgreSQL integration).",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.keycloak.extensions/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.keycloak.extensions/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.Keycloak.Extensions",
     "tags": [
       "aspire",
@@ -2338,13 +2438,13 @@
       "hosting",
       "extensions"
     ],
-    "downloads": 14519,
-    "version": "13.4.1-beta.706"
+    "downloads": 13313,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Kind",
     "description": "An Aspire hosting integration for Kind that manages local Kind clusters for development with Docker or Podman.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.kind/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.kind/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.Kind",
     "tags": [
       "aspire",
@@ -2358,8 +2458,8 @@
       "docker",
       "podman"
     ],
-    "downloads": 348,
-    "version": "13.4.1-beta.706"
+    "downloads": 132,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.KurrentDB",
@@ -2374,7 +2474,7 @@
       "hosting",
       "kurrentdb"
     ],
-    "downloads": 15923,
+    "downloads": 15301,
     "version": "13.4.0"
   },
   {
@@ -2390,13 +2490,13 @@
       "hosting",
       "lavinmq"
     ],
-    "downloads": 46544,
+    "downloads": 45610,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Listmonk",
     "description": "listmonk support for Aspire.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.listmonk/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.listmonk/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.Listmonk",
     "tags": [
       "aspire",
@@ -2409,13 +2509,13 @@
       "email",
       "marketing"
     ],
-    "downloads": 331,
-    "version": "13.4.1-beta.706"
+    "downloads": 119,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Logto",
     "description": "Aspire hosting extensions for Logto (includes PostgreSQL and Redis integration).",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.logto/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.logto/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.Logto",
     "tags": [
       "aspire",
@@ -2428,8 +2528,8 @@
       "hosting",
       "extensions"
     ],
-    "downloads": 833,
-    "version": "13.4.1-beta.706"
+    "downloads": 557,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.MailPit",
@@ -2445,7 +2545,7 @@
       "smtp",
       "hosting"
     ],
-    "downloads": 305737,
+    "downloads": 288029,
     "version": "13.4.0"
   },
   {
@@ -2463,7 +2563,7 @@
       "debugging",
       "hosting"
     ],
-    "downloads": 65545,
+    "downloads": 63327,
     "version": "13.4.0"
   },
   {
@@ -2479,7 +2579,7 @@
       "hosting",
       "meilisearch"
     ],
-    "downloads": 70456,
+    "downloads": 69433,
     "version": "13.4.0"
   },
   {
@@ -2498,7 +2598,7 @@
       "storage",
       "deprecated"
     ],
-    "downloads": 164051,
+    "downloads": 156563,
     "version": "13.4.0"
   },
   {
@@ -2515,7 +2615,7 @@
       "mongodb",
       "dbgate"
     ],
-    "downloads": 80504,
+    "downloads": 78721,
     "version": "13.4.0"
   },
   {
@@ -2532,7 +2632,7 @@
       "mysql",
       "dbgate"
     ],
-    "downloads": 43638,
+    "downloads": 42618,
     "version": "13.4.0"
   },
   {
@@ -2549,7 +2649,7 @@
       "ngrok",
       "tunnels"
     ],
-    "downloads": 163498,
+    "downloads": 156893,
     "version": "13.4.0"
   },
   {
@@ -2566,7 +2666,7 @@
       "ollama",
       "ai"
     ],
-    "downloads": 354004,
+    "downloads": 341591,
     "version": "13.4.0"
   },
   {
@@ -2583,7 +2683,7 @@
       "opentelemetry",
       "observability"
     ],
-    "downloads": 51920,
+    "downloads": 48618,
     "version": "13.4.0"
   },
   {
@@ -2600,7 +2700,7 @@
       "smtp",
       "hosting"
     ],
-    "downloads": 59341,
+    "downloads": 58566,
     "version": "13.4.0"
   },
   {
@@ -2616,7 +2716,7 @@
       "hosting",
       "perl"
     ],
-    "downloads": 1253,
+    "downloads": 987,
     "version": "13.4.0"
   },
   {
@@ -2633,7 +2733,7 @@
       "postgres",
       "dbgate"
     ],
-    "downloads": 99694,
+    "downloads": 96465,
     "version": "13.4.0"
   },
   {
@@ -2652,7 +2752,7 @@
       "script",
       "hosting"
     ],
-    "downloads": 60669,
+    "downloads": 58541,
     "version": "13.4.0"
   },
   {
@@ -2669,7 +2769,7 @@
       "uvicorn",
       "python"
     ],
-    "downloads": 76120,
+    "downloads": 75428,
     "version": "13.4.0"
   },
   {
@@ -2685,7 +2785,7 @@
       "hosting",
       "ravendb"
     ],
-    "downloads": 67783,
+    "downloads": 66663,
     "version": "13.4.0"
   },
   {
@@ -2702,7 +2802,7 @@
       "redis",
       "dbgate"
     ],
-    "downloads": 74145,
+    "downloads": 72725,
     "version": "13.4.0"
   },
   {
@@ -2718,13 +2818,13 @@
       "hosting",
       "rust"
     ],
-    "downloads": 66747,
+    "downloads": 65622,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.RustFs",
     "description": "An Aspire hosting integration for the RustFS S3-compatible object storage container.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.rustfs/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.rustfs/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.RustFs",
     "tags": [
       "aspire",
@@ -2736,13 +2836,13 @@
       "storage",
       "s3-compatible"
     ],
-    "downloads": 1229,
-    "version": "13.4.1-beta.706"
+    "downloads": 610,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.SeaweedFS",
     "description": "Provides extension methods and resource definitions for the Aspire AppHost to support running SeaweedFS containers with an S3-compatible API.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.seaweedfs/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.seaweedfs/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.SeaweedFS",
     "tags": [
       "aspire",
@@ -2755,8 +2855,8 @@
       "storage",
       "s3"
     ],
-    "downloads": 741,
-    "version": "13.4.1-beta.706"
+    "downloads": 452,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Sftp",
@@ -2772,7 +2872,7 @@
       "sftp",
       "hosting"
     ],
-    "downloads": 7785,
+    "downloads": 7257,
     "version": "13.4.0"
   },
   {
@@ -2789,7 +2889,7 @@
       "solr",
       "search"
     ],
-    "downloads": 13835,
+    "downloads": 13438,
     "version": "13.4.0"
   },
   {
@@ -2806,7 +2906,7 @@
       "sql",
       "sqlproj"
     ],
-    "downloads": 301273,
+    "downloads": 286007,
     "version": "13.4.0"
   },
   {
@@ -2823,7 +2923,7 @@
       "sql",
       "sqlite"
     ],
-    "downloads": 87619,
+    "downloads": 85566,
     "version": "13.4.0"
   },
   {
@@ -2840,13 +2940,13 @@
       "sqlserver",
       "dbgate"
     ],
-    "downloads": 187157,
+    "downloads": 177161,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Squad",
     "description": "An Aspire hosting integration for Squad AI-agent teams. Models a `.squad/` workspace as a first-class Aspire resource that auto-discovers the team roster and exposes it via WithReference for downstream services.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.squad/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.hosting.squad/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Hosting.Squad",
     "tags": [
       "aspire",
@@ -2859,8 +2959,8 @@
       "agents",
       "copilot"
     ],
-    "downloads": 645,
-    "version": "13.4.1-beta.706"
+    "downloads": 401,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Hosting.Stripe",
@@ -2877,7 +2977,7 @@
       "payments",
       "webhooks"
     ],
-    "downloads": 11231,
+    "downloads": 10636,
     "version": "13.4.0"
   },
   {
@@ -2893,7 +2993,7 @@
       "hosting",
       "surrealdb"
     ],
-    "downloads": 20987,
+    "downloads": 20637,
     "version": "13.4.0"
   },
   {
@@ -2909,7 +3009,7 @@
       "hosting",
       "umami"
     ],
-    "downloads": 1741,
+    "downloads": 1441,
     "version": "13.4.0"
   },
   {
@@ -2930,7 +3030,7 @@
       "openid-connect",
       "oidc"
     ],
-    "downloads": 1587,
+    "downloads": 1229,
     "version": "13.4.0"
   },
   {
@@ -2946,13 +3046,13 @@
       "kurrentdb",
       "client"
     ],
-    "downloads": 11413,
+    "downloads": 11059,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.Logto.Client",
     "description": "An Aspire client integration for Logto that registers OpenID Connect (OIDC) or JWT authentication services in the dependency injection container.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.logto.client/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.logto.client/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.Logto.Client",
     "tags": [
       "aspire",
@@ -2965,8 +3065,8 @@
       "oidc",
       "jwt"
     ],
-    "downloads": 827,
-    "version": "13.4.1-beta.706"
+    "downloads": 570,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.MassTransit.RabbitMQ",
@@ -2982,7 +3082,7 @@
       "masstransit",
       "rabbitmq"
     ],
-    "downloads": 79561,
+    "downloads": 78058,
     "version": "13.4.0"
   },
   {
@@ -2998,7 +3098,7 @@
       "meilisearch",
       "client"
     ],
-    "downloads": 80641,
+    "downloads": 79689,
     "version": "13.4.0"
   },
   {
@@ -3016,7 +3116,7 @@
       "data",
       "ado.net"
     ],
-    "downloads": 54842,
+    "downloads": 54197,
     "version": "13.4.0"
   },
   {
@@ -3037,7 +3137,7 @@
       "ef",
       "orm"
     ],
-    "downloads": 64357,
+    "downloads": 63651,
     "version": "9.7.2"
   },
   {
@@ -3056,7 +3156,7 @@
       "storage",
       "deprecated"
     ],
-    "downloads": 76761,
+    "downloads": 74832,
     "version": "13.4.0"
   },
   {
@@ -3074,7 +3174,7 @@
       "ollamasharp",
       "client"
     ],
-    "downloads": 439972,
+    "downloads": 427684,
     "version": "13.4.0"
   },
   {
@@ -3090,13 +3190,13 @@
       "client",
       "ravendb"
     ],
-    "downloads": 69769,
+    "downloads": 69184,
     "version": "13.4.0"
   },
   {
     "title": "CommunityToolkit.Aspire.SeaweedFS.Client",
     "description": "An Aspire client integration for SeaweedFS using the AWSSDK.S3 client.",
-    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.seaweedfs.client/13.4.1-beta.706/icon",
+    "icon": "https://api.nuget.org/v3-flatcontainer/communitytoolkit.aspire.seaweedfs.client/13.4.1-beta.701/icon",
     "href": "https://www.nuget.org/packages/CommunityToolkit.Aspire.SeaweedFS.Client",
     "tags": [
       "aspire",
@@ -3109,8 +3209,8 @@
       "storage",
       "s3"
     ],
-    "downloads": 538,
-    "version": "13.4.1-beta.706"
+    "downloads": 290,
+    "version": "13.4.1-beta.701"
   },
   {
     "title": "CommunityToolkit.Aspire.Sftp",
@@ -3125,7 +3225,7 @@
       "sftp",
       "client"
     ],
-    "downloads": 3837,
+    "downloads": 3473,
     "version": "13.4.0"
   },
   {
@@ -3141,7 +3241,7 @@
       "surrealdb",
       "client"
     ],
-    "downloads": 20256,
+    "downloads": 19945,
     "version": "13.4.0"
   }
 ]
