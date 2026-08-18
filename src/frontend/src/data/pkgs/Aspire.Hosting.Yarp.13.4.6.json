@@ -1205,7 +1205,7 @@
             {
               "name": "Aspire.Hosting.AspireExportIgnoreAttribute",
               "arguments": {
-                "Reason": "A single internal export with an optional sourcePath parameter provides the polyglot API without changing the public C# overloads."
+                "Reason": "A single internal export with an optional sourcePath parameter provides the non-C# API without changing the public C# overloads."
               }
             }
           ],
@@ -1265,7 +1265,7 @@
             {
               "name": "Aspire.Hosting.AspireExportIgnoreAttribute",
               "arguments": {
-                "Reason": "A single internal export with an optional sourcePath parameter provides the polyglot API without changing the public C# overloads."
+                "Reason": "A single internal export with an optional sourcePath parameter provides the non-C# API without changing the public C# overloads."
               }
             }
           ],

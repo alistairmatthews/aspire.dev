@@ -8360,7 +8360,7 @@
             {
               "name": "Aspire.Hosting.AspireExportIgnoreAttribute",
               "arguments": {
-                "Reason": "Kubernetes manifest resource types are C#-only customization objects and are not part of the polyglot SDK surface."
+                "Reason": "Kubernetes manifest resource types are C#-only customization objects and are not part of the non-C# SDK surface."
               }
             }
           ],

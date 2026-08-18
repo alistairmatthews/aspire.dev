@@ -34107,7 +34107,7 @@
                 "children": [
                   {
                     "kind": "text",
-                    "text": "This C# overload is not exported to polyglot AppHosts. Use the language-specific static process command API instead."
+                    "text": "This C# overload is not exported to non-C# AppHosts. Use the language-specific static process command API instead."
                   }
                 ]
               }
@@ -34236,7 +34236,7 @@
             {
               "name": "Aspire.Hosting.AspireExportIgnoreAttribute",
               "arguments": {
-                "Reason": "Process command factories are C# callbacks and cannot be represented in polyglot AppHosts."
+                "Reason": "Process command factories are C# callbacks and cannot be represented in non-C# AppHosts."
               }
             }
           ],
@@ -34335,7 +34335,7 @@
                 "children": [
                   {
                     "kind": "text",
-                    "text": "This C# callback overload is not available in polyglot AppHosts."
+                    "text": "This C# callback overload is not available in non-C# AppHosts."
                   }
                 ]
               }
@@ -34457,7 +34457,7 @@
             {
               "name": "Aspire.Hosting.AspireExportIgnoreAttribute",
               "arguments": {
-                "Reason": "Process command factories are C# callbacks and cannot be represented in polyglot AppHosts."
+                "Reason": "Process command factories are C# callbacks and cannot be represented in non-C# AppHosts."
               }
             }
           ],
@@ -34556,7 +34556,7 @@
                 "children": [
                   {
                     "kind": "text",
-                    "text": "This C# callback overload is not available in polyglot AppHosts."
+                    "text": "This C# callback overload is not available in non-C# AppHosts."
                   }
                 ]
               }
