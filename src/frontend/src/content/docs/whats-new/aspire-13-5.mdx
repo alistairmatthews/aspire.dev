@@ -24,7 +24,7 @@ import dashboardResources from '@assets/dashboard/explore/projects.png';
 import dashboardStructuredLogsFiltered from '@assets/dashboard/explore/structured-logs-filtered.png';
 import dashboardTracesFiltering from '@assets/dashboard/explore/traces-filtering.png';
 
-Aspire 13.5 is here, and it's a **developer-experience** release through and through — sharper tooling, **C# and TypeScript feature parity**, and a batch of runtime-stability fixes. The headline is a richer, more interactive AppHost: resources can host **interactive terminal sessions** with `WithTerminal()`, the **Interaction Service** now works across both **C#** and **TypeScript** AppHosts — with **file uploads** and **progress dialogs** — and resource commands can **prompt for user-defined arguments** before they run. **TypeScript AppHosts are now generally available**, gaining **custom health checks** and **container file copying** to close the gap with C#. Projects can request **HTTPS developer certificates**, and deployment picks up **persistent volumes for Kubernetes and AKS**. The dashboard gets an officially branded visual refresh and sharper telemetry filtering, and the Visual Studio Code extension is rebranded to **Aspire** with dashboard, debugging, and discovery improvements.
+Aspire 13.5 is here, and it's a **developer-experience** release through and through — sharper tooling, **closer C# and TypeScript parity**, and a batch of runtime-stability fixes. The headline is a richer, more interactive AppHost: resources can host **interactive terminal sessions** with `WithTerminal()`, the **Interaction Service** now works across both **C#** and **TypeScript** AppHosts — with **file uploads** and **progress dialogs** — and resource commands can **prompt for user-defined arguments** before they run. **TypeScript AppHosts are now generally available**, gaining **custom health checks** and **container file copying** to close the gap with C#. Projects can request **HTTPS developer certificates**, and deployment picks up **persistent volumes for Kubernetes and AKS**. The dashboard gets an officially branded visual refresh and sharper telemetry filtering, and the Visual Studio Code extension is rebranded to **Aspire** with dashboard, debugging, and discovery improvements.
 
 We'd love to hear what you think. Drop by [<Icon name="discord" class='d-inline' /> Discord](https://aka.ms/aspire-discord) to chat with the team and the community, or file feedback and issues on [<Icon name="github" class='d-inline' /> GitHub](https://github.com/microsoft/aspire/issues).
 
@@ -116,7 +116,7 @@ mise use -g aspire
 </TabItem>
 <TabItem label='Nix'>
 
-```bash title="Run with Nix"
+```bash title="Install with Nix"
 nix profile add github:microsoft/aspire#aspire-cli
 ```
 
@@ -313,7 +313,7 @@ await builder.build().run();
 
 ### 📤 File uploads and progress dialogs
 
-The Interaction Service can now ask users to **upload a file**. Add an `InteractionInput` with `InputType.File`, and the dashboard renders a file picker constrained by an optional `FileFilter` and `MaxFileSize`. After submission, the uploaded content is available through `InteractionFile` (via `ReadAllBytesAsync()` or `OpenRead()`). The file-upload input is **stable**. Long-running commands can also show a **progress dialog** with `PromptProgressAsync`.
+The Interaction Service can now ask users to **upload a file**. Add an `InteractionInput` with `InputType.File`, and the dashboard renders a file picker constrained by an optional `FileFilter` and `MaxFileSize`. After submission, C# AppHosts read the uploaded content through `InteractionFile` (via `ReadAllBytesAsync()` or `OpenRead()`), while TypeScript AppHosts receive the upload as an on-disk path (`file.filePath`) to read with Node's `fs` APIs. The file-upload input is **stable**. Long-running commands can also show a **progress dialog** with `PromptProgressAsync`.
 
 <Aside type="caution">
   `PromptProgressAsync`, `ProgressInteractionOptions`, and `ProgressContext` are experimental. C# callers must suppress [`ASPIREINTERACTION001`](/diagnostics/aspireinteraction001/) to use the progress-dialog APIs. The file-upload input (`InputType.File`) is stable and needs no suppression.
@@ -661,7 +661,7 @@ await builder.build().run();
 
 Because a `DotnetProjectResource` is orchestration-only, `aspire publish` and `aspire deploy` fail with an actionable error rather than emitting a manifest with machine-local paths. When you need to publish a path-based project, reach for `AddCSharpApp(...)`/`addCSharpApp(...)` or configure container publishing with `PublishAsDockerFile(...)`.
 
-Go resources get a debugging boost too: they now default to **multi-client Delve** mode, and typed options for common Delve server flags (including `--continue`) are exposed through `GoDelveServerAnnotation` for C# AppHost configuration.
+Go resources get a debugging boost too: the Delve server accepts a single client by default and can opt into **multi-client** mode via `WithDelveServer(o => o.AcceptMultiClient = true)`, and typed options for common Delve server flags (including `--continue`) are configured through `DelveServerOptions` in C# AppHosts.
 
 <LearnMore>
   For modeling .NET projects, see [Set up .NET / C# apps in the AppHost](/integrations/frameworks/dotnet/dotnet-host/); for Go, see [Go hosting integration](/integrations/frameworks/go/go-host/).
@@ -946,7 +946,7 @@ Azure Container Apps and Azure App Service environments can now be placed into a
 The integrations ecosystem keeps growing. Aspire 13.5 opens a preview path to a new deployment platform, sharpens the AI hosting story, and folds in a batch of community-driven improvements. Here are the highlights:
 
 - **Radius (preview).** The new `Aspire.Hosting.Radius` integration adds `AddRadiusEnvironment(name)` (with `WithNamespace(...)`) so you can publish your app to a [Radius](https://radapp.io/) environment. Publish-time infrastructure configuration (`ConfigureRadiusInfrastructure`) and project container-image overrides are gated behind experimental diagnostics.
-- **Foundry Local.** `AddFoundry(name).RunAsFoundryLocal()` now drives the installed **foundry CLI** for lifecycle management (requires foundry CLI **1.1.0+**), and resources can be exposed as hosted agents with `AsHostedAgent(...)`, where `HostedAgentProtocol` is `Responses` or `Invocations`.
+- **Foundry Local.** `AddFoundry(name).RunAsFoundryLocal()` now drives the installed **foundry CLI** for lifecycle management, and resources can be exposed as hosted agents with `AsHostedAgent(...)`, where `HostedAgentProtocol` is `Responses` or `Invocations`.
 - **Redis modules.** `AddRedis(...).WithModule(path)` loads a Redis module into the container, with `RedisModules` constants (`Json`, `Search`, `BloomFilter`, `TimeSeries`) pointing at the modules shipped in Redis 8+ images — see the sample below.
 - **.NET projects by path.** The new `Aspire.Hosting.Dotnet` package provides the experimental `AddDotnetProject` API for modeling .NET projects by path, covered earlier in this release.
 - **Dev tunnels regions.** `DevTunnelOptions.Region` (a `DevTunnelRegion?` enum) lets you pin the region a tunnel is created in.
