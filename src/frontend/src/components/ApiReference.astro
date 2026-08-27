@@ -1,0 +1,162 @@
+---
+/**
+ * ApiReference — renders a single Aspire API name as inline, syntax-highlighted
+ * code that pivots between its C# and TypeScript forms with the page's C#/TS
+ * language selection (Starlight `syncKey="aspire-lang"`).
+ *
+ * Accepts the name in either language's casing (C# PascalCase or TypeScript
+ * camelCase); only the last dot-separated segment's casing pivots between
+ * languages; any declaring-type prefix (e.g. `StripeResource.`) and a
+ * trailing `()` are preserved as-is. Mirrors the API-label derivation in
+ * ContainerImages.astro.
+ */
+import { Code } from '@astrojs/starlight/components';
+
+interface Props {
+  /**
+   * Fully qualified Aspire API name, e.g. `AddPostgres`, `addPostgres`,
+   * `StripeResource.SetWebhookSigningSecret`, or `WithReference()`.
+   */
+  name: string;
+}
+
+const { name } = Astro.props;
+
+function apiNames(raw: string) {
+  const hasParens = raw.endsWith('()');
+  const base = hasParens ? raw.slice(0, -2) : raw;
+  const lastDot = base.lastIndexOf('.');
+  const prefix = lastDot >= 0 ? base.slice(0, lastDot + 1) : '';
+  const leaf = lastDot >= 0 ? base.slice(lastDot + 1) : base;
+  const suffix = hasParens ? '()' : '';
+
+  if (!leaf) return { csharp: raw, typescript: raw };
+
+  const pascalLeaf = leaf.charAt(0).toUpperCase() + leaf.slice(1);
+  const camelLeaf = leaf.charAt(0).toLowerCase() + leaf.slice(1);
+
+  return {
+    csharp: `${prefix}${pascalLeaf}${suffix}`,
+    typescript: `${prefix}${camelLeaf}${suffix}`,
+  };
+}
+
+const { csharp, typescript } = apiNames(name);
+---
+
+<span class="api-reference not-content">
+  <span class="ar-lang" data-lang="csharp">
+    <Code code={csharp} lang="csharp" frame="none" showLineNumbers={false} />
+  </span>
+  <span class="ar-lang" data-lang="typescript">
+    <Code code={typescript} lang="typescript" frame="none" showLineNumbers={false} />
+  </span>
+</span>
+
+{/* Reflect the page-wide C#/TS pivot (Starlight `syncKey="aspire-lang"`) onto
+    <html data-aspire-lang> so the name above can swap language with CSS.
+    Inlined + guarded so it runs once per page and before paint. Shares its
+    guard flag and storage key with ContainerImages.astro's identical script,
+    so pages that use both stay in sync through one listener registration. */}
+<script is:inline>
+  (function () {
+    if (window.__aspireLangPivot) return;
+    window.__aspireLangPivot = true;
+
+    var KEY = 'starlight-synced-tabs__aspire-lang';
+
+    function normalize(label) {
+      if (!label) return null;
+      var value = label.trim().toLowerCase();
+      if (value === 'typescript') return 'typescript';
+      if (value === 'c#' || value === 'csharp') return 'csharp';
+      return null;
+    }
+
+    function readStored() {
+      try {
+        return normalize(localStorage.getItem(KEY));
+      } catch (error) {
+        return null;
+      }
+    }
+
+    function apply(lang) {
+      document.documentElement.dataset.aspireLang = lang || 'csharp';
+    }
+
+    apply(readStored());
+
+    // Starlight persists the choice on tab click; defer a tick so we read the
+    // stored value it just wrote rather than the tab we clicked.
+    document.addEventListener('click', function (event) {
+      var target = event.target;
+      if (!target || !target.closest) return;
+      var tab = target.closest('starlight-tabs[data-sync-key="aspire-lang"] a[role="tab"]');
+      if (!tab) return;
+      var clicked = normalize(tab.textContent);
+      setTimeout(function () {
+        apply(readStored() || clicked);
+      }, 0);
+    });
+
+    // Keep in sync when the choice changes in another tab/window.
+    window.addEventListener('storage', function (event) {
+      if (event.key === KEY) apply(normalize(event.newValue));
+    });
+  })();
+</script>
+
+<style>
+  .api-reference {
+    display: inline-flex;
+    vertical-align: middle;
+  }
+
+  /* Language pivot: default to the C# name; swap to the TypeScript name only
+     when TS is selected. `data-aspire-lang` is set on <html> by the script
+     above (or by ContainerImages.astro's identical script, if present). */
+  .ar-lang {
+    display: none;
+  }
+
+  :global(html[data-aspire-lang='typescript']) .ar-lang[data-lang='typescript'] {
+    display: inline-flex;
+  }
+
+  :global(html:not([data-aspire-lang='typescript'])) .ar-lang[data-lang='csharp'] {
+    display: inline-flex;
+  }
+
+  /* Collapse the Expressive Code block chrome (frame, empty caption, copy
+     button) so the name reads as inline code matching prose, rather than a
+     fenced code block with its own affordances. */
+  .ar-lang :global(.expressive-code) {
+    display: inline-flex;
+    margin: 0;
+  }
+
+  .ar-lang :global(figure.frame) {
+    margin: 0;
+    box-shadow: none;
+  }
+
+  .ar-lang :global(.expressive-code .header),
+  .ar-lang :global(.expressive-code .copy) {
+    display: none;
+  }
+
+  .ar-lang :global(.expressive-code pre) {
+    margin: 0;
+    padding: 0.125rem 0.375rem;
+    border-radius: 0.25rem;
+    background-color: var(--aspire-inline-code-bg);
+    border: 1px solid var(--aspire-inline-code-border);
+  }
+
+  .ar-lang :global(.expressive-code code) {
+    display: inline;
+    color: var(--aspire-inline-code-text);
+    font-size: var(--sl-text-body);
+  }
+</style>

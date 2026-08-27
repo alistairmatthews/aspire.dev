@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 
 import heroImage from '@assets/aspire-hero.png';
 import AccessibleCodeButtons from '@components/AccessibleCodeButtons.astro';
+import ApiReference from '@components/ApiReference.astro';
 import AppHostBuilder from '@components/AppHostBuilder.astro';
 import AspireMap from '@components/AspireMap.astro';
 import AsciinemaPlayer from '@components/AsciinemaPlayer.astro';
@@ -193,6 +194,24 @@ const journeySteps = [
 ];
 
 const basicRenderCases: BasicRenderCase[] = [
+  {
+    name: 'ApiReference renders both C# and TypeScript casings and the language pivot script',
+    Component: ApiReference,
+    props: { name: 'AddPostgres()' },
+    includes: [
+      'data-lang="csharp"',
+      'AddPostgres()',
+      'data-lang="typescript"',
+      'addPostgres()',
+      'starlight-synced-tabs__aspire-lang',
+    ],
+  },
+  {
+    name: 'ApiReference preserves a declaring-type prefix and pivots only the leaf name',
+    Component: ApiReference,
+    props: { name: 'StripeResource.setWebhookSigningSecret' },
+    includes: ['StripeResource.SetWebhookSigningSecret', 'StripeResource.setWebhookSigningSecret'],
+  },
   {
     name: 'AsciinemaPlayer renders player options as data attributes',
     Component: AsciinemaPlayer,
