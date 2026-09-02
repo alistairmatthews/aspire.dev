@@ -73,7 +73,7 @@ Having issues getting started with Aspire? This page covers solutions to the mos
 
 **Symptoms**: Your frontend can't connect to the API, showing connection refused errors.
 
-**Solution**: Make sure you're using <ApiReference name="WaitFor()" /> in your AppHost:
+**Solution**: Make sure you're using <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WaitFor" /> in your AppHost:
 
 ```csharp title="AppHost.cs"
 builder.AddProject<Projects.WebFrontend>("frontend")
@@ -85,7 +85,7 @@ builder.AddProject<Projects.WebFrontend>("frontend")
 
 **Symptoms**: Your service can't find connection strings or configuration that should be injected.
 
-**Solution**: Verify you're using <ApiReference name="WithReference()" /> to connect resources.
+**Solution**: Verify you're using <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithReference" /> to connect resources.
 
 ### Example: Connecting a database to your service
 
@@ -161,7 +161,7 @@ var client = new HttpClient { BaseAddress = new Uri("http://apiservice") };
 Also verify:
 
 - Both services have `AddServiceDefaults()` called
-- The consuming service has <ApiReference name=".WithReference(api)" /> in the AppHost
+- The consuming service has `.WithReference(api)` in the AppHost
 
 <LearnMore>
   For a deeper understanding of how service discovery works in Aspire, see

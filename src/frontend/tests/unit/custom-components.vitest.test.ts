@@ -80,6 +80,7 @@ type BasicRenderCase = {
   props?: Record<string, unknown>;
   slots?: Record<string, string>;
   includes: string[];
+  excludes?: string[];
   requestUrl?: string;
 };
 
@@ -195,22 +196,30 @@ const journeySteps = [
 
 const basicRenderCases: BasicRenderCase[] = [
   {
-    name: 'ApiReference renders both C# and TypeScript casings and the language pivot script',
+    name: 'ApiReference resolves a canonical FQN to both C# and TypeScript casings, linked to their reference pages, plus the language pivot script',
     Component: ApiReference,
-    props: { name: 'AddPostgres()' },
+    props: { name: 'Aspire.Hosting.PostgresBuilderExtensions.AddPostgres' },
     includes: [
       'data-lang="csharp"',
       'AddPostgres()',
       'data-lang="typescript"',
       'addPostgres()',
+      '/reference/api/csharp/aspire.hosting.postgresql/postgresbuilderextensions/methods/#addpostgres',
+      '/reference/api/typescript/aspire.hosting.postgresql/addpostgres/',
       'starlight-synced-tabs__aspire-lang',
     ],
+    // Only plain phrasing content (`<a><code>`) is valid here — this renders
+    // from inside a `<p>`/`<li>` in real docs content, so any block-level
+    // markup (Starlight's `<Code>` / Expressive Code) would get reparented
+    // out of its containing paragraph or list item by the HTML parser.
+    excludes: ['<pre', '<figure', 'expressive-code'],
   },
   {
-    name: 'ApiReference preserves a declaring-type prefix and pivots only the leaf name',
+    name: 'ApiReference renders the TypeScript form as plain unlinked code when the API has no TypeScript export',
     Component: ApiReference,
-    props: { name: 'StripeResource.setWebhookSigningSecret' },
-    includes: ['StripeResource.SetWebhookSigningSecret', 'StripeResource.setWebhookSigningSecret'],
+    props: { name: 'Aspire.Hosting.ApplicationModel.IResourceBuilder.WithAnnotation' },
+    includes: ['data-lang="csharp"', 'WithAnnotation()', 'data-lang="typescript"'],
+    excludes: ['/reference/api/typescript/', '<pre', '<figure', 'expressive-code'],
   },
   {
     name: 'AsciinemaPlayer renders player options as data attributes',
@@ -889,6 +898,9 @@ describe('custom Astro component render coverage', () => {
 
       for (const fragment of testCase.includes) {
         expect(html).toContain(fragment);
+      }
+      for (const fragment of testCase.excludes ?? []) {
+        expect(html).not.toContain(fragment);
       }
     });
   }

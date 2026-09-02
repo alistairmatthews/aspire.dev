@@ -65,7 +65,7 @@ The fastest way to add Aspire to an existing app is to let `aspire init` scaffol
 
    - Scan your repo and discover existing projects, services, containers, and infrastructure
    - Ask you to confirm the resources it found, which ones you want included, and other clarifying questions before starting
-   - Wire resources into the AppHost with <ApiReference name="WithReference" />, <ApiReference name="WaitFor" />, endpoints, and volumes
+   - Wire resources into the AppHost with <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithReference" />, <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WaitFor" />, endpoints, and volumes
    - Add ServiceDefaults and configure OpenTelemetry for each service
    - Validate the setup by running `aspire start`
 
@@ -454,7 +454,7 @@ await builder.build().run();
 </TabItem>
 </Tabs>
 
-If a workload does not have a dedicated hosting API yet, model it as an executable resource with <ApiReference name="AddExecutable" /> so it can still participate in the same application model.
+If a workload does not have a dedicated hosting API yet, model it as an executable resource with <ApiReference name="Aspire.Hosting.ExecutableResourceBuilderExtensions.AddExecutable" /> so it can still participate in the same application model.
 
 <LearnMore>
 For first-class workload guidance, see [JavaScript integration](/integrations/frameworks/javascript/), [Python integration](/integrations/frameworks/python/), and [Multi-language architecture](/architecture/multi-language-architecture/).

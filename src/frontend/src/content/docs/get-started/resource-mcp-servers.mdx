@@ -13,14 +13,14 @@ Aspire resources can expose their own <abbr title="Model Context Protocol" data-
 
 ## How it works
 
-When a resource is annotated with <ApiReference name="WithMcpServer()" /> in the AppHost, Aspire discovers the MCP endpoint and makes its tools available in two ways:
+When a resource is annotated with <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> in the AppHost, Aspire discovers the MCP endpoint and makes its tools available in two ways:
 
 - **Through the Aspire MCP server** — resource tools are automatically proxied alongside the built-in [Aspire MCP server](/get-started/aspire-mcp-server/) tools. AI agents see them in their tool list without any extra configuration.
 - **Through the CLI** — use `aspire mcp tools` and `aspire mcp call` to discover and invoke resource tools directly from the terminal.
 
 ## Add an MCP server to a resource
 
-Use the <ApiReference name="WithMcpServer()" /> extension method to declare that a resource hosts an MCP server:
+Use the <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> extension method to declare that a resource hosts an MCP server:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -57,7 +57,7 @@ await builder.build().run();
 </Tabs>
 
 <Aside type="note">
-<ApiReference name="WithMcpServer()" /> and <ApiReference name="WithPostgresMcp()" /> are experimental APIs. Suppress the `ASPIREMCP001` or `ASPIREPOSTGRES001` diagnostic to use them.
+<ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> and <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithPostgresMcp" /> are experimental APIs. Suppress the `ASPIREMCP001` or `ASPIREPOSTGRES001` diagnostic to use them.
 </Aside>
 
 <ContainerImages package="Aspire.Hosting.PostgreSQL" only="Postgres MCP" />
@@ -92,7 +92,7 @@ aspire mcp call appdata query --input '{"sql": "SELECT * FROM users LIMIT 5"}'
 
 ## Custom MCP server resources
 
-You can add any container that implements the MCP protocol as an MCP-enabled resource. Use <ApiReference name="WithMcpServer()" /> to tell Aspire where the MCP endpoint lives:
+You can add any container that implements the MCP protocol as an MCP-enabled resource. Use <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> to tell Aspire where the MCP endpoint lives:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -126,10 +126,10 @@ await builder.build().run();
 </TabItem>
 </Tabs>
 
-The <ApiReference name="WithMcpServer()" /> method accepts an optional path and endpoint name:
+The <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> method accepts an optional path and endpoint name:
 
-- <ApiReference name="WithMcpServer()" /> — uses the default HTTP endpoint at the root path
-- <ApiReference name='WithMcpServer("/mcp")' /> — uses the default HTTP endpoint at `/mcp`
+- <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> — uses the default HTTP endpoint at the root path
+- `WithMcpServer("/mcp")` — uses the default HTTP endpoint at `/mcp`
 - `WithMcpServer("/sse", endpointName: "https")` — uses a named endpoint at `/sse`
 
 ## See also

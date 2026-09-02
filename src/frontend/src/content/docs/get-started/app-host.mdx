@@ -157,12 +157,12 @@ You can represent that architecture in an AppHost like this:
 </Pivot>
 <Pivot id="python">
 <SimpleAppHostCode lang="python">
-  <p>Uses <ApiReference name="AddUvicornApp()" /> with <ApiReference name="WithUv()" /> for ASGI apps like FastAPI.</p>
+  <p>Uses <ApiReference name="Aspire.Hosting.PythonAppResourceBuilderExtensions.AddUvicornApp" /> with <ApiReference name="Aspire.Hosting.PythonAppResourceBuilderExtensions.WithUv" /> for ASGI apps like FastAPI.</p>
 </SimpleAppHostCode>
 </Pivot>
 <Pivot id="nodejs">
 <SimpleAppHostCode lang="nodejs">
-  <p>Uses <ApiReference name="AddNodeApp()" /> with <ApiReference name="WithNpm()" /> for Node.js applications.</p>
+  <p>Uses <ApiReference name="Aspire.Hosting.JavaScriptHostingExtensions.AddNodeApp" /> with <ApiReference name="Aspire.Hosting.JavaScriptHostingExtensions.WithNpm" /> for Node.js applications.</p>
 </SimpleAppHostCode>
 </Pivot>
 <Pivot id="go">
@@ -359,7 +359,7 @@ With the builder ready, define resources and services. The snippet below shows h
 </Pivot>
 
 <Aside type="tip">
-  To also keep the container running between AppHost restarts (avoiding slow startup), add <ApiReference name="WithPersistentLifetime()" />. See [resource lifetimes](/app-host/resource-lifetimes/) for details.
+  To also keep the container running between AppHost restarts (avoiding slow startup), add <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithPersistentLifetime" />. See [resource lifetimes](/app-host/resource-lifetimes/) for details.
 </Aside>
 
 <LearnMore>
@@ -749,6 +749,6 @@ You can hook into lifecycle events to run custom logic during startup and resour
 ## Best practices
 
 - Keep the AppHost minimal to start; add complexity only as required.
-- Define explicit dependencies with <ApiReference name="WithReference()" /> to make wiring obvious.
+- Define explicit dependencies with <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithReference" /> to make wiring obvious.
 - Use separate configurations for development, testing, and production.
 - Pick clear, descriptive names for resources to make debugging and logging easier.
