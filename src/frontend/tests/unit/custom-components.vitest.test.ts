@@ -196,7 +196,7 @@ const journeySteps = [
 
 const basicRenderCases: BasicRenderCase[] = [
   {
-    name: 'ApiReference resolves a canonical FQN to both C# and TypeScript casings, linked to their reference pages, plus the language pivot script',
+    name: 'ApiReference resolves a canonical FQN to both C# and TypeScript casings, linked to their reference pages',
     Component: ApiReference,
     props: { name: 'Aspire.Hosting.PostgresBuilderExtensions.AddPostgres' },
     includes: [
@@ -206,13 +206,20 @@ const basicRenderCases: BasicRenderCase[] = [
       'addPostgres()',
       '/reference/api/csharp/aspire.hosting.postgresql/postgresbuilderextensions/methods/#addpostgres',
       '/reference/api/typescript/aspire.hosting.postgresql/addpostgres/',
-      'starlight-synced-tabs__aspire-lang',
     ],
     // Only plain phrasing content (`<a><code>`) is valid here — this renders
     // from inside a `<p>`/`<li>` in real docs content, so any block-level
     // markup (Starlight's `<Code>` / Expressive Code) would get reparented
     // out of its containing paragraph or list item by the HTML parser.
-    excludes: ['<pre', '<figure', 'expressive-code'],
+    //
+    // ApiReference must bind to the site's single canonical `data-apphost-lang`
+    // attribute (owned by src/components/starlight/Head.astro) rather than
+    // tracking its own copy of the C#/TS language state — a duplicate
+    // `data-aspire-lang` attribute + listener drifts out of sync with update
+    // paths Head.astro already handles (PivotSelector clicks, Starlight tab
+    // keyboard nav). So this must render no script of its own and reference
+    // only `data-apphost-lang`, never `data-aspire-lang`.
+    excludes: ['<pre', '<figure', 'expressive-code', '<script', 'data-aspire-lang'],
   },
   {
     name: 'ApiReference renders the TypeScript form as plain unlinked code when the API has no TypeScript export',

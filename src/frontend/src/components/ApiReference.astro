@@ -1,8 +1,13 @@
 ---
 /**
  * ApiReference — renders a single Aspire API as inline, linked code that
- * pivots between its C# and TypeScript forms with the page's C#/TS language
- * selection (Starlight `syncKey="aspire-lang"`).
+ * pivots between its C# and TypeScript forms with the site's canonical C#/TS
+ * language preference: the `data-apphost-lang` attribute that
+ * src/components/starlight/Head.astro sets on `<html>` before paint and keeps
+ * current (query string, localStorage, Starlight `<Tabs syncKey="aspire-lang">`
+ * pointer clicks and keyboard nav). This component binds to that attribute
+ * via CSS only — it must not track its own copy of the language state, which
+ * would drift out of sync with any update path Head.astro handles.
  *
  * Renders a plain `<code>` (optionally wrapped in `<a>`) rather than
  * Starlight's `<Code>` component: `<Code>` emits block-level Expressive Code
@@ -166,60 +171,6 @@ const typescript = (typescriptName ?? camelLeaf) + (isCallable ? '()' : '');
   )}
 </span>
 
-{/* Reflect the page-wide C#/TS pivot (Starlight `syncKey="aspire-lang"`) onto
-    <html data-aspire-lang> so the name above can swap language with CSS.
-    Inlined + guarded so it runs once per page and before paint. Shares its
-    guard flag and storage key with ContainerImages.astro's identical script,
-    so pages that use both stay in sync through one listener registration. */}
-<script is:inline>
-  (function () {
-    if (window.__aspireLangPivot) return;
-    window.__aspireLangPivot = true;
-
-    var KEY = 'starlight-synced-tabs__aspire-lang';
-
-    function normalize(label) {
-      if (!label) return null;
-      var value = label.trim().toLowerCase();
-      if (value === 'typescript') return 'typescript';
-      if (value === 'c#' || value === 'csharp') return 'csharp';
-      return null;
-    }
-
-    function readStored() {
-      try {
-        return normalize(localStorage.getItem(KEY));
-      } catch (error) {
-        return null;
-      }
-    }
-
-    function apply(lang) {
-      document.documentElement.dataset.aspireLang = lang || 'csharp';
-    }
-
-    apply(readStored());
-
-    // Starlight persists the choice on tab click; defer a tick so we read the
-    // stored value it just wrote rather than the tab we clicked.
-    document.addEventListener('click', function (event) {
-      var target = event.target;
-      if (!target || !target.closest) return;
-      var tab = target.closest('starlight-tabs[data-sync-key="aspire-lang"] a[role="tab"]');
-      if (!tab) return;
-      var clicked = normalize(tab.textContent);
-      setTimeout(function () {
-        apply(readStored() || clicked);
-      }, 0);
-    });
-
-    // Keep in sync when the choice changes in another tab/window.
-    window.addEventListener('storage', function (event) {
-      if (event.key === KEY) apply(normalize(event.newValue));
-    });
-  })();
-</script>
-
 <style>
   .api-reference {
     display: inline-flex;
@@ -227,17 +178,20 @@ const typescript = (typescriptName ?? camelLeaf) + (isCallable ? '()' : '');
   }
 
   /* Language pivot: default to the C# name; swap to the TypeScript name only
-     when TS is selected. `data-aspire-lang` is set on <html> by the script
-     above (or by ContainerImages.astro's identical script, if present). */
+     when TS is selected. `data-apphost-lang` is the site's single canonical
+     C#/TS preference attribute, set on <html> by src/components/starlight/Head.astro
+     before paint and kept current there (query string, localStorage, Starlight
+     `<Tabs syncKey="aspire-lang">` pointer clicks and keyboard navigation). This
+     component only reads it — it must not maintain its own copy of that state. */
   .ar-lang {
     display: none;
   }
 
-  :global(html[data-aspire-lang='typescript']) .ar-lang[data-lang='typescript'] {
+  :global(html[data-apphost-lang='typescript']) .ar-lang[data-lang='typescript'] {
     display: inline-flex;
   }
 
-  :global(html:not([data-aspire-lang='typescript'])) .ar-lang[data-lang='csharp'] {
+  :global(html:not([data-apphost-lang='typescript'])) .ar-lang[data-lang='csharp'] {
     display: inline-flex;
   }
 
