@@ -170,6 +170,9 @@ importers:
       '@iconify-json/material-icon-theme':
         specifier: ^1.2.69
         version: 1.2.69
+      '@mdx-js/mdx':
+        specifier: 3.1.1
+        version: 3.1.1
       '@playwright/test':
         specifier: ^1.61.1
         version: 1.61.1
