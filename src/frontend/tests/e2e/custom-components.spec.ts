@@ -502,6 +502,10 @@ test('ApiReference renders as valid phrasing content and is never reparented out
       (element) => element.closest('p, li')?.tagName.toLowerCase() ?? null
     );
     expect(containingParent).toMatch(/^(p|li)$/);
+
+    // A correctly rendered ApiReference is just `<a><code>`, so a copy
+    // affordance anywhere inside one means a code frame crept back in.
+    await expect(reference.locator('.copy, .copy button, button.copy')).toHaveCount(0);
   }
 
   // No ApiReference instance should ever emit block-level code markup —
@@ -510,4 +514,29 @@ test('ApiReference renders as valid phrasing content and is never reparented out
   await expect(
     page.locator('.api-reference pre, .api-reference figure, .api-reference .expressive-code')
   ).toHaveCount(0);
+
+  // A hoisted frame lands as a *sibling* of the paragraph, out of reach of the
+  // `.api-reference`-scoped selectors above, so also check the whole page for a
+  // copy button belonging to one of these references. Expressive Code
+  // SSR-attaches the copied text to the button as `data-code` (see
+  // integrations-gallery.spec.ts), and matching it exactly keeps the page's real
+  // code samples - whose `data-code` is a full statement that may well mention
+  // the same API - from tripping this. Labels are read with `evaluateAll` rather
+  // than `allInnerTexts` so the chips hidden by the language pivot still count.
+  const referenceLabels = await page
+    .locator('.api-reference .ar-lang code')
+    .evaluateAll((elements) =>
+      elements.flatMap((element) => {
+        const label = element.textContent?.trim() ?? '';
+        return label ? [label, label.replace(/\(\)$/, '')] : [];
+      })
+    );
+  expect(referenceLabels.length).toBeGreaterThan(0);
+
+  for (const label of new Set(referenceLabels)) {
+    const selector = JSON.stringify(label);
+    await expect(
+      page.locator(`.copy button[data-code=${selector}], button.copy[data-code=${selector}]`)
+    ).toHaveCount(0);
+  }
 });
