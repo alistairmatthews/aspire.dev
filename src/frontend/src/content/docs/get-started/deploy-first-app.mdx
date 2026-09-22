@@ -242,9 +242,9 @@ In the root directory of your Aspire app that you created in the previous quicks
 
 ## Update your AppHost
 
-<Pivot id="csharp">
+In the AppHost, use <ApiReference name="Aspire.Hosting.DockerComposeEnvironmentExtensions.AddDockerComposeEnvironment" /> for Docker Compose or <ApiReference name="Aspire.Hosting.AzureContainerAppExtensions.AddAzureContainerAppEnvironment" /> for Azure Container Apps to configure the deployment environment. Use <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithExternalHttpEndpoints" /> to expose a resource's HTTP endpoints when deployed.
 
-In the AppHost, chain a call to the appropriate environment API method to configure the deployment environment for your target.
+<Pivot id="csharp">
 
 <Tabs syncKey="deploy-target">
   <TabItem id="docker-compose" label="Docker Compose">
@@ -303,8 +303,6 @@ After installing a new deployment package, you can run `aspire deploy --list-ste
 
 </Pivot>
 <Pivot id="typescript">
-
-In the AppHost, chain a call to the appropriate environment API method to configure the deployment environment for your target.
 
 <Tabs syncKey="deploy-target">
   <TabItem id="docker-compose" label="Docker Compose">

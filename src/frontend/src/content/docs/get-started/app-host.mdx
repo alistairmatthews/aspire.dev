@@ -368,7 +368,7 @@ With the builder ready, define resources and services. The snippet below shows h
 
 #### Adding an API resource and declaring a dependency
 
-Next, register the API service and wire it to the PostgreSQL resource:
+Next, register the API service and wire it to the PostgreSQL resource with <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithReference" />:
 
 <Pivot id="csharp">
 <SimpleAppHostCode lang="csharp" mark={{ range: '9-11' }} collapse={['1-6', '13-17']}>
@@ -749,6 +749,6 @@ You can hook into lifecycle events to run custom logic during startup and resour
 ## Best practices
 
 - Keep the AppHost minimal to start; add complexity only as required.
-- Define explicit dependencies with <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithReference" /> to make wiring obvious.
+- Define explicit resource references to make dependency wiring obvious.
 - Use separate configurations for development, testing, and production.
 - Pick clear, descriptive names for resources to make debugging and logging easier.

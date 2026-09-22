@@ -1,9 +1,11 @@
-import { memberNameSlug } from './api-member-anchors';
+import { memberNameSlug, resolveMemberAnchorMap } from './api-member-anchors';
+import { sampleDescriptionText } from './samples';
 import {
   getTsItemSlug,
   getTsMemberAnchor,
   getTsMethodSlug,
   getTsTopLevelRouteItems,
+  type TsRouteParameterLike,
 } from './ts-api-routes';
 
 export interface ApiReferenceAttribute {
@@ -28,6 +30,14 @@ export interface ApiReferenceMember {
   attributes?: ApiReferenceAttribute[];
   isStatic?: boolean;
   isExtension?: boolean;
+  docs?: { summary?: string | ApiReferenceDocNode[] };
+}
+
+interface ApiReferenceDocNode {
+  kind: string;
+  text?: string;
+  value?: string;
+  children?: ApiReferenceDocNode[];
 }
 
 export interface ApiReferenceType {
@@ -48,13 +58,14 @@ export interface ApiReferencePackageDocument {
 
 export interface ApiReferenceTsCallable {
   name: string;
+  description?: string;
   kind?: string;
   capabilityId?: string;
   qualifiedName?: string;
   signature?: string;
   targetTypeId?: string;
   expandedTargetTypes?: string[];
-  parameters?: { name?: string; type?: string }[];
+  parameters?: (TsRouteParameterLike & { isOptional?: boolean })[];
 }
 
 export interface ApiReferenceTsHandle {
@@ -76,12 +87,16 @@ export interface ApiReferenceTsDocument {
 export interface ApiReferenceTarget {
   label: string;
   path?: string;
+  description?: string;
 }
 
 export type ApiReferenceDiagnosticCode =
   | 'invalid-fqn'
   | 'missing-csharp'
   | 'ambiguous-csharp'
+  | 'invalid-overload'
+  | 'missing-overload'
+  | 'ambiguous-overload'
   | 'missing-typescript'
   | 'unresolved-typescript-export'
   | 'ambiguous-typescript';
@@ -103,7 +118,11 @@ export interface ApiReferenceResolution {
 
 export interface ApiReferenceIndex {
   readonly size: number;
-  resolve(name: string, packageName?: string): ApiReferenceResolution;
+  resolve(
+    name: string,
+    packageName?: string,
+    parameterTypes?: readonly string[]
+  ): ApiReferenceResolution;
 }
 
 interface CSharpCandidate {
@@ -124,6 +143,8 @@ interface TsRouteCandidate {
   parentTypeFullName?: string;
   path: string;
   priority: number;
+  parameters?: ApiReferenceTsCallable['parameters'];
+  description?: string;
 }
 
 interface TsRouteIndex {
@@ -227,10 +248,6 @@ function lowerCamelCase(value: string): string {
 
 function isCallable(kind: string | undefined): boolean {
   return kind ? CALLABLE_KINDS.has(kind) : false;
-}
-
-function callableLabel(name: string, kind: string | undefined): string {
-  return name + (isCallable(kind) ? '()' : '');
 }
 
 function readNamedString(attribute: ApiReferenceAttribute, name: string): string | undefined {
@@ -360,6 +377,8 @@ function buildTsRouteIndex(modules: readonly ApiReferenceTsDocument[]): TsRouteI
         expandedTargetTypes: fn.expandedTargetTypes ?? [],
         path: `${modulePath}/${getTsItemSlug(fn, topLevelItems)}/`,
         priority: 0,
+        parameters: fn.parameters,
+        description: fn.description,
       });
     }
 
@@ -393,6 +412,8 @@ function buildTsRouteIndex(modules: readonly ApiReferenceTsDocument[]): TsRouteI
           parentTypeFullName: handle.fullName,
           path,
           priority,
+          parameters: capability.parameters,
+          description: capability.description,
         });
       }
     }
@@ -527,23 +548,56 @@ function findTsCandidates(
   return { matches: [], suggestions: named };
 }
 
-function createCSharpTarget(candidate: CSharpCandidate): ApiReferenceTarget {
+function summaryText(summary: string | ApiReferenceDocNode[] | undefined): string | undefined {
+  if (typeof summary === 'string') {
+    return sampleDescriptionText(summary)?.replace(/\s+/g, ' ') || undefined;
+  }
+  let text = '';
+  for (const node of summary ?? []) {
+    const value = node.children
+      ? (summaryText(node.children) ?? '')
+      : (node.text ?? node.value ?? '');
+    const label =
+      node.kind === 'cref'
+        ? value
+            .replace(/^[A-Z]:/, '')
+            .replace(/\(.*$/, '')
+            .replace(/``?\d+/g, '')
+        : value;
+    if (text && label && !/\s$/.test(text) && !/^[\s,.:;!?)}\]]/.test(label)) text += ' ';
+    text += label;
+  }
+  return text.replace(/\s+/g, ' ').trim() || undefined;
+}
+
+function createCSharpTarget(candidate: CSharpCandidate, exactOverload = false): ApiReferenceTarget {
   const member = candidate.members[0];
   const kind = member.kind ?? 'method';
+  const anchor = exactOverload
+    ? resolveMemberAnchorMap(candidate.type.members ?? []).get(member)!.exact
+    : memberNameSlug(member);
+  const parameters = (member.parameters ?? [])
+    .filter((parameter) => !member.isExtension || parameter.modifier !== 'this')
+    .map(
+      (parameter) =>
+        `${parameter.modifier ? `${parameter.modifier} ` : ''}${parameter.type.replace(/\b(?:[A-Za-z_]\w*\.)+/g, '')}${parameter.name ? ` ${parameter.name}` : ''}`
+    );
   return {
-    label: callableLabel(member.name, kind),
+    label: exactOverload ? `${member.name}(${parameters.join(', ')})` : member.name,
+    description: summaryText(member.docs?.summary),
     path: `${csharpTypePath(
       candidate.packageName,
       candidate.type.name,
       genericArity(candidate.type)
-    )}${MEMBER_KIND_SLUGS[kind] ?? `${kind}s`}/#${memberNameSlug(member)}`,
+    )}${MEMBER_KIND_SLUGS[kind] ?? `${kind}s`}/#${anchor}`,
   };
 }
 
 function resolveTypescriptTarget(
   candidate: CSharpCandidate,
   csharp: ApiReferenceTarget,
-  tsIndex: TsRouteIndex
+  tsIndex: TsRouteIndex,
+  exactOverload = false
 ): { target: ApiReferenceTarget; diagnostics: ApiReferenceDiagnostic[] } {
   const mappings = getExportMappings(candidate);
   if (mappings.length === 0) {
@@ -628,7 +682,19 @@ function resolveTypescriptTarget(
   const match = preferred[0];
   return {
     target: {
-      label: callableLabel(match.name, match.kind),
+      description:
+        sampleDescriptionText(match.description ?? null)?.replace(/\s+/g, ' ') || undefined,
+      label:
+        exactOverload && isCallable(match.kind)
+          ? `${match.name}(${(match.parameters ?? [])
+              .map((parameter) => {
+                const type = parameter.callbackSignature ?? parameter.type;
+                return parameter.name
+                  ? `${parameter.name}${parameter.isOptional ? '?' : ''}${type ? `: ${type}` : ''}`
+                  : type;
+              })
+              .join(', ')})`
+          : match.name,
       path: match.path,
     },
     diagnostics: [],
@@ -792,10 +858,69 @@ export function buildApiReferenceIndex(
   }
 
   const missingResolutions = new Map<string, ApiReferenceResolution>();
+  const overloadResolutions = new Map<string, ApiReferenceResolution>();
 
   return {
     size: packageResolutions.size,
-    resolve(name: string, packageName?: string): ApiReferenceResolution {
+    resolve(
+      name: string,
+      packageName?: string,
+      parameterTypes?: readonly string[]
+    ): ApiReferenceResolution {
+      if (parameterTypes !== undefined) {
+        const cacheKey = JSON.stringify([name, packageName, parameterTypes]);
+        const cached = overloadResolutions.get(cacheKey);
+        if (cached) return cached;
+
+        const groups = [...(candidates.get(name)?.values() ?? [])].filter(
+          (candidate) => !packageName || candidate.packageName === packageName
+        );
+        const matches = groups.flatMap((candidate) =>
+          candidate.members
+            .filter(
+              (member) =>
+                isCallable(member.kind) &&
+                (member.parameters ?? []).length === parameterTypes.length &&
+                (member.parameters ?? []).every(
+                  (parameter, index) => parameter.type === parameterTypes[index]
+                )
+            )
+            .map((member) => ({ ...candidate, members: [member] }))
+        );
+        let resolution: ApiReferenceResolution;
+        if (matches.length === 1) {
+          const candidate = matches[0];
+          const csharp = createCSharpTarget(candidate, true);
+          const typescript = resolveTypescriptTarget(candidate, csharp, tsIndex, true);
+          resolution = {
+            name,
+            status: 'resolved',
+            csharp,
+            typescript: typescript.target,
+            diagnostics: typescript.diagnostics,
+          };
+        } else {
+          const fallback = fallbackTarget(name);
+          resolution = {
+            name,
+            status: matches.length > 1 ? 'ambiguous' : 'missing',
+            csharp: fallback,
+            typescript: fallback,
+            diagnostics: [
+              {
+                code: matches.length > 1 ? 'ambiguous-overload' : 'missing-overload',
+                severity: 'error',
+                message: `ApiReference: "${name}" with parameter types ${JSON.stringify(parameterTypes)} ${matches.length > 1 ? 'matches multiple overloads' : 'does not match a generated overload'}. Use the complete declared C# parameter types, including the extension receiver, and qualify the package if needed.`,
+                candidates: (matches.length > 1 ? matches : groups)
+                  .map(describeCSharpCandidate)
+                  .sort(),
+              },
+            ],
+          };
+        }
+        overloadResolutions.set(cacheKey, resolution);
+        return resolution;
+      }
       const resolved = packageName
         ? packageResolutions.get(`${packageName}\0${name}`)
         : resolutions.get(name);

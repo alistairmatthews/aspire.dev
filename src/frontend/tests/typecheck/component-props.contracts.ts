@@ -179,6 +179,15 @@ const validApiReferenceProps = {
 const validUnqualifiedApiReferenceProps = {
   name: 'Aspire.Hosting.PostgresBuilderExtensions.AddPostgres',
 } satisfies PropsOf<typeof ApiReference>;
+const validOverloadApiReferenceProps = {
+  name: 'Aspire.Hosting.ResourceBuilderExtensions.WithEnvironment',
+  parameterTypes: ['Aspire.Hosting.ApplicationModel.IResourceBuilder<T>', 'string', 'string?'],
+} satisfies PropsOf<typeof ApiReference>;
+// @ts-expect-error ApiReference parameterTypes must be an array of strings.
+const invalidOverloadApiReferenceProps: PropsOf<typeof ApiReference> = {
+  name: 'Aspire.Hosting.ResourceBuilderExtensions.WithEnvironment',
+  parameterTypes: [42],
+};
 // @ts-expect-error ApiReference package must be a string.
 const invalidApiReferenceProps: PropsOf<typeof ApiReference> = {
   name: 'Aspire.Hosting.JavaScriptHostingExtensions.WithNpm',
@@ -753,6 +762,8 @@ const invalidYouTubeGridProps: PropsOf<typeof YouTubeGrid> = {
 void [
   validApiReferenceProps,
   validUnqualifiedApiReferenceProps,
+  validOverloadApiReferenceProps,
+  invalidOverloadApiReferenceProps,
   invalidApiReferenceProps,
   validAsciinemaPlayerProps,
   invalidAsciinemaPlayerProps,

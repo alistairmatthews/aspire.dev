@@ -36,13 +36,13 @@ interface ApiReferenceSyntax {
 
 interface SourceAttribute {
   name?: string;
-  value?: string;
+  value?: string | string[];
   spread: boolean;
 }
 
 interface ResolvedAttribute {
   present: boolean;
-  value?: string;
+  value?: string | string[];
 }
 
 const mdxProcessor = createProcessor({ format: 'mdx' });
@@ -59,13 +59,19 @@ function isSyntaxNode(value: unknown): value is SyntaxNode {
   return isRecord(value) && typeof value.type === 'string';
 }
 
-function readStaticStringExpression(value: unknown): string | undefined {
+function readStaticExpression(value: unknown): string | string[] | undefined {
   if (!isRecord(value)) return undefined;
   if (value.type === 'Literal' && typeof value.value === 'string') {
     return value.value;
   }
   if (value.type === 'ParenthesizedExpression') {
-    return readStaticStringExpression(value.expression);
+    return readStaticExpression(value.expression);
+  }
+  if (value.type === 'ArrayExpression' && isUnknownArray(value.elements)) {
+    const elements = value.elements.map(readStaticExpression);
+    return elements.every((element): element is string => typeof element === 'string')
+      ? elements
+      : undefined;
   }
   if (
     value.type === 'TemplateLiteral' &&
@@ -82,14 +88,14 @@ function readStaticStringExpression(value: unknown): string | undefined {
   return undefined;
 }
 
-function readStaticStringProgram(value: unknown): string | undefined {
+function readStaticProgram(value: unknown): string | string[] | undefined {
   if (!isRecord(value) || value.type !== 'Program' || !isUnknownArray(value.body)) {
     return undefined;
   }
   if (value.body.length !== 1 || !isRecord(value.body[0])) return undefined;
   const statement = value.body[0];
   return statement.type === 'ExpressionStatement'
-    ? readStaticStringExpression(statement.expression)
+    ? readStaticExpression(statement.expression)
     : undefined;
 }
 
@@ -110,7 +116,7 @@ function readMdxAttribute(value: unknown): SourceAttribute | undefined {
   const data = expressionValue && isRecord(expressionValue.data) ? expressionValue.data : undefined;
   return {
     name: value.name,
-    value: readStaticStringProgram(data?.estree),
+    value: readStaticProgram(data?.estree),
     spread: false,
   };
 }
@@ -141,7 +147,7 @@ function readJsxAttribute(value: unknown): SourceAttribute | undefined {
       : undefined;
   return {
     name,
-    value: readStaticStringExpression(expression),
+    value: readStaticExpression(expression),
     spread: false,
   };
 }
@@ -231,7 +237,7 @@ export function validateApiReferenceSource(
     const packageAttribute = resolveAttribute(node.attributes, 'package');
     const packageName = packageAttribute.value;
 
-    if (!name) {
+    if (typeof name !== 'string' || !name) {
       diagnostics.push({
         filePath: file.path,
         line: node.line,
@@ -244,7 +250,7 @@ export function validateApiReferenceSource(
       continue;
     }
 
-    if (packageAttribute.present && !packageName) {
+    if (packageAttribute.present && (typeof packageName !== 'string' || !packageName)) {
       diagnostics.push({
         filePath: file.path,
         line: node.line,
@@ -257,14 +263,38 @@ export function validateApiReferenceSource(
       continue;
     }
 
-    const resolution = index.resolve(name, packageName);
+    const parameterTypesAttribute = resolveAttribute(node.attributes, 'parameterTypes');
+    const parameterTypes = parameterTypesAttribute.value;
+    if (
+      parameterTypesAttribute.present &&
+      (!Array.isArray(parameterTypes) || parameterTypes.some((type) => !type.trim()))
+    ) {
+      diagnostics.push({
+        filePath: file.path,
+        line: node.line,
+        name,
+        code: 'invalid-overload',
+        severity: 'error',
+        message:
+          'ApiReference: parameterTypes must be a static array of nonempty C# parameter type strings.',
+        candidates: [],
+      });
+      continue;
+    }
+
+    const resolvedPackage = typeof packageName === 'string' ? packageName : undefined;
+    const resolution = index.resolve(
+      name,
+      resolvedPackage,
+      Array.isArray(parameterTypes) ? parameterTypes : undefined
+    );
     diagnostics.push(
       ...resolution.diagnostics.map((diagnostic) => ({
         ...diagnostic,
         filePath: file.path,
         line: node.line,
         name,
-        packageName,
+        packageName: resolvedPackage,
       }))
     );
   }

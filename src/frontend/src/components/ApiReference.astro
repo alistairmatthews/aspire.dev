@@ -12,10 +12,15 @@ interface Props {
    * Example: `Aspire.Hosting.JavaScript`.
    */
   package?: string;
+  /**
+   * Complete declared C# parameter types, in order, including an extension
+   * method's receiver. Omit for a method-group link; [] selects zero parameters.
+   */
+  parameterTypes?: string[];
 }
 
-const { name, package: packageName } = Astro.props;
-const resolution = await resolveApiReference(name, packageName, Astro.locals);
+const { name, package: packageName, parameterTypes } = Astro.props;
+const resolution = await resolveApiReference(name, packageName, Astro.locals, parameterTypes);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
 const csharpHref = resolution.csharp.path ? `${base}${resolution.csharp.path}` : undefined;
 const typescriptHref = resolution.typescript.path
@@ -29,22 +34,59 @@ const typescriptDiagnostic = resolution.diagnostics.length > 0 ? diagnosticText 
 <span class="api-reference not-content" data-status={resolution.status}>
   {
     csharpHref ? (
-      <a class="ar-lang" data-lang="csharp" href={csharpHref}>
-        <code>{resolution.csharp.label}</code>
+      <a
+        class="ar-lang"
+        data-lang="csharp"
+        href={csharpHref}
+        aria-label={`${resolution.csharp.label} — C# API reference`}
+        title={resolution.csharp.description ?? `${resolution.csharp.label} — C# API reference`}
+        data-tooltip-placement="top"
+        data-tippy-allowhtml="false"
+      >
+        <code>
+          <span class="ar-icon i-material-icon-theme:csharp" aria-hidden="true" />
+          <span>{resolution.csharp.label}</span>
+        </code>
       </a>
     ) : (
-      <span class="ar-lang" data-lang="csharp" title={csharpDiagnostic}>
+      <span
+        class="ar-lang"
+        data-lang="csharp"
+        title={csharpDiagnostic}
+        data-tooltip-placement="top"
+        data-tippy-allowhtml="false"
+      >
         <code>{resolution.csharp.label}</code>
       </span>
     )
   }
   {
     typescriptHref ? (
-      <a class="ar-lang" data-lang="typescript" href={typescriptHref}>
-        <code>{resolution.typescript.label}</code>
+      <a
+        class="ar-lang"
+        data-lang="typescript"
+        href={typescriptHref}
+        aria-label={`${resolution.typescript.label} — TypeScript API reference`}
+        title={
+          resolution.typescript.description ??
+          `${resolution.typescript.label} — TypeScript API reference`
+        }
+        data-tooltip-placement="top"
+        data-tippy-allowhtml="false"
+      >
+        <code>
+          <span class="ar-icon i-material-icon-theme:typescript" aria-hidden="true" />
+          <span>{resolution.typescript.label}</span>
+        </code>
       </a>
     ) : (
-      <span class="ar-lang" data-lang="typescript" title={typescriptDiagnostic}>
+      <span
+        class="ar-lang"
+        data-lang="typescript"
+        title={typescriptDiagnostic}
+        data-tooltip-placement="top"
+        data-tippy-allowhtml="false"
+      >
         <code>{resolution.typescript.label}</code>
       </span>
     )
@@ -53,8 +95,7 @@ const typescriptDiagnostic = resolution.diagnostics.length > 0 ? diagnosticText 
 
 <style>
   .api-reference {
-    display: inline-flex;
-    vertical-align: middle;
+    display: inline;
   }
 
   .ar-lang {
@@ -62,30 +103,50 @@ const typescriptDiagnostic = resolution.diagnostics.length > 0 ? diagnosticText 
   }
 
   :global(html[data-apphost-lang='typescript']) .ar-lang[data-lang='typescript'] {
-    display: inline-flex;
+    display: inline;
   }
 
   :global(html:not([data-apphost-lang='typescript'])) .ar-lang[data-lang='csharp'] {
-    display: inline-flex;
+    display: inline;
   }
 
   a.ar-lang {
+    color: var(--sl-color-text-accent);
     text-decoration: none;
-    color: inherit;
+  }
+
+  .ar-icon {
+    display: block;
+    flex: 0 0 1em;
+    width: 1em;
+    height: 1em;
   }
 
   .ar-lang code {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.3em;
+    max-width: 100%;
+    box-sizing: border-box;
+    vertical-align: middle;
     font-family: var(--sl-font-mono, ui-monospace, SFMono-Regular, monospace);
     font-size: var(--sl-text-body);
     font-weight: 400;
-    color: var(--aspire-inline-code-text);
+    line-height: 1.5;
+    white-space: normal;
+    color: inherit;
     background-color: var(--aspire-inline-code-bg);
-    border: 1px solid var(--aspire-inline-code-border);
-    padding: 0.125rem 0.375rem;
+    border: 0;
+    padding: 0.08em 0.3em;
     border-radius: 0.25rem;
+    overflow-wrap: anywhere;
   }
 
-  a.ar-lang:hover code {
-    border-color: var(--sl-color-text-accent);
+  .ar-lang code > span {
+    min-width: 0;
+  }
+
+  a.ar-lang:is(:hover, :focus-visible) code {
+    background-color: color-mix(in srgb, var(--aspire-inline-code-bg), currentColor 15%);
   }
 </style>

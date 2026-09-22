@@ -25,6 +25,7 @@ import {
   validateApiReferenceSource,
 } from '@utils/api-reference-validator';
 import { normalizeHtml, renderComponent } from './astro-test-utils';
+import { resolveMemberAnchors } from '@utils/api-member-anchors';
 
 const EXPORT_ATTRIBUTE = 'Aspire.Hosting.AspireExportAttribute';
 const EXPORT_IGNORE_ATTRIBUTE = 'Aspire.Hosting.AspireExportIgnoreAttribute';
@@ -87,11 +88,11 @@ describe('API reference index', () => {
     expect(first).toMatchObject({
       status: 'resolved',
       csharp: {
-        label: 'AddWidget()',
+        label: 'AddWidget',
         path: '/reference/api/csharp/aspire.hosting.widget/widgetbuilderextensions/methods/#addwidget',
       },
       typescript: {
-        label: 'addWidget()',
+        label: 'addWidget',
         path: '/reference/api/typescript/aspire.hosting.widget/addwidget/',
       },
       diagnostics: [],
@@ -138,7 +139,7 @@ describe('API reference index', () => {
     expect(
       index.resolve('Aspire.Hosting.ResourceBuilderExtensions.WaitForCompletion').typescript
     ).toEqual({
-      label: 'waitForCompletion()',
+      label: 'waitForCompletion',
       path: '/reference/api/typescript/aspire.hosting/waitforcompletion/',
     });
   });
@@ -163,10 +164,10 @@ describe('API reference index', () => {
     );
 
     expect(resolution.csharp).toEqual({
-      label: 'WithAnnotation()',
+      label: 'WithAnnotation',
       path: '/reference/api/csharp/aspire.hosting/iresourcebuilder-1/methods/#withannotation',
     });
-    expect(resolution.typescript).toEqual({ label: 'WithAnnotation()' });
+    expect(resolution.typescript).toEqual({ label: 'WithAnnotation' });
     expect(resolution.diagnostics).toMatchObject([
       { code: 'missing-typescript', severity: 'warning' },
     ]);
@@ -276,7 +277,7 @@ describe('API reference index', () => {
     expect(
       index.resolve('Aspire.Hosting.YarpResourceExtensions.WithStaticFiles').typescript
     ).toEqual({
-      label: 'withStaticFiles()',
+      label: 'withStaticFiles',
       path: '/reference/api/typescript/aspire.hosting.yarp/withstaticfiles/',
     });
   });
@@ -407,7 +408,7 @@ describe('API reference index', () => {
     expect(
       index.resolve('Aspire.Hosting.AzureBicepResourceExtensions.WithEnvironment').typescript
     ).toEqual({
-      label: 'withEnvironment()',
+      label: 'withEnvironment',
       path: '/reference/api/typescript/aspire.hosting/withenvironment/',
     });
   });
@@ -513,7 +514,7 @@ describe('API reference index', () => {
     expect(
       index.resolve('Aspire.Hosting.ResourceBuilderExtensions.WithReference').typescript
     ).toEqual({
-      label: 'withReference()',
+      label: 'withReference',
       path: '/reference/api/typescript/aspire.hosting/withreference/',
     });
   });
@@ -625,6 +626,190 @@ describe('API reference index', () => {
   });
 });
 
+describe('API reference overloads', () => {
+  const name = 'Aspire.Hosting.WidgetBuilderExtensions.AddWidget';
+  const receiver = {
+    name: 'builder',
+    type: 'Aspire.Hosting.IDistributedApplicationBuilder',
+    modifier: 'this',
+  };
+  const members = ['One.Options', 'Two.Options'].map((type, index) => ({
+    name: 'AddWidget',
+    kind: 'method',
+    isStatic: true,
+    isExtension: true,
+    parameters: [receiver, { name: 'options', type }],
+    docs: {
+      summary: [
+        {
+          kind: 'para',
+          children: [
+            { kind: 'text', text: ' Uses ' },
+            { kind: 'code', text: `Options${index}` },
+            { kind: 'text', text: '.' },
+          ],
+        },
+      ],
+    },
+    attributes: [
+      {
+        name: EXPORT_ATTRIBUTE,
+        constructorArguments: [`addWidget${index}`],
+        arguments: { MethodName: `addWidget${index}` },
+      },
+    ],
+  }));
+  const pkg = packageDocument('Aspire.Hosting.Widget', [
+    {
+      name: 'WidgetBuilderExtensions',
+      fullName: 'Aspire.Hosting.WidgetBuilderExtensions',
+      members,
+    },
+  ]);
+  const module = tsDocument(
+    'Aspire.Hosting.Widget',
+    members.map((_, index) => ({
+      name: `addWidget${index}`,
+      kind: 'Method',
+      capabilityId: `Aspire.Hosting.Widget/addWidget${index}`,
+      description: `Uses \`Options${index}\` in TypeScript.`,
+      parameters: [{ name: 'options', type: `Options${index}`, isOptional: true }],
+    }))
+  );
+
+  it('selects exact anchors despite short-type collisions and uses the selected TS export', () => {
+    const index = buildApiReferenceIndex([pkg], [module]);
+    const anchors = resolveMemberAnchors(members);
+    for (const [ordinal, member] of members.entries()) {
+      const types = member.parameters.map((parameter) => parameter.type);
+      const resolution = index.resolve(name, undefined, types);
+      expect(resolution).toBe(index.resolve(name, undefined, [...types]));
+      expect(resolution).toMatchObject({
+        status: 'resolved',
+        csharp: {
+          label: 'AddWidget(Options options)',
+          description: `Uses Options${ordinal}.`,
+          path: `/reference/api/csharp/aspire.hosting.widget/widgetbuilderextensions/methods/#${anchors[ordinal].exact}`,
+        },
+        typescript: {
+          label: `addWidget${ordinal}(options?: Options${ordinal})`,
+          description: `Uses Options${ordinal} in TypeScript.`,
+          path: `/reference/api/typescript/aspire.hosting.widget/addwidget${ordinal}/`,
+        },
+        diagnostics: [],
+      });
+    }
+    expect(anchors[0].exact).not.toBe(anchors[1].exact);
+    expect(index.resolve(name).csharp.label).toBe('AddWidget');
+  });
+
+  it('reports incorrect types and missing receivers instead of linking the first overload', () => {
+    const index = buildApiReferenceIndex([pkg], [module]);
+    for (const types of [
+      [],
+      ['One.Options'],
+      [receiver.type, 'Options'],
+      ['One.Options', receiver.type],
+    ]) {
+      const resolution = index.resolve(name, undefined, types);
+      expect(resolution.status).toBe('missing');
+      expect(resolution.csharp.path).toBeUndefined();
+      expect(resolution.diagnostics).toMatchObject([
+        { code: 'missing-overload', severity: 'error' },
+      ]);
+    }
+  });
+
+  it('retains package ambiguity and accepts package qualification', () => {
+    const duplicate = packageDocument('Aspire.Hosting.Other', pkg.types);
+    const index = buildApiReferenceIndex([pkg, duplicate], [module]);
+    const types = members[0].parameters.map((parameter) => parameter.type);
+    expect(index.resolve(name, undefined, types).diagnostics[0].code).toBe('ambiguous-overload');
+    expect(index.resolve(name, 'Aspire.Hosting.Widget', types).status).toBe('resolved');
+  });
+
+  it('reports same-type overload ambiguity rather than choosing by order', () => {
+    const duplicate = packageDocument('Aspire.Hosting.Widget', [
+      {
+        ...pkg.types![0],
+        members: [members[0], { ...members[0], genericParameters: [{ name: 'T' }] }],
+      },
+    ]);
+    const index = buildApiReferenceIndex([duplicate], [module]);
+    const resolution = index.resolve(
+      name,
+      undefined,
+      members[0].parameters.map((p) => p.type)
+    );
+    expect(resolution.diagnostics[0].code).toBe('ambiguous-overload');
+    expect(resolution.csharp.path).toBeUndefined();
+  });
+
+  it('distinguishes a selected zero-parameter overload from a method-group reference', () => {
+    const index = buildApiReferenceIndex([widgetPackage], [widgetModule]);
+    expect(index.resolve(name).csharp.label).toBe('AddWidget');
+    expect(index.resolve(name, undefined, []).csharp.label).toBe('AddWidget()');
+    expect(index.resolve(name, undefined, []).typescript.label).toBe('addWidget()');
+  });
+
+  it('preserves nullable generic and array types in a selected signature', () => {
+    const type =
+      'System.Collections.Generic.List<System.Collections.Generic.List<System.String>?>?[]';
+    const index = buildApiReferenceIndex(
+      [
+        packageDocument('Aspire.Hosting.Widget', [
+          {
+            ...pkg.types![0],
+            members: [{ ...members[0], parameters: [receiver, { name: 'values', type }] }],
+          },
+        ]),
+      ],
+      [module]
+    );
+    expect(index.resolve(name, undefined, [receiver.type, type]).csharp.label).toBe(
+      'AddWidget(List<List<String>?>?[] values)'
+    );
+  });
+
+  it('validates static arrays in MDX and nested JSX, including spread precedence', () => {
+    const index = buildApiReferenceIndex([pkg], [module]);
+    const props = `name="${name}" package="Aspire.Hosting.Widget" parameterTypes={${JSON.stringify(members[0].parameters.map((p) => p.type))}}`;
+    const diagnostics = validateApiReferenceSource(
+      {
+        path: 'test.mdx',
+        content: [
+          `<ApiReference {...props} ${props} />`,
+          `{true && <ApiReference ${props} />}`,
+          `<Wrapper child={<ApiReference ${props} />} />`,
+          `<ApiReference ${props} {...props} name="${name}" package="Aspire.Hosting.Widget" />`,
+          `<ApiReference name="${name}" parameterTypes={['wrong']} />`,
+        ].join('\n'),
+      },
+      index
+    );
+    expect(diagnostics).toMatchObject([
+      { line: 4, code: 'invalid-overload' },
+      { line: 5, code: 'missing-overload' },
+    ]);
+  });
+
+  it.each(['types', '[type]', '[...types]', '[""]', '"string"', '[42]', '[["string"]]'])(
+    'rejects non-static or malformed parameterTypes: %s',
+    (expression) => {
+      const index = buildApiReferenceIndex([pkg], [module]);
+      expect(
+        validateApiReferenceSource(
+          {
+            path: 'test.mdx',
+            content: `<ApiReference name="${name}" parameterTypes={${expression}} />`,
+          },
+          index
+        )
+      ).toMatchObject([{ code: 'invalid-overload', severity: 'error' }]);
+    }
+  );
+});
+
 describe('API reference authoring validator', () => {
   it('reports the source file, line, FQN, and candidates', () => {
     const index = buildApiReferenceIndex([widgetPackage], [widgetModule]);
@@ -710,7 +895,7 @@ describe('API reference authoring validator', () => {
       {
         path: 'src/content/docs/test.mdx',
         content: [
-          '<ApiReference {...props} name={"Aspire.Hosting.WidgetBuilderExtensions.AddWidget"} package={"Aspire.Hosting.Widget"} />',
+          '<ApiReference {...props} name={"Aspire.Hosting.WidgetBuilderExtensions.AddWidget"} package={"Aspire.Hosting.Widget"} parameterTypes={[]} />',
           '{true && <ApiReference name="Aspire.Hosting.OtherExtensions.AddWidget" />}',
           '<ApiReference name={"Aspire.Hosting.WidgetBuilderExtensions.AddWidget"} {...props} />',
         ].join('\n'),
@@ -797,6 +982,23 @@ describe('API reference authoring validator', () => {
       })
     );
 
+    const overload = index.resolve(
+      'Aspire.Hosting.ResourceBuilderExtensions.WithEnvironment',
+      undefined,
+      ['Aspire.Hosting.ApplicationModel.IResourceBuilder<T>', 'string', 'string?']
+    );
+    expect(overload).toMatchObject({
+      csharp: {
+        label: 'WithEnvironment(string name, string? value)',
+        path: '/reference/api/csharp/aspire.hosting/resourcebuilderextensions/methods/#withenvironment-iresourcebuilder-t-string-string',
+      },
+      typescript: {
+        label: 'withEnvironment(name: string, value: IExpressionValue)',
+        path: '/reference/api/typescript/aspire.hosting/withenvironment/',
+      },
+      diagnostics: [],
+    });
+
     expect(
       index.resolve('Aspire.Hosting.YarpResourceExtensions.WithStaticFiles').typescript.path
     ).toBe('/reference/api/typescript/aspire.hosting.yarp/withstaticfiles/');
@@ -876,11 +1078,11 @@ describe('ApiReference component', () => {
       name: 'Aspire.Hosting.WidgetBuilderExtensions.AddWidget',
       status: 'resolved',
       csharp: {
-        label: 'AddWidget()',
+        label: 'AddWidget',
         path: '/reference/api/csharp/aspire.hosting.widget/widgetbuilderextensions/methods/#addwidget',
       },
       typescript: {
-        label: 'addWidget()',
+        label: 'addWidget',
         path: '/reference/api/typescript/aspire.hosting.widget/addwidget/',
       },
       diagnostics: [],
@@ -895,9 +1097,18 @@ describe('ApiReference component', () => {
     );
 
     expect(html).toContain('data-lang="csharp"');
-    expect(html).toContain('AddWidget()');
+    expect(html).toContain('AddWidget');
     expect(html).toContain('data-lang="typescript"');
-    expect(html).toContain('addWidget()');
+    expect(html).toContain('addWidget');
+    expect(html).toContain('aria-label="AddWidget — C# API reference"');
+    expect(html).toContain('aria-label="addWidget — TypeScript API reference"');
+    expect(html).toContain('title="AddWidget — C# API reference"');
+    expect(html.match(/data-tooltip-placement="top"/g)).toHaveLength(2);
+    expect(html.match(/data-tippy-allowhtml="false"/g)).toHaveLength(2);
+    expect(html).toContain('ar-icon i-material-icon-theme:csharp');
+    expect(html).toContain('ar-icon i-material-icon-theme:typescript');
+    expect(html.match(/aria-hidden="true"/g)).toHaveLength(2);
+    expect(html.match(/<code[^>]*>\s*<span class="ar-icon /g)).toHaveLength(2);
     expect(html).toContain(
       '/reference/api/csharp/aspire.hosting.widget/widgetbuilderextensions/methods/#addwidget'
     );
@@ -912,10 +1123,10 @@ describe('ApiReference component', () => {
       name: 'Aspire.Hosting.ApplicationModel.IResourceBuilder.WithAnnotation',
       status: 'resolved',
       csharp: {
-        label: 'WithAnnotation()',
+        label: 'WithAnnotation',
         path: '/reference/api/csharp/aspire.hosting/iresourcebuilder-1/methods/#withannotation',
       },
-      typescript: { label: 'WithAnnotation()' },
+      typescript: { label: 'WithAnnotation' },
       diagnostics: [
         {
           code: 'missing-typescript',
@@ -936,6 +1147,39 @@ describe('ApiReference component', () => {
 
     expect(html).toContain(`title="${message.replaceAll('"', '&quot;')}"`);
     expect(html.match(/href=/g)).toHaveLength(1);
+    expect(html.match(/class="ar-icon /g)).toHaveLength(1);
     expect(html).not.toContain('/reference/api/typescript/');
+  });
+
+  it('forwards overload parameters and renders the selected signature', async () => {
+    apiReferenceMocks.resolve.mockResolvedValue({
+      name: 'Aspire.Hosting.WidgetBuilderExtensions.AddWidget',
+      status: 'resolved',
+      csharp: {
+        label: 'AddWidget(string name)',
+        description: 'Adds <T> safely.',
+        path: '/reference/api/csharp/widget/#addwidget-string',
+      },
+      typescript: {
+        label: 'addWidget(name: string)',
+        description: 'Adds a named widget.',
+        path: '/reference/api/typescript/widget/addwidget/',
+      },
+      diagnostics: [],
+    } satisfies ApiReferenceResolution);
+    const html = normalizeHtml(
+      await renderComponent(ApiReference, {
+        props: {
+          name: 'Aspire.Hosting.WidgetBuilderExtensions.AddWidget',
+          parameterTypes: ['string'],
+        },
+      })
+    );
+    expect(apiReferenceMocks.resolve.mock.calls[0][3]).toEqual(['string']);
+    expect(html).toContain('AddWidget(string name)');
+    expect(html).toContain('addWidget(name: string)');
+    expect(html).toContain('#addwidget-string');
+    expect(html).toContain('title="Adds <T> safely."');
+    expect(html).toContain('title="Adds a named widget."');
   });
 });

@@ -20,7 +20,7 @@ When a resource is annotated with <ApiReference name="Aspire.Hosting.McpServerRe
 
 ## Add an MCP server to a resource
 
-Use the <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> extension method to declare that a resource hosts an MCP server:
+For PostgreSQL, use <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithPostgresMcp" /> to expose MCP tools for a database:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -57,7 +57,7 @@ await builder.build().run();
 </Tabs>
 
 <Aside type="note">
-<ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> and <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithPostgresMcp" /> are experimental APIs. Suppress the `ASPIREMCP001` or `ASPIREPOSTGRES001` diagnostic to use them.
+The resource MCP APIs are experimental. Suppress the `ASPIREMCP001` or `ASPIREPOSTGRES001` diagnostic to use them.
 </Aside>
 
 <ContainerImages package="Aspire.Hosting.PostgreSQL" only="Postgres MCP" />
@@ -92,7 +92,7 @@ aspire mcp call appdata query --input '{"sql": "SELECT * FROM users LIMIT 5"}'
 
 ## Custom MCP server resources
 
-You can add any container that implements the MCP protocol as an MCP-enabled resource. Use <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> to tell Aspire where the MCP endpoint lives:
+You can add any container that implements the MCP protocol as an MCP-enabled resource. Annotate the container with the location of its MCP endpoint:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -126,10 +126,10 @@ await builder.build().run();
 </TabItem>
 </Tabs>
 
-The <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> method accepts an optional path and endpoint name:
+The MCP annotation method accepts an optional path and endpoint name:
 
-- <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMcpServer" /> — uses the default HTTP endpoint at `/mcp`
-- `WithMcpServer("/sse", endpointName: "https")` — uses a named endpoint at `/sse`
+- With no arguments, it uses the default HTTP endpoint at `/mcp`.
+- To use a named endpoint at a different path, pass the path and endpoint name, such as `/sse` and `https`.
 
 ## See also
 
@@ -137,4 +137,3 @@ The <ApiReference name="Aspire.Hosting.McpServerResourceBuilderExtensions.WithMc
 - [Aspire MCP server](/get-started/aspire-mcp-server/) — the built-in MCP server tools
 - [ASPIREMCP001 diagnostic](/diagnostics/aspiremcp001/) — experimental MCP server API warning
 - [ASPIREPOSTGRES001 diagnostic](/diagnostics/aspirepostgres001/) — experimental PostgreSQL MCP warning
-

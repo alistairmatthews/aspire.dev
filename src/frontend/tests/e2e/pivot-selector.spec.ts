@@ -159,9 +159,21 @@ test('ApiReference chips follow the language selection through every entry point
   await dismissCookieConsentIfVisible(page);
 
   await expect(csharpChip).toBeVisible();
-  await expect(csharpChip).toHaveText('WithMcpServer()');
+  await expect(csharpChip).toHaveText('WithMcpServer');
   await expect(typeScriptChip).toBeHidden();
-  await expect(typeScriptChip).toHaveText('withMcpServer()');
+  await expect(typeScriptChip).toHaveText('withMcpServer');
+  await expect(csharpChip.locator('code > .ar-icon')).toBeVisible();
+  await expect(csharpChip).toHaveAccessibleName('WithMcpServer — C# API reference');
+  await expect(csharpChip).toHaveAttribute('data-tooltip-placement', 'top');
+  const normalBackground = await csharpChip.locator('code').evaluate(
+    (element) => getComputedStyle(element).backgroundColor
+  );
+  await csharpChip.hover();
+  await expect(page.getByRole('tooltip')).toBeVisible();
+  await expect(page.getByRole('tooltip')).not.toBeEmpty();
+  await expect(csharpChip.locator('code')).not.toHaveCSS('background-color', normalBackground);
+  await expect(csharpChip.locator('code')).toHaveCSS('border-style', 'none');
+  await page.mouse.move(0, 0);
 
   // Pointer: clicking the tab strip.
   const appHostTabs = page.locator('starlight-tabs[data-sync-key="aspire-lang"]').first();
@@ -169,6 +181,23 @@ test('ApiReference chips follow the language selection through every entry point
 
   await expect(typeScriptChip).toBeVisible();
   await expect(csharpChip).toBeHidden();
+  await expect(typeScriptChip.locator('code > .ar-icon')).toBeVisible();
+  await expect(typeScriptChip).toHaveAccessibleName('withMcpServer — TypeScript API reference');
+  const iconCenterOffset = await typeScriptChip.evaluate((element) => {
+    const code = element.querySelector('code')!.getBoundingClientRect();
+    const icon = element.querySelector('.ar-icon')!.getBoundingClientRect();
+    return Math.abs(icon.y + icon.height / 2 - (code.y + code.height / 2));
+  });
+  expect(iconCenterOffset).toBeLessThan(1);
+  for (const language of ['csharp', 'typescript']) {
+    const referenceIcon = reference.locator(`[data-lang="${language}"] .ar-icon`);
+    const headerIcon = page.locator(`.code-block-icon[data-language="${language}"]`).first();
+    const headerBackground = await headerIcon.evaluate(
+      (element) => getComputedStyle(element).backgroundImage
+    );
+    expect(headerBackground).not.toBe('none');
+    await expect(referenceIcon).toHaveCSS('background-image', headerBackground);
+  }
 
   // Keyboard: arrowing along the same tab strip.
   await appHostTabs.locator('[role="tab"][aria-selected="true"]').focus();
@@ -194,13 +223,13 @@ test('ApiReference chips follow the language selection through every entry point
   await page.goto('/get-started/glossary/?aspire-lang=typescript');
 
   await expect(typeScriptChip).toBeVisible();
-  await expect(typeScriptChip).toHaveText('withReference()');
+  await expect(typeScriptChip).toHaveText('withReference');
 
   await page.locator('#pivot-selector-aspire-lang').getByRole('button', { name: 'C#' }).click();
 
   await expect(page).toHaveURL(/\?aspire-lang=csharp$/);
   await expect(csharpChip).toBeVisible();
-  await expect(csharpChip).toHaveText('WithReference()');
+  await expect(csharpChip).toHaveText('WithReference');
   await expect(typeScriptChip).toBeHidden();
 });
 

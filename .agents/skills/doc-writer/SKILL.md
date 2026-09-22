@@ -1003,6 +1003,48 @@ Use standard Markdown links with absolute paths from the docs root:
 For more information, see [Service Defaults](/fundamentals/service-defaults/).
 ```
 
+### Inline API references
+
+Use `ApiReference` selectively to connect an explanation to API reference documentation, not to turn every API mention into a link.
+
+- Use `<ApiReference />` only on the **first named mention of a given API in an article's prose**, when naming that API helps explain the behavior or accompanying example. Do not introduce an API name just to add a reference link.
+- After that first mention, do **not** repeat the component or API reference link in the article body, including callouts, lists, and later sections. Prefer descriptive prose such as "this method" or "the dependency configuration." If repeating the name is necessary for clarity, use unlinked inline code appropriate to the AppHost language being discussed.
+- Apply this limit **per API, per article**, not per section or language tab. A different API can have its own first reference.
+- An optional API reference link in **See also** is the only exception to the no-repeat rule.
+- Keep API names in code samples as code; do not add reference markup inside code fences.
+- Match the reference to the API actually used in the example. A PostgreSQL example calling `withPostgresMcp()` / `WithPostgresMcp()` must be introduced with `Aspire.Hosting.PostgresBuilderExtensions.WithPostgresMcp`, not the generic `WithMcpServer` API.
+
+For example, introduce an API once:
+
+```mdx
+import ApiReference from '@components/ApiReference.astro';
+
+For PostgreSQL, use <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithPostgresMcp" /> to expose MCP tools for a database.
+```
+
+Later in the same article, refer to "the PostgreSQL MCP helper" rather than repeating the linked API name.
+
+#### Selecting an overload
+
+By default, `ApiReference` shows the method name **without `()`** and links to the method group. To discuss a specific overload, supply `parameterTypes` as a static array of its **complete declared C# parameter types**, in declaration order. Copy the types from the generated C# catalog, preserving namespaces, generic arguments, and nullability. Include the `this` receiver's type for an extension method, but not the `this` keyword. Use `[]` only for a declaration with no parameters.
+
+```mdx
+<ApiReference
+  name="Aspire.Hosting.ResourceBuilderExtensions.WithEnvironment"
+  parameterTypes={[
+    'Aspire.Hosting.ApplicationModel.IResourceBuilder<T>',
+    'string',
+    'string?',
+  ]}
+/>
+```
+
+This links to the exact C# overload and displays `WithEnvironment(string name, string? value)`. The extension receiver is used for selection but omitted from the visible call signature. In TypeScript mode, the component uses the generated TypeScript export's own name and parameters; several C# overloads may share one TypeScript dispatcher. Do not copy C# parameter types into a TypeScript signature or select overloads by ordinal position. A missing or ambiguous match is an authoring error, not permission to link to the first overload. Use `package` when the same API is declared in multiple packages.
+
+Linked references reuse the code-block headers' C# and TypeScript icons from `material-icon-theme`, centered inside the code background. Do not add a separate icon or empty parentheses manually. `()` is shown only when an explicitly selected API genuinely has no call parameters.
+
+The component derives its top-positioned tooltip from the resolved API's generated summary or description, including the selected overload when specified. Do not duplicate that description in an authored `title` prop. When no description exists, the tooltip identifies the API and language instead.
+
 ### Reference NuGet Packages
 
 Use the 📦 emoji with links:

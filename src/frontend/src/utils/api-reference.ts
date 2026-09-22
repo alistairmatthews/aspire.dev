@@ -39,10 +39,11 @@ export function getApiReferenceIndex(requestScope?: object): Promise<ApiReferenc
 export async function resolveApiReference(
   name: string,
   packageName?: string,
-  requestScope?: object
+  requestScope?: object,
+  parameterTypes?: readonly string[]
 ): Promise<ApiReferenceResolution> {
   const index = await getApiReferenceIndex(requestScope);
-  return index.resolve(name, packageName);
+  return index.resolve(name, packageName, parameterTypes);
 }
 
 export type {
