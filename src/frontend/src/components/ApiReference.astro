@@ -19,6 +19,14 @@ interface Props {
   parameterTypes?: string[];
 }
 
+function formatTitle(title: string | undefined): string | undefined {
+  if (!title || title.length <= 160) return title;
+
+  const prefix = title.slice(0, 157);
+  const text = /\s/.test(title[157]) ? prefix : prefix.replace(/\s+\S*$/, '');
+  return `${text.trimEnd()}...`;
+}
+
 const { name, package: packageName, parameterTypes } = Astro.props;
 const resolution = await resolveApiReference(name, packageName, Astro.locals, parameterTypes);
 const base = import.meta.env.BASE_URL.replace(/\/$/, '');
@@ -39,7 +47,9 @@ const typescriptDiagnostic = resolution.diagnostics.length > 0 ? diagnosticText 
         data-lang="csharp"
         href={csharpHref}
         aria-label={`${resolution.csharp.label} — C# API reference`}
-        title={resolution.csharp.description ?? `${resolution.csharp.label} — C# API reference`}
+        title={formatTitle(
+          resolution.csharp.description ?? `${resolution.csharp.label} — C# API reference`
+        )}
         data-tooltip-placement="top"
         data-tippy-allowhtml="false"
       >
@@ -52,7 +62,7 @@ const typescriptDiagnostic = resolution.diagnostics.length > 0 ? diagnosticText 
       <span
         class="ar-lang"
         data-lang="csharp"
-        title={csharpDiagnostic}
+        title={formatTitle(csharpDiagnostic)}
         data-tooltip-placement="top"
         data-tippy-allowhtml="false"
       >
@@ -67,10 +77,10 @@ const typescriptDiagnostic = resolution.diagnostics.length > 0 ? diagnosticText 
         data-lang="typescript"
         href={typescriptHref}
         aria-label={`${resolution.typescript.label} — TypeScript API reference`}
-        title={
+        title={formatTitle(
           resolution.typescript.description ??
-          `${resolution.typescript.label} — TypeScript API reference`
-        }
+            `${resolution.typescript.label} — TypeScript API reference`
+        )}
         data-tooltip-placement="top"
         data-tippy-allowhtml="false"
       >
@@ -83,7 +93,7 @@ const typescriptDiagnostic = resolution.diagnostics.length > 0 ? diagnosticText 
       <span
         class="ar-lang"
         data-lang="typescript"
-        title={typescriptDiagnostic}
+        title={formatTitle(typescriptDiagnostic)}
         data-tooltip-placement="top"
         data-tippy-allowhtml="false"
       >

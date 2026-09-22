@@ -1,0 +1,52 @@
+import tippy, { type Instance, type Placement, type ReferenceElement } from 'tippy.js';
+
+const tooltips = new Map<ReferenceElement, { instance: Instance; title: string }>();
+
+function initializeTooltips() {
+  for (const element of document.querySelectorAll<ReferenceElement>('[title]')) {
+    const title = element.getAttribute('title');
+    if (!title || element._tippy || tooltips.has(element)) continue;
+
+    const placement = element.getAttribute('data-tooltip-placement') as Placement | null;
+    const interactive = element.getAttribute('data-tooltip-interactive');
+    const instance = tippy(element, {
+      content: title,
+      allowHTML: true,
+      theme: 'default',
+      maxWidth: 'none',
+      placement: placement ?? 'auto',
+      interactive: interactive === 'true',
+      delay: [0, 0],
+      duration: [0, 0],
+      hideOnClick: true,
+      animation: 'scale',
+      onClickOutside: (instance) => instance.hide(),
+    });
+    tooltips.set(element, { instance, title });
+    element.setAttribute('title', '');
+  }
+}
+
+function destroyTooltips() {
+  for (const [element, { instance, title }] of tooltips) {
+    if (!instance.state.isDestroyed) instance.destroy();
+    // Persisted nodes need their source title when the next page initializes.
+    if (element.getAttribute('title') === '') element.setAttribute('title', title);
+  }
+  tooltips.clear();
+}
+
+document.addEventListener('astro:before-swap', destroyTooltips);
+document.addEventListener('astro:page-load', initializeTooltips);
+document.addEventListener('keydown', (event) => {
+  if (event.key === 'Escape') {
+    const activeElement: ReferenceElement | null = document.activeElement;
+    activeElement?._tippy?.hide();
+  }
+});
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', initializeTooltips, { once: true });
+} else {
+  initializeTooltips();
+}

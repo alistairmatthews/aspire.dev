@@ -267,8 +267,8 @@ In the AppHost, use <ApiReference name="Aspire.Hosting.DockerComposeEnvironmentE
     builder.Build().Run();
     ```
 
-    - `AddDockerComposeEnvironment` - Configures the Docker Compose environment for deployment. This call implicitly adds support for containerizing resources in the AppHost as part of deployment.
-    - `WithExternalHttpEndpoints` - Exposes HTTP endpoints for the resource when deployed.
+    - <ApiReference name="Aspire.Hosting.DockerComposeEnvironmentExtensions.AddDockerComposeEnvironment" /> - Configures the Docker Compose environment for deployment. This call implicitly adds support for containerizing resources in the AppHost as part of deployment.
+    - <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithExternalHttpEndpoints" /> - Exposes HTTP endpoints for the resource when deployed.
 
   </TabItem>
   <TabItem id="azure" label="Azure">
@@ -291,8 +291,8 @@ In the AppHost, use <ApiReference name="Aspire.Hosting.DockerComposeEnvironmentE
     builder.Build().Run();
     ```
 
-    - `AddAzureContainerAppEnvironment` - Configures the Azure App Container environment for deployment. This call implicitly adds support for containerizing resources in the AppHost as part of deployment.
-    - `WithExternalHttpEndpoints` - Exposes HTTP endpoints for the resource when deployed.
+    - <ApiReference name="Aspire.Hosting.AzureContainerAppExtensions.AddAzureContainerAppEnvironment" /> - Configures the Azure App Container environment for deployment. This call implicitly adds support for containerizing resources in the AppHost as part of deployment.
+    - <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithExternalHttpEndpoints" /> - Exposes HTTP endpoints for the resource when deployed.
 
   </TabItem>
 </Tabs>
@@ -330,8 +330,8 @@ After installing a new deployment package, you can run `aspire deploy --list-ste
     await builder.build().run();
     ```
 
-    - `addDockerComposeEnvironment` - Configures the Docker Compose environment for deployment. This call implicitly adds support for containerizing resources in the AppHost as part of deployment.
-    - `withExternalHttpEndpoints` - Exposes HTTP endpoints for the resource when deployed.
+    - <ApiReference name="Aspire.Hosting.DockerComposeEnvironmentExtensions.AddDockerComposeEnvironment" /> - Configures the Docker Compose environment for deployment. This call implicitly adds support for containerizing resources in the AppHost as part of deployment.
+    - <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithExternalHttpEndpoints" /> - Exposes HTTP endpoints for the resource when deployed.
 
   </TabItem>
   <TabItem id="azure" label="Azure">
@@ -359,8 +359,8 @@ After installing a new deployment package, you can run `aspire deploy --list-ste
     await builder.build().run();
     ```
 
-    - `addAzureContainerAppEnvironment` - Configures the Azure App Container environment for deployment. This call implicitly adds support for containerizing resources in the AppHost as part of deployment.
-    - `withExternalHttpEndpoints` - Exposes HTTP endpoints for the resource when deployed.
+    - <ApiReference name="Aspire.Hosting.AzureContainerAppExtensions.AddAzureContainerAppEnvironment" /> - Configures the Azure App Container environment for deployment. This call implicitly adds support for containerizing resources in the AppHost as part of deployment.
+    - <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithExternalHttpEndpoints" /> - Exposes HTTP endpoints for the resource when deployed.
 
   </TabItem>
 

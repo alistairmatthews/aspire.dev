@@ -1116,6 +1116,104 @@ describe('ApiReference component', () => {
     expect(html).not.toMatch(/<pre|<figure|expressive-code|<script|data-aspire-lang/);
   });
 
+  it.each([
+    ['short', 'Adds a widget.', 'Adds a widget.'],
+    ['exactly 160 characters', 'x'.repeat(160), 'x'.repeat(160)],
+    ['word boundary', `${'word '.repeat(30)}remaining text`, `${'word '.repeat(30).trimEnd()}...`],
+    ['unbroken token', 'x'.repeat(161), `${'x'.repeat(157)}...`],
+    ['complete word at the limit', `${'x'.repeat(157)} tail`, `${'x'.repeat(157)}...`],
+    ['whitespace boundary', `${'x'.repeat(150)} \t\nlongerword`, `${'x'.repeat(150)}...`],
+  ])(
+    'formats %s descriptions in both languages without changing links or labels',
+    async (_, description, title) => {
+      const resolution = {
+        name: 'Aspire.Hosting.WidgetBuilderExtensions.AddWidget',
+        status: 'resolved',
+        csharp: {
+          label: 'AddWidget(string name)',
+          description,
+          path: '/reference/api/csharp/widget/#addwidget-string',
+        },
+        typescript: {
+          label: 'addWidget(name: string)',
+          description,
+          path: '/reference/api/typescript/widget/addwidget/',
+        },
+        diagnostics: [],
+      } satisfies ApiReferenceResolution;
+      apiReferenceMocks.resolve.mockResolvedValue(resolution);
+
+      const html = normalizeHtml(
+        await renderComponent(ApiReference, { props: { name: resolution.name } })
+      );
+
+      expect([...html.matchAll(/\btitle="([^"]*)"/g)].map((match) => match[1])).toEqual([
+        title,
+        title,
+      ]);
+      expect(title.length).toBeLessThanOrEqual(160);
+      expect(html).toContain('>AddWidget(string name)</span>');
+      expect(html).toContain('>addWidget(name: string)</span>');
+      expect(html).toContain('aria-label="AddWidget(string name) — C# API reference"');
+      expect(html).toContain('aria-label="addWidget(name: string) — TypeScript API reference"');
+      expect(html).toContain(`href="${resolution.csharp.path}"`);
+      expect(html).toContain(`href="${resolution.typescript.path}"`);
+      expect(html.match(/data-tooltip-placement="top"/g)).toHaveLength(2);
+      expect(html.match(/data-tippy-allowhtml="false"/g)).toHaveLength(2);
+      expect(resolution.csharp.description).toBe(description);
+      expect(resolution.typescript.description).toBe(description);
+    }
+  );
+
+  it('caps language-qualified fallback titles without shortening API labels', async () => {
+    const label = 'x'.repeat(170);
+    apiReferenceMocks.resolve.mockResolvedValue({
+      name: 'Aspire.Hosting.WidgetBuilderExtensions.AddWidget',
+      status: 'resolved',
+      csharp: { label, path: '/reference/api/csharp/widget/#addwidget' },
+      typescript: { label, path: '/reference/api/typescript/widget/addwidget/' },
+      diagnostics: [],
+    } satisfies ApiReferenceResolution);
+
+    const html = normalizeHtml(
+      await renderComponent(ApiReference, {
+        props: { name: 'Aspire.Hosting.WidgetBuilderExtensions.AddWidget' },
+      })
+    );
+    const title = `${'x'.repeat(157)}...`;
+    expect([...html.matchAll(/\btitle="([^"]*)"/g)].map((match) => match[1])).toEqual([
+      title,
+      title,
+    ]);
+    expect(html).toContain(`>${label}</span>`);
+    expect(html).toContain(`aria-label="${label} — C# API reference"`);
+    expect(html).toContain(`aria-label="${label} — TypeScript API reference"`);
+  });
+
+  it('caps unresolved titles in both languages without changing source diagnostics', async () => {
+    const message = 'Diagnostic '.repeat(20).trimEnd();
+    const resolution = {
+      name: 'Aspire.Hosting.WidgetBuilderExtensions.AddWidget',
+      status: 'missing',
+      csharp: { label: 'AddWidget' },
+      typescript: { label: 'AddWidget' },
+      diagnostics: [{ code: 'missing-csharp', severity: 'error', message, candidates: [] }],
+    } satisfies ApiReferenceResolution;
+    apiReferenceMocks.resolve.mockResolvedValue(resolution);
+
+    const html = normalizeHtml(
+      await renderComponent(ApiReference, { props: { name: resolution.name } })
+    );
+    const title = `${'Diagnostic '.repeat(14).trimEnd()}...`;
+    expect([...html.matchAll(/\btitle="([^"]*)"/g)].map((match) => match[1])).toEqual([
+      title,
+      title,
+    ]);
+    expect(title.length).toBeLessThanOrEqual(160);
+    expect(resolution.diagnostics[0].message).toBe(message);
+    expect(html).not.toContain('href=');
+  });
+
   it('renders one-language APIs as warned, unlinked TypeScript code', async () => {
     const message =
       'ApiReference: "Aspire.Hosting.ApplicationModel.IResourceBuilder.WithAnnotation" has no TypeScript export; the C# API name is shown without a TypeScript link.';
