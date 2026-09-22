@@ -3,23 +3,21 @@ import { defineConfig } from 'astro/config';
 import { unified } from '@astrojs/markdown-remark';
 import { sidebarTopics } from './config/sidebar/sidebar.topics.ts';
 import { redirects } from './config/redirects.mjs';
-import { iconPacks } from './config/icon-packs.mjs';
 import { locales } from './config/locales.ts';
 import { headAttrs } from './config/head.attrs.ts';
 import { socialConfig } from './config/socials.config.ts';
 import { aspireVersionPlaceholdersIntegration } from './config/aspire-version-placeholders-integration.mjs';
 import { remarkAspireVersionPlaceholders } from './config/remark-aspire-version-placeholders.mjs';
 import { remarkTypeScriptFirstAppHostTabs } from './config/remark-typescript-first-apphost-tabs.mjs';
+import { remarkMermaid } from './config/remark-mermaid.mjs';
 import catppuccin from '@catppuccin/starlight';
 import lunaria from './config/lunaria-starlight.mjs';
-import mermaid from 'astro-mermaid';
 import mdx from '@astrojs/mdx';
 import starlightGitHubAlerts from 'starlight-github-alerts';
 import starlightImageZoom from 'starlight-image-zoom';
 import starlightKbd from 'starlight-kbd';
 import starlightLinksValidator from 'starlight-links-validator';
 import starlightLlmsTxt from 'starlight-llms-txt';
-import starlightScrollToTop from 'starlight-scroll-to-top';
 import starlightSidebarTopics from 'starlight-sidebar-topics';
 import starlightPageActions from 'starlight-page-actions';
 import buildTiming from './config/build-timing.mjs';
@@ -28,9 +26,18 @@ import Icons from 'starlight-plugin-icons';
 
 const modeArgIndex = process.argv.indexOf('--mode');
 const isSkipSearchBuild = modeArgIndex >= 0 && process.argv[modeArgIndex + 1] === 'skip-search';
+const outDir = process.env.ASTRO_OUT_DIR;
 const isBuildTimingEnabled = process.env.BUILD_TIMING === '1';
 const siteDescription =
   'Aspire is a multi-language local dev-time orchestration tool chain for building, running, debugging, and deploying distributed applications.';
+
+// Under `aspire run` the frontend dev server (Vite) and StaticHost are separate
+// origins. The live-status client fetches same-origin `/api/live` and streams
+// `/api/live/stream`, so in dev those must be proxied to StaticHost. The AppHost
+// injects its origin as ASPIRE_STATICHOST_URL; unset in CI/production builds
+// (where StaticHost serves both the site and the API from one origin), so the
+// proxy is simply omitted then.
+const staticHostUrl = process.env.ASPIRE_STATICHOST_URL;
 
 // Astro renders pages mostly on the main JS thread. Default `build.concurrency`
 // is 1, so a multi-vCPU CI runner is largely idle during the generate phase.
@@ -48,12 +55,13 @@ const buildConcurrency = Number(process.env.ASPIRE_BUILD_CONCURRENCY) || 4;
 // https://astro.build/config
 export default defineConfig({
   cacheDir: './.astro',
+  ...(outDir ? { outDir } : {}),
   prefetch: true,
   site: 'https://aspire.dev',
   trailingSlash: 'always',
   markdown: {
     processor: unified({
-      remarkPlugins: [remarkTypeScriptFirstAppHostTabs, remarkAspireVersionPlaceholders],
+      remarkPlugins: [remarkTypeScriptFirstAppHostTabs, remarkAspireVersionPlaceholders, remarkMermaid],
     }),
   },
   redirects: redirects,
@@ -79,7 +87,6 @@ export default defineConfig({
         head: headAttrs,
         social: socialConfig,
         customCss: [
-          '@fontsource-variable/outfit',
           'starlight-plugin-icons/styles/main.css',
           './src/styles/site.css',
         ],
@@ -125,31 +132,6 @@ export default defineConfig({
             errorOnRelativeLinks: false,
             errorOnFallbackPages: false,
             exclude: ['/i18n/', '/reference/api', '/reference/api/**'],
-          }),
-          starlightScrollToTop({
-            // https://frostybee.github.io/starlight-scroll-to-top/svg-paths/
-            svgPath: 'M4 16L12 8L20 16',
-            showTooltip: true,
-            threshold: 10,
-            showOnHomepage: true,
-            svgStrokeWidth: 4,
-            tooltipText: {
-              da: 'Rul op',
-              de: 'Nach oben scrollen',
-              en: 'Scroll to top',
-              es: 'Ir arriba',
-              fr: 'Retour en haut',
-              hi: 'ऊपर स्क्रॉल करें',
-              id: 'Gulir ke atas',
-              it: 'Torna su',
-              ja: 'トップへ戻る',
-              ko: '맨 위로',
-              'pt-br': 'Voltar ao topo',
-              ru: 'Наверх',
-              tr: 'Başa dön',
-              uk: 'Прокрутити вгору',
-              'zh-cn': '回到顶部',
-            },
           }),
           starlightGitHubAlerts(),
           starlightLlmsTxt({
@@ -222,11 +204,6 @@ export default defineConfig({
         ],
       },
     }),
-    mermaid({
-      theme: 'forest',
-      autoTheme: true,
-      iconPacks,
-    }),
     mdx({
       optimize: true,
       gfm: true,
@@ -237,4 +214,21 @@ export default defineConfig({
   build: {
     concurrency: buildConcurrency,
   },
+  ...(staticHostUrl
+    ? {
+        vite: {
+          server: {
+            proxy: {
+              // A regular-expression context bypasses Astro's trailing-slash
+              // routing for both the JSON snapshot and SSE stream.
+              '^/api/live(?:/.*)?$': {
+                target: staticHostUrl,
+                changeOrigin: true,
+                secure: false,
+              },
+            },
+          },
+        },
+      }
+    : {}),
 });

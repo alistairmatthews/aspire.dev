@@ -674,6 +674,7 @@ const invalidTopicHeroProps: PropsOf<typeof TopicHero> = {
 
 const validTwitchEmbedProps = {
   channel: 'aspiredotdev',
+  autoplay: true,
   title: 'Twitch stream',
 } satisfies PropsOf<typeof TwitchEmbed>;
 // @ts-expect-error TwitchEmbed should reject unknown props.
@@ -726,6 +727,10 @@ const validYouTubeEmbedProps = {
   videoId: 'dQw4w9WgXcQ',
   autoplay: true,
   title: 'Video player',
+} satisfies PropsOf<typeof YouTubeEmbed>;
+const validYouTubePlaylistProps = {
+  playlistId: 'UUW_UJkc7RhM_NPcDXnOCfrQ',
+  autoplay: false,
 } satisfies PropsOf<typeof YouTubeEmbed>;
 // @ts-expect-error YouTubeEmbed should reject unknown props.
 const invalidYouTubeEmbedProps: PropsOf<typeof YouTubeEmbed> = {
@@ -840,6 +845,7 @@ void [
   validYouTubeCardProps,
   invalidYouTubeCardProps,
   validYouTubeEmbedProps,
+  validYouTubePlaylistProps,
   invalidYouTubeEmbedProps,
   validYouTubeGridProps,
   invalidYouTubeGridProps,
