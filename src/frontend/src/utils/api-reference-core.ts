@@ -91,6 +91,7 @@ export interface ApiReferenceTarget {
 }
 
 export type ApiReferenceDiagnosticCode =
+  | 'unsupported-spread'
   | 'invalid-fqn'
   | 'missing-csharp'
   | 'ambiguous-csharp'

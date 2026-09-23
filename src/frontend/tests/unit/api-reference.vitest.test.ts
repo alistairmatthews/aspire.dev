@@ -788,7 +788,7 @@ describe('API reference overloads', () => {
       index
     );
     expect(diagnostics).toMatchObject([
-      { line: 4, code: 'invalid-overload' },
+      { line: 4, code: 'unsupported-spread', message: expect.stringContaining('parameterTypes') },
       { line: 5, code: 'missing-overload' },
     ]);
   });
@@ -911,9 +911,41 @@ describe('API reference authoring validator', () => {
       },
       {
         line: 3,
-        code: 'invalid-fqn',
+        code: 'unsupported-spread',
       },
     ]);
+  });
+
+  it.each([
+    '<ApiReference name="Aspire.Hosting.WidgetBuilderExtensions.AddWidget" {...props} />',
+    '<ApiReference {...props} name="Aspire.Hosting.WidgetBuilderExtensions.AddWidget" />',
+    '{true && <ApiReference name="Aspire.Hosting.WidgetBuilderExtensions.AddWidget" {...props} />}',
+    '<Wrapper child={<ApiReference {...props} name="Aspire.Hosting.WidgetBuilderExtensions.AddWidget" />} />',
+    '<ApiReference name="Aspire.Hosting.WidgetBuilderExtensions.AddWidget" {...{}} />',
+  ])('reports uncertain spread props explicitly: %s', (content) => {
+    const index = buildApiReferenceIndex([widgetPackage], [widgetModule]);
+    const diagnostics = validateApiReferenceSource(
+      { path: 'spread.mdx', content: `\n${content}` },
+      index
+    );
+    expect(diagnostics).toEqual([
+      expect.objectContaining({
+        filePath: 'spread.mdx',
+        line: 2,
+        code: 'unsupported-spread',
+        severity: 'error',
+        message: expect.stringContaining('spread props cannot be statically validated'),
+      }),
+    ]);
+    expect(diagnostics[0].message).toContain('package, parameterTypes');
+  });
+
+  it('does not require optional props when no spread is present', () => {
+    const index = buildApiReferenceIndex([widgetPackage], [widgetModule]);
+    expect(validateApiReferenceSource({
+      path: 'test.mdx',
+      content: '<ApiReference name="Aspire.Hosting.WidgetBuilderExtensions.AddWidget" />',
+    }, index)).toEqual([]);
   });
 
   it('validates components inside MDX attributes and exports', () => {

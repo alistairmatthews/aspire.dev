@@ -36,17 +36,34 @@ function destroyTooltips() {
   tooltips.clear();
 }
 
-document.addEventListener('astro:before-swap', destroyTooltips);
-document.addEventListener('astro:page-load', initializeTooltips);
-document.addEventListener('keydown', (event) => {
+function dismissTooltip(event: KeyboardEvent) {
   if (event.key === 'Escape') {
     const activeElement: ReferenceElement | null = document.activeElement;
     activeElement?._tippy?.hide();
   }
-});
+}
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', initializeTooltips, { once: true });
-} else {
-  initializeTooltips();
+const lifecycleDocument = document as Document & { __aspireTooltipsCleanup?: () => void };
+
+if (!lifecycleDocument.__aspireTooltipsCleanup) {
+  const cleanup = () => {
+    document.removeEventListener('astro:before-swap', destroyTooltips);
+    document.removeEventListener('astro:page-load', initializeTooltips);
+    document.removeEventListener('keydown', dismissTooltip);
+    document.removeEventListener('DOMContentLoaded', initializeTooltips);
+    destroyTooltips();
+    delete lifecycleDocument.__aspireTooltipsCleanup;
+  };
+  lifecycleDocument.__aspireTooltipsCleanup = cleanup;
+  document.addEventListener('astro:before-swap', destroyTooltips);
+  document.addEventListener('astro:page-load', initializeTooltips);
+  document.addEventListener('keydown', dismissTooltip);
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', initializeTooltips, { once: true });
+  } else {
+    initializeTooltips();
+  }
+
+  import.meta.hot?.dispose(cleanup);
 }

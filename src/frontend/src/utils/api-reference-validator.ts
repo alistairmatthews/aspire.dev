@@ -41,7 +41,7 @@ interface SourceAttribute {
 }
 
 interface ResolvedAttribute {
-  present: boolean;
+  source: 'absent' | 'explicit' | 'spread';
   value?: string | string[];
 }
 
@@ -155,10 +155,10 @@ function readJsxAttribute(value: unknown): SourceAttribute | undefined {
 function resolveAttribute(attributes: readonly SourceAttribute[], name: string): ResolvedAttribute {
   for (let index = attributes.length - 1; index >= 0; index--) {
     const attribute = attributes[index];
-    if (attribute.spread) return { present: true };
-    if (attribute.name === name) return { present: true, value: attribute.value };
+    if (attribute.spread) return { source: 'spread' };
+    if (attribute.name === name) return { source: 'explicit', value: attribute.value };
   }
-  return { present: false };
+  return { source: 'absent' };
 }
 
 function findApiReferenceNodes(content: string): ApiReferenceSyntax[] {
@@ -236,6 +236,25 @@ export function validateApiReferenceSource(
     const name = nameAttribute.value;
     const packageAttribute = resolveAttribute(node.attributes, 'package');
     const packageName = packageAttribute.value;
+    const parameterTypesAttribute = resolveAttribute(node.attributes, 'parameterTypes');
+    const spreadProps = [
+      { name: 'name', attribute: nameAttribute },
+      { name: 'package', attribute: packageAttribute },
+      { name: 'parameterTypes', attribute: parameterTypesAttribute },
+    ].filter(({ attribute }) => attribute.source === 'spread');
+
+    if (spreadProps.length > 0) {
+      diagnostics.push({
+        filePath: file.path,
+        line: node.line,
+        name: typeof name === 'string' ? name : undefined,
+        code: 'unsupported-spread',
+        severity: 'error',
+        message: `ApiReference: spread props cannot be statically validated for ${spreadProps.map(({ name }) => name).join(', ')}. Remove the spread or specify these props explicitly after it.`,
+        candidates: [],
+      });
+      continue;
+    }
 
     if (typeof name !== 'string' || !name) {
       diagnostics.push({
@@ -250,7 +269,7 @@ export function validateApiReferenceSource(
       continue;
     }
 
-    if (packageAttribute.present && (typeof packageName !== 'string' || !packageName)) {
+    if (packageAttribute.source === 'explicit' && (typeof packageName !== 'string' || !packageName)) {
       diagnostics.push({
         filePath: file.path,
         line: node.line,
@@ -263,10 +282,9 @@ export function validateApiReferenceSource(
       continue;
     }
 
-    const parameterTypesAttribute = resolveAttribute(node.attributes, 'parameterTypes');
     const parameterTypes = parameterTypesAttribute.value;
     if (
-      parameterTypesAttribute.present &&
+      parameterTypesAttribute.source === 'explicit' &&
       (!Array.isArray(parameterTypes) || parameterTypes.some((type) => !type.trim()))
     ) {
       diagnostics.push({

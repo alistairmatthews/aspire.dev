@@ -38,6 +38,7 @@ describe('title tooltip navigation lifecycle', () => {
     readyState: string;
     activeElement: TooltipElement | null;
     querySelectorAll: () => TooltipElement[];
+    __aspireTooltipsCleanup?: () => void;
   };
 
   beforeEach(() => {
@@ -153,5 +154,58 @@ describe('title tooltip navigation lifecycle', () => {
     document.dispatchEvent(Object.assign(new Event('keydown'), { key: 'Escape' }));
     createTooltip.mock.calls[0][1].onClickOutside(instance);
     expect(instance.hide).toHaveBeenCalledTimes(2);
+  });
+
+  it('registers only one lifecycle when the module is evaluated again', async () => {
+    const addListener = vi.spyOn(document, 'addEventListener');
+    await import('@scripts/tooltips');
+    vi.resetModules();
+    await import('@scripts/tooltips');
+    expect(addListener.mock.calls.map(([event]) => event)).toEqual([
+      'astro:before-swap', 'astro:page-load', 'keydown',
+    ]);
+
+    document.activeElement = elements[0];
+    const instance = elements[0]._tippy!;
+    document.dispatchEvent(Object.assign(new Event('keydown'), { key: 'Escape' }));
+    expect(instance.hide).toHaveBeenCalledOnce();
+    document.dispatchEvent(new Event('astro:before-swap'));
+    expect(instance.destroy).toHaveBeenCalledOnce();
+    document.dispatchEvent(new Event('astro:page-load'));
+    expect(createTooltip).toHaveBeenCalledTimes(2);
+  });
+
+  it.each(['loading', 'complete'])('disposes listeners and instances before HMR with readyState %s', async (readyState) => {
+    document.readyState = readyState;
+    await import('@scripts/tooltips');
+    const instance = elements[0]._tippy;
+    expect(document.__aspireTooltipsCleanup).toBeTypeOf('function');
+    document.__aspireTooltipsCleanup!();
+    if (instance) expect(instance.destroy).toHaveBeenCalledOnce();
+    expect(elements[0].getAttribute('title')).toBe('Initial title');
+    expect(Reflect.has(document, '__aspireTooltipsCleanup')).toBe(false);
+    createTooltip.mockClear();
+
+    document.dispatchEvent(new Event('DOMContentLoaded'));
+    document.dispatchEvent(new Event('astro:page-load'));
+    expect(createTooltip).not.toHaveBeenCalled();
+    vi.resetModules();
+    document.readyState = 'complete';
+    await import('@scripts/tooltips');
+    expect(createTooltip).toHaveBeenCalledOnce();
+    document.activeElement = elements[0];
+    document.dispatchEvent(Object.assign(new Event('keydown'), { key: 'Escape' }));
+    expect(elements[0]._tippy!.hide).toHaveBeenCalledOnce();
+  });
+
+  it('honors the text-only API reference flag after navigation', async () => {
+    elements[0].setAttribute('data-tippy-allowhtml', 'false');
+    await import('@scripts/tooltips');
+    document.dispatchEvent(new Event('astro:before-swap'));
+    document.dispatchEvent(new Event('astro:page-load'));
+    expect(createTooltip).toHaveBeenCalledTimes(2);
+    for (const [, options] of createTooltip.mock.calls) {
+      expect(options).toMatchObject({ allowHTML: false });
+    }
   });
 });
