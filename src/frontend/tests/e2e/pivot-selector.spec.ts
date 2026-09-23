@@ -237,16 +237,16 @@ test('ApiReference chips follow the language selection through every entry point
   // PivotSelector. Regression: the pivot wrote the storage keys and the query
   // string but never `<html data-apphost-lang>`, so the chips stayed on the
   // old language until the page was reloaded.
-  await page.goto('/get-started/glossary/?aspire-lang=typescript');
+  await page.goto('/get-started/first-app/?aspire-lang=typescript');
 
   await expect(typeScriptChip).toBeVisible();
-  await expect(typeScriptChip).toHaveText('withReference');
+  await expect(typeScriptChip).toHaveText('createBuilder');
 
   await page.locator('#pivot-selector-aspire-lang').getByRole('button', { name: 'C#' }).click();
 
   await expect(page).toHaveURL(/\?aspire-lang=csharp$/);
   await expect(csharpChip).toBeVisible();
-  await expect(csharpChip).toHaveText('WithReference');
+  await expect(csharpChip).toHaveText('CreateBuilder');
   await expect(typeScriptChip).toBeHidden();
 });
 
@@ -346,6 +346,78 @@ test('floating pivot controls clear the TOC across its responsive breakpoint', a
 });
 
 for (const transition of ['native', 'fallback'] as const) {
+  test(`ApiReference links and tooltips survive navigation and history with ${transition} swaps`, async ({
+    page, isMobile,
+  }) => {
+    test.skip(isMobile && transition === 'native',
+      'Chromium touch emulation aborts native transitions; touch projects cover the swap fallback.');
+    test.setTimeout(120_000);
+    const errors: string[] = [];
+    page.on('pageerror', (error) => errors.push(error.message));
+    if (transition === 'fallback') {
+      await page.addInitScript(() => {
+        Object.defineProperty(document, 'startViewTransition', { value: undefined });
+      });
+    }
+    await page.goto('/docs/');
+    await dismissCookieConsentIfVisible(page);
+    const marker = await page.evaluate(() => {
+      const value = crypto.randomUUID();
+      Reflect.set(window, '__apiReferenceSession', value);
+      return value;
+    });
+    const navigate = async (action: () => Promise<unknown>) => {
+      await page.evaluate(() => {
+        Reflect.set(window, '__apiReferenceLoaded', false);
+        document.addEventListener('astro:page-load', () => {
+          Reflect.set(window, '__apiReferenceLoaded', true);
+        }, { once: true });
+      });
+      await action();
+      await expect.poll(() => page.evaluate(() => Reflect.get(window, '__apiReferenceLoaded'))).toBe(true);
+      await expect(page.locator('html[data-astro-transition]')).toHaveCount(0);
+      expect(await page.evaluate(() => Reflect.get(window, '__apiReferenceSession'))).toBe(marker);
+    };
+    await navigate(() => page.locator('a[href="/get-started/first-app/"]:visible').first().click());
+    const reference = page.locator('.api-reference').first();
+
+    for (const language of ['csharp', 'typescript'] as const) {
+      await page.evaluate(() => window.scrollTo({ top: 0, behavior: 'instant' }));
+      await page.locator('#pivot-selector-aspire-lang').getByRole('button', {
+        name: language === 'csharp' ? 'C#' : 'TypeScript', exact: true,
+      }).click();
+      const chip = reference.locator(`a[data-lang="${language}"]`);
+      await expect(chip).toBeVisible();
+      await expect(chip).toHaveAttribute('href', new RegExp(`/reference/api/${language}/`));
+      const destination = new URL((await chip.getAttribute('href'))!, page.url()).href;
+
+      await chip.focus();
+      await expect(page.getByRole('tooltip')).toBeVisible();
+      await expect(page.getByRole('tooltip')).not.toBeEmpty();
+      await navigate(() => chip.press('Enter'));
+      await expect(page).toHaveURL(destination);
+      await expect(page.getByRole('tooltip')).toHaveCount(0);
+
+      await navigate(() => page.goBack());
+      await expect(page.locator('html')).toHaveAttribute('data-apphost-lang', language);
+      await expect(chip).toBeVisible();
+      await chip.focus();
+      await expect(page.getByRole('tooltip')).toBeVisible();
+      await expect(page.getByRole('tooltip')).not.toBeEmpty();
+      await chip.press('Escape');
+      await expect(page.getByRole('tooltip')).toHaveCount(0);
+      await chip.blur();
+
+      await navigate(() => page.goForward());
+      await expect(page).toHaveURL(destination);
+      await expect(page.getByRole('tooltip')).toHaveCount(0);
+      await navigate(() => page.goBack());
+      await expect(page.locator('html')).toHaveAttribute('data-apphost-lang', language);
+      await expect(chip).toBeVisible();
+    }
+    expect(errors).toEqual([]);
+  });
+
   test(`pivot lifecycle survives repeated visits and history with ${transition} swaps`, async ({
     page, isMobile,
   }) => {
