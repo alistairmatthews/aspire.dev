@@ -11,7 +11,7 @@ function initializeTooltips() {
     const interactive = element.getAttribute('data-tooltip-interactive');
     const instance = tippy(element, {
       content: title,
-      allowHTML: true,
+      allowHTML: element.getAttribute('data-tippy-allowhtml') !== 'false',
       theme: 'default',
       maxWidth: 'none',
       placement: placement ?? 'auto',
