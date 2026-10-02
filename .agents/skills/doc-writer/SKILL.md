@@ -9,9 +9,9 @@ This skill provides guidelines for AI coding agents to help maintainers produce 
 
 When drafting or editing any document, follow the rules in the [Common Documentation Issues reference](./references/common-documentation-issues.md).
 
-When linking or referring to any other resource, follow the rules in the [Cross Referencing reference](./references/cross-referencing.md).
+When linking or referring to any other resource, follow the rules in the [Cross-Referencing reference](./references/cross-referencing.md).
 
-When drafting or editing documentation for an Aspire integration, use the files locations and documentation structures in the [Integration Documentation reference](./references/integration-documentation.md).
+When drafting or editing documentation for an Aspire integration, use the file locations and documentation structures in the [Integration Documentation reference](./references/integration-documentation.md).
 
 Before finishing any draft, check it against the [Prose Patterns skill reference](./references/prose-patterns.md).
 

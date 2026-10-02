@@ -36,6 +36,7 @@ Examples of scenarios that often merit targeted tests:
 - responsive behavior that changes across desktop, tablet, and mobile
 - keyboard navigation, focus management, or screen-reader labeling
 - repeated code examples that need distinct accessible labels or titles
+
 - RSS, analytics, or other generated/static asset behaviors exposed through docs pages
 
 ## Recommended Frontend Test Commands
@@ -45,7 +46,7 @@ Prefer targeted validation over the slowest possible full-site build when the ch
 ```bash
 pnpm --dir ./src/frontend run test:unit:components
 pnpm --dir ./src/frontend run test:unit:contracts
-pnpm --dir ./src/frontend exec playwright test tests/e2e/<relevant-spec>.ts
+pnpm --dir ./src/frontend exec playwright test tests/e2e/<relevant-spec>.spec.ts
 ```
 
 If you changed custom components, docs interactions, or accessibility behavior, make sure the relevant targeted tests pass before submitting the work.
