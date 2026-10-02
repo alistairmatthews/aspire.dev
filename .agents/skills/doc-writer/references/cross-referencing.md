@@ -1,126 +1,79 @@
-# Testing Your Documentation
+# Cross-Referencing
 
-Before submitting documentation:
+## Link to Related Documentation
 
-1. **Preview locally**: Run the site locally to verify rendering and content flow
-2. **Check links**: Ensure all internal and external links work
-3. **Validate code**: Test all code examples compile and run using `aspire run`
-4. **Review formatting**: Verify components render correctly
-5. **Run relevant tests**: Do not consider documentation or component work done until the affected tests pass
-6. **Check navigation**: Confirm sidebar entries are correct
-7. **Check integration logos**: At desktop and mobile widths, verify the full logo is visible, uncropped, and legible in both light and dark themes
+Use standard Markdown links with absolute paths from the docs root:
 
-## Documentation Validation Strategy
-
-Use the smallest set of checks that proves the change is correct:
-
-- For MDX copy, structure, and navigation changes, verify the page locally and check the edited links.
-- For custom component usage changes, run the component render tests that cover the affected behavior.
-- For component prop surface changes, update and run the prop-contract coverage so editor completions and consumer typings stay intact.
-- For interactive behavior changes, run targeted Playwright coverage for the scenario you changed rather than relying on unrelated broad suites.
-- For browser-based local verification, use `playwright-cli` (`playwright-cli open <frontend-url>`, `playwright-cli snapshot`, `playwright-cli click <ref>`) instead of Playwright MCP tools.
-- For accessibility-sensitive changes, validate both the rendered page and any focused accessibility tests that exercise the affected interaction.
-
-## Custom Component and Test Expectations
-
-If a documentation change adds, removes, or materially changes a custom component, you should usually update one or more of these test layers:
-
-- `src/frontend/tests/unit/custom-components.vitest.test.ts` for runtime render coverage of custom Astro components.
-- `src/frontend/tests/typecheck/component-props.contracts.ts` when component props change and the public prop contract should remain typed for MDX and other consumers.
-- `src/frontend/tests/e2e/*.spec.ts` for user-visible interactions that depend on hydration, persistence, navigation, or accessibility behavior.
-
-Examples of scenarios that often merit targeted tests:
-
-- query-string or local-storage persistence
-- cookie-consent or preference-driven behavior
-- responsive behavior that changes across desktop, tablet, and mobile
-- keyboard navigation, focus management, or screen-reader labeling
-- repeated code examples that need distinct accessible labels or titles
-- RSS, analytics, or other generated/static asset behaviors exposed through docs pages
-
-## Recommended Frontend Test Commands
-
-Prefer targeted validation over the slowest possible full-site build when the change does not require it.
-
-```bash
-pnpm --dir ./src/frontend run test:unit:components
-pnpm --dir ./src/frontend run test:unit:contracts
-pnpm --dir ./src/frontend exec playwright test tests/e2e/<relevant-spec>.ts
+```markdown
+For more information, see [Service Defaults](/fundamentals/service-defaults/).
 ```
 
-If you changed custom components, docs interactions, or accessibility behavior, make sure the relevant targeted tests pass before submitting the work.
+## Inline API references
 
-## Installing the Aspire CLI
+Use `ApiReference` selectively to connect an explanation to API reference documentation, not to turn every API mention into a link.
 
-Ensure you have the appropriate version of the Aspire CLI installed for testing. The version depends on what you're documenting:
+- In ordinary prose, use `<ApiReference />` only on the **first named mention of a given API in an article**, when naming that API helps explain the behavior or accompanying example. Do not introduce an API name just to add a reference link.
+- After that first mention, do **not** repeat the component or API reference link in ordinary prose, including prose in callouts and later sections. Prefer descriptive prose such as "this method" or "the dependency configuration." If repeating the name is necessary for clarity, use unlinked inline code appropriate to the AppHost language being discussed.
+- Apply the ordinary-prose limit **per API, per article**, not per section or language tab. A different API can have its own first reference.
+- In **bulleted or numbered lists**, including language-specific API explanation lists, repeated `<ApiReference />` components are allowed. Treat equivalent API entries consistently, regardless of earlier mentions, rather than mixing linked components and unlinked API names.
+- An optional API reference link in **See also** is also allowed.
+- Keep API names in code samples as code; do not add reference markup inside code fences.
+- Match the reference to the API actually used in the example. A PostgreSQL example calling `withPostgresMcp()` / `WithPostgresMcp()` must be introduced with `Aspire.Hosting.PostgresBuilderExtensions.WithPostgresMcp`, not the generic `WithMcpServer` API.
 
-### GA/Stable Builds (Default)
+For example, introduce an API once:
 
-For documenting released features:
+```mdx
+import ApiReference from '@components/ApiReference.astro';
 
-```bash
-# Linux/macOS
-curl -sSL https://aspire.dev/install.sh | bash
-
-# Windows (PowerShell)
-irm https://aspire.dev/install.ps1 | iex
+For PostgreSQL, use <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithPostgresMcp" /> to expose MCP tools for a database.
 ```
 
-For complete installation instructions, see [Install Aspire CLI](https://aspire.dev/get-started/install-cli/).
+Later in the same article's ordinary prose, refer to "the PostgreSQL MCP helper" rather than repeating the linked API name. In an API explanation list, repeat the component for consistent entries:
 
-### Nightly/Dev Builds
-
-For documenting features on the main branch that haven't been released yet:
-
-```bash
-# Linux/macOS
-curl -sSL https://aspire.dev/install.sh | bash -s -- --quality dev
-
-# Windows (PowerShell)
-iex "& { $(irm https://aspire.dev/install.ps1) } -Quality 'dev'"
+```mdx
+- <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithPostgresMcp" /> exposes MCP tools for a database.
+- <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithReference" /> connects resources.
 ```
 
-You can also access this via the download icon on aspire.dev and selecting "Dev" from the Channel selector.
+### Selecting an overload
 
-### PR Builds
+Author `name`, `package`, and `parameterTypes` as explicit static props. The authoring validator does not evaluate spread objects: it reports `unsupported-spread` when a spread could supply or override any of these props, including optional ones. Remove the spread, or explicitly set all three props after the last spread so their values are known.
 
-For documenting features in specific pull requests before they merge:
+By default, `ApiReference` shows the method name **without `()`** and links to the method group. To discuss a specific overload, supply `parameterTypes` as a static array of its **complete declared C# parameter types**, in declaration order. Copy the types from the generated C# catalog, preserving namespaces, generic arguments, and nullability. Include the `this` receiver's type for an extension method, but not the `this` keyword. Use `[]` only for a declaration with no parameters.
 
-1. Go to the PR in [microsoft/aspire](https://github.com/microsoft/aspire)
-2. Find the build artifacts in the Checks/Actions section
-3. Download and install the CLI from the PR artifacts
-
-This is useful for getting an early start on documentation for upcoming features.
-
-### Staging Builds
-
-For prerelease builds from the current release branch:
-
-```bash
-# Linux/macOS
-curl -sSL https://aspire.dev/install.sh | bash -s -- --quality staging
-
-# Windows (PowerShell)
-iex "& { $(irm https://aspire.dev/install.ps1) } -Quality 'staging'"
+```mdx
+<ApiReference
+  name="Aspire.Hosting.ResourceBuilderExtensions.WithEnvironment"
+  parameterTypes={[
+    'Aspire.Hosting.ApplicationModel.IResourceBuilder<T>',
+    'string',
+    'string?',
+  ]}
+/>
 ```
 
-## Running Locally
+This links to the exact C# overload and displays `WithEnvironment(string name, string? value)`. The extension receiver is used for selection but omitted from the visible call signature. In TypeScript mode, the component uses the generated TypeScript export's own name and parameters; several C# overloads may share one TypeScript dispatcher. Do not copy C# parameter types into a TypeScript signature or select overloads by ordinal position. A missing or ambiguous match is an authoring error, not permission to link to the first overload. Use `package` when the same API is declared in multiple packages.
 
-The documentation site can be run locally using the Aspire CLI:
+Linked references reuse the code-block headers' C# and TypeScript icons from `material-icon-theme`, centered inside the code background. Do not add a separate icon or empty parentheses manually. `()` is shown only when an explicitly selected API genuinely has no call parameters.
 
-```bash
-aspire run
+The component derives its top-positioned tooltip from the resolved API's generated summary or description, including the selected overload when specified. Do not duplicate that description in an authored `title` prop. When no description exists, the tooltip identifies the API and language instead. Tooltip titles are capped at 160 characters, including an ASCII `...` suffix when shortened, preferably at a word boundary. This presentation limit also applies to diagnostic titles; full source descriptions, diagnostics, and visible API labels remain unchanged.
+
+Title-based tooltips use the shared `src/frontend/src/scripts/tooltips.ts` lifecycle on initial load and after ClientRouter navigation. Keep API descriptions text-only with `data-tippy-allowhtml="false"`; do not add a competing per-component initializer.
+The lifecycle is installed once per document; HMR disposal removes its listeners, restores titles, and destroys tooltip instances before the replacement module initializes.
+
+## Reference NuGet Packages
+
+Use the 📦 emoji with links:
+
+```markdown
+Install the [📦 Aspire.Hosting.Redis](https://nuget.org/packages/Aspire.Hosting.Redis) package.
 ```
 
-<Aside type="tip">
-When testing code examples that add integration packages, use `aspire add <package-name>` rather than `dotnet add package`. The Aspire CLI automatically adds packages to the correct project.
-</Aside>
+## See Also Sections
 
-Use the Aspire CLI output or dashboard resource list to find the `frontend` endpoint, then open it with `playwright-cli`:
+End pages with a "See also" section linking to:
 
-```bash
-playwright-cli open <frontend-url>
-playwright-cli snapshot
-```
-
-Use snapshot refs with `playwright-cli click <ref>` for page interactions.
+- Official technology documentation
+- Related Aspire documentation
+- NuGet package pages
+- GitHub repositories (when applicable)
