@@ -6,11 +6,11 @@ description: Learn how to integrate console applications and background worker s
 import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 import LearnMore from '@components/LearnMore.astro';
 
-Aspire can orchestrate more than just ASP.NET Core web applications. You can add console applications and background worker services to the AppHost, allowing them to participate in service discovery, receive connection strings, and benefit from centralized orchestration alongside the rest of your application.
+Console applications and background workers can participate in an Aspire application regardless of the language they're written in. Add them to your AppHost to manage their lifecycle alongside your other resources, provide connection strings and service endpoints, and view their console output in the dashboard.
 
 ## Adding a console app to the AppHost
 
-Any .NET project — including console applications and Worker Service projects — can be added to the AppHost using `AddProject`. The project doesn't need to be a web app. For Python scripts, use `AddPythonApp`; use `AddPythonModule` or `AddPythonExecutable` for modules and environment-provided tools. For Node.js apps or arbitrary executables, use a JavaScript app resource or `AddExecutable`.
+Choose the resource type that matches how your app runs. Use an executable resource for a command-line program, a Python app resource for a script or module, or a JavaScript app resource for a Node.js app. For a .NET console app or Worker Service project, use a project resource. None of these apps needs to expose an HTTP endpoint to be orchestrated by Aspire.
 
 <LearnMore>
   For more information on executable, Python, and JavaScript resources, see
@@ -18,6 +18,8 @@ Any .NET project — including console applications and Worker Service projects 
   integration](/integrations/frameworks/python/), and [JavaScript
   integration](/integrations/frameworks/javascript/).
 </LearnMore>
+
+The following examples show how to add a .NET console app and configure service discovery and background workers with the .NET Generic Host.
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
