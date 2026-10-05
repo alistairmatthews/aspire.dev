@@ -5,6 +5,8 @@ description: Learn how to integrate console applications and background worker s
 
 import { Aside, Steps, Tabs, TabItem } from '@astrojs/starlight/components';
 import LearnMore from '@components/LearnMore.astro';
+import InstallPackage from '@components/InstallPackage.astro';
+import InstallDotNetPackage from '@components/InstallDotNetPackage.astro';
 
 Console applications and background workers can participate in an Aspire application regardless of the language they're written in. Add them to your AppHost to manage their lifecycle alongside your other resources, provide connection strings and service endpoints, and view their console output in the dashboard.
 
@@ -20,6 +22,12 @@ Choose the resource type that matches how your app runs. Use an executable resou
 </LearnMore>
 
 The following examples show how to add a .NET console app and configure service discovery and background workers with the .NET Generic Host.
+
+These examples assume an existing AppHost and a shared service defaults project. Create the named console, worker, and API projects before referencing them. In a C# AppHost, add project references so the corresponding `Projects.*` types are generated; in a TypeScript AppHost, use each project's actual path.
+
+For the Redis examples, install the hosting integration in your AppHost. Running Redis also requires a supported [container runtime](/get-started/prerequisites/).
+
+<InstallPackage packageName="Aspire.Hosting.Redis" />
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -68,20 +76,38 @@ The `processor` project receives the `ConnectionStrings__cache` environment vari
 
 ## Service discovery in console apps
 
-Non-ASP.NET Core console apps can use the same service discovery infrastructure as web apps. Add the appropriate packages and configure them during startup.
+Console apps using the .NET Generic Host can use the same service discovery infrastructure as web apps. The following walkthrough assumes a `MyConsoleApp` console project and a `CatalogService` API project that exposes an HTTP endpoint at `/`.
 
 <Steps>
 
-1.  Add the hosting package and reference the service defaults project:
+1.  From the console project directory, install the hosting package:
+
+    <InstallDotNetPackage packageName="Microsoft.Extensions.Hosting" />
+
+    Add a reference to your existing service defaults project in the console project's _MyConsoleApp.csproj_. Replace the example path with your project's actual path:
 
     ```xml title="MyConsoleApp.csproj"
-    <PackageReference Include="Microsoft.Extensions.Hosting" />
-    <ProjectReference Include="..\MyApp.ServiceDefaults\MyApp.ServiceDefaults.csproj" />
+    <ItemGroup>
+      <ProjectReference Include="..\MyApp.ServiceDefaults\MyApp.ServiceDefaults.csproj" />
+    </ItemGroup>
     ```
 
-2.  Configure the host in your console app's _Program.cs_:
+2.  Add a typed HTTP client to the console project:
+
+    ```csharp title="CatalogClient.cs"
+    using System.Net.Http;
+
+    public sealed class CatalogClient(HttpClient httpClient)
+    {
+        public Task<string> GetAsync(CancellationToken cancellationToken = default)
+            => httpClient.GetStringAsync("/", cancellationToken);
+    }
+    ```
+
+3.  Configure the host in your console app's _Program.cs_. This example starts the host, calls the catalog API, and then stops:
 
     ```csharp title="Program.cs"
+    using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
 
     var builder = Host.CreateApplicationBuilder(args);
@@ -93,11 +119,16 @@ Non-ASP.NET Core console apps can use the same service discovery infrastructure 
     builder.Services.AddHttpClient<CatalogClient>(
         client => client.BaseAddress = new Uri("https+http://catalog"));
 
-    var app = builder.Build();
-    await app.RunAsync();
+    using var app = builder.Build();
+    await app.StartAsync();
+
+    var catalogClient = app.Services.GetRequiredService<CatalogClient>();
+    Console.WriteLine(await catalogClient.GetAsync());
+
+    await app.StopAsync();
     ```
 
-3.  In the AppHost, reference the services this app depends on:
+4.  In the AppHost, reference the services this app depends on:
 
           <Tabs syncKey='aspire-lang'>
 
@@ -153,16 +184,29 @@ Worker Service projects are the recommended pattern for long-running background 
 
 ### Creating a Worker Service
 
+Create a `DataWorker` project with the Worker Service template, then add a reference to your shared service defaults project as shown in the console walkthrough:
+
+```bash title=".NET CLI"
+dotnet new worker --name DataWorker --output DataWorker
+```
+
+From the `DataWorker` directory, install the Redis **client** integration. This package supplies `AddRedisClient`; the AppHost's hosting package doesn't register a client in the worker:
+
+<InstallDotNetPackage packageName="Aspire.StackExchange.Redis" />
+
+Replace the generated worker class with _DataProcessor.cs_. Its `DoWorkAsync` method is a placeholder for your application's processing logic; registering the Redis client doesn't itself perform Redis operations.
+
 ```csharp title="DataProcessor.cs"
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
+
 public class DataProcessor : BackgroundService
 {
     private readonly ILogger<DataProcessor> _logger;
-    private readonly IServiceProvider _services;
 
-    public DataProcessor(ILogger<DataProcessor> logger, IServiceProvider services)
+    public DataProcessor(ILogger<DataProcessor> logger)
     {
         _logger = logger;
-        _services = services;
     }
 
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
@@ -177,14 +221,18 @@ public class DataProcessor : BackgroundService
         }
     }
 
-    private async Task DoWorkAsync(CancellationToken stoppingToken)
+    private Task DoWorkAsync(CancellationToken stoppingToken)
     {
-        // Your background work here
+        // Replace with your background work.
+        return Task.CompletedTask;
     }
 }
 ```
 
 ```csharp title="Program.cs"
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
+
 var builder = Host.CreateApplicationBuilder(args);
 
 builder.AddServiceDefaults();
@@ -200,6 +248,12 @@ await app.RunAsync();
 ```
 
 ### Adding to the AppHost
+
+The following model also provides a PostgreSQL database. Install its hosting integration in the AppHost before using this example:
+
+<InstallPackage packageName="Aspire.Hosting.PostgreSQL" />
+
+The database reference supplies connection information, but the worker above doesn't yet use it. To add database operations, configure a client as described in [Connect to PostgreSQL](/integrations/databases/postgres/postgres-connect/).
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -296,16 +350,10 @@ With `WithExplicitStart`, the resource appears in the Aspire dashboard but doesn
   the console logs page doesn't forward user input to the process's stdin.
 </Aside>
 
-Development builds after Aspire 13.4.6 include an experimental `WithTerminal` API for interactive terminal user interfaces (TUIs) and shell-based experiences that need a live, bidirectional session.
+Aspire builds that include the experimental `WithTerminal` API support interactive terminal user interfaces (TUIs) and shell-based experiences that need a live, bidirectional session, separately from the dashboard's console log viewer.
 
-:::caution[Experimental development feature]
-`WithTerminal` isn't available in Aspire 13.4.6. In development builds that include it, the API is reported under diagnostic ID `ASPIRETERMINAL001`, and the related `aspire terminal` command group is hidden by default. Enable the CLI commands for the current project with:
-
-```bash title="Aspire CLI"
-aspire config set features.terminalCommandsEnabled true
-```
-
-The API surface and behavior may change before release. Using `WithTerminal` in C# also requires suppressing `ASPIRETERMINAL001`.
+:::caution[Experimental API]
+`WithTerminal` is reported under diagnostic ID `ASPIRETERMINAL001`. Using it in C# requires suppressing that diagnostic, and its API surface and behavior may change. This API might not be present in your installed release; use compatible hosting packages and a CLI build that includes it.
 :::
 
 ## Viewing console output
@@ -317,7 +365,7 @@ Aspire captures stdout and stderr from all managed resources and displays them i
   page](/dashboard/explore/#console-logs-page).
 </LearnMore>
 
-For structured logging in console apps, use `ILogger` instead of `Console.Write`:
+For structured logging in console apps, use `ILogger` instead of `Console.Write`. The following fragment assumes an existing logger and item identifier:
 
 ```csharp title="Program.cs"
 // Prefer structured logging
@@ -327,11 +375,15 @@ logger.LogInformation("Processing item {ItemId}", itemId);
 Console.WriteLine($"Processing item {itemId}");
 ```
 
-Structured logs appear in both the **Console** and **Structured logs** tabs of the dashboard, making them easier to search and filter.
+With console logging and OpenTelemetry logging/export configured, such as through the service defaults setup above, logs appear in both the **Console logs** and **Structured logs** views of the dashboard. Calling `ILogger` alone doesn't export structured logs to the dashboard.
 
 ## Using connection strings without service defaults
 
 If you can't use the service defaults project (for example, in a minimal console app without a host), you can access connection strings directly from environment variables:
+
+For the configuration API example, install the environment variables configuration provider in your console project:
+
+<InstallDotNetPackage packageName="Microsoft.Extensions.Configuration.EnvironmentVariables" />
 
 ```csharp title="Program.cs"
 // For .NET apps, read from configuration

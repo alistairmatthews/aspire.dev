@@ -7,6 +7,8 @@ import { Aside, Tabs, TabItem } from '@astrojs/starlight/components';
 
 When you define resources in an Aspire AppHost, their names determine how configuration is surfaced to consuming services. This article explains which generated configuration keys preserve resource names, which environment variables encode them, and how to choose valid names.
 
+The AppHost examples assume the named application projects already exist. A C# AppHost needs project references for the `Projects.*` types; a TypeScript AppHost needs the corresponding project paths. Install the hosting integrations used by each example: [Redis](/integrations/caching/redis/redis-host/), [PostgreSQL](/integrations/databases/postgres/postgres-host/), and [RabbitMQ](/integrations/messaging/rabbitmq/rabbitmq-host/). Running those resources requires a supported [container runtime](/get-started/prerequisites/).
+
 ## How resource names map to environment variables
 
 When a resource is referenced by another resource using `WithReference`, Aspire injects configuration into the consuming resource. Connection strings use the `ConnectionStrings__<resourceName>` pattern, and service discovery endpoints use `services__<resourceName>__<endpointName>__<index>`.
@@ -14,8 +16,9 @@ When a resource is referenced by another resource using `WithReference`, Aspire 
 <Aside type="note">
   The connection string and service discovery formats preserve the resource name
   exactly, including dashes. Other injected forms, such as uppercase endpoint
-  and connection-property variables, encode dashes as underscores. For more
-  information, see [When Aspire encodes resource
+  and connection-property variables, encode dashes as underscores. Aspire also
+  provides a portable connection-string alias with dashes replaced by
+  underscores. For more information, see [When Aspire encodes resource
   names](#when-aspire-encodes-resource-names).
 </Aside>
 
@@ -77,12 +80,14 @@ For example, a project named `catalog` with an `http` endpoint provides:
 services__catalog__http__0=http://localhost:5123
 ```
 
-Multiple endpoints are indexed starting from `0`:
+Indices start at `0` separately for each endpoint name or scheme. An `http` endpoint and an `https` endpoint can therefore both use index `0`:
 
 ```
 services__catalog__http__0=http://localhost:5123
 services__catalog__https__0=https://localhost:7234
 ```
+
+For endpoints named `http` or `https`, the key uses the endpoint's current URI scheme. Other endpoint names use their configured name.
 
 For more information, see [Service discovery](/fundamentals/service-discovery/).
 
@@ -135,11 +140,12 @@ await builder.build().run();
 
 The `worker` resource receives different name forms according to the configuration type:
 
-| Configuration type | Example environment variable     | Resource name handling |
-| ------------------ | -------------------------------- | ---------------------- |
-| Connection string  | `ConnectionStrings__app-db`      | Preserved              |
-| Service discovery  | `services__catalog-api__http__0` | Preserved              |
-| Uppercase endpoint | `CATALOG_API_HTTP`               | Encoded                |
+| Configuration type               | Example environment variable     | Resource name handling |
+| -------------------------------- | -------------------------------- | ---------------------- |
+| Connection string                | `ConnectionStrings__app-db`      | Preserved              |
+| Portable connection-string alias | `ConnectionStrings__app_db`      | Encoded                |
+| Service discovery                | `services__catalog-api__http__0` | Preserved              |
+| Uppercase endpoint               | `CATALOG_API_HTTP`               | Encoded                |
 
 <Aside type="note">
   Connection-property variables use the same encoded uppercase prefix. For
@@ -249,7 +255,7 @@ Aspire validates resource names at startup. A valid resource name:
   recommended convention. Underscores (`_`) aren't valid in resource names.
 </Aside>
 
-If a resource name is invalid, Aspire reports a diagnostic error at build time. For more information, see [ASPIRE006](/diagnostics/aspire006/).
+In a C# AppHost, invalid names that the analyzer can determine from literal strings produce the [ASPIRE006](/diagnostics/aspire006/) build-time diagnostic. Aspire also validates names when constructing the application model and throws an `ArgumentException` for invalid names. This runtime validation applies to dynamically computed names and TypeScript AppHosts, which don't receive the C# analyzer diagnostic.
 
 ## See also
 

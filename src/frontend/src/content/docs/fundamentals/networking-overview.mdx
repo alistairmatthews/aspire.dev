@@ -514,14 +514,18 @@ By default, Aspire binds service endpoints to `localhost` (loopback), making the
 
 <Aside type="caution">
   Binding to `0.0.0.0` exposes your service on all network interfaces, including
-  local network and any externally routable interfaces. Only do this in a
-  trusted development environment. Never deploy with this configuration to
-  production.
+  local network and any externally routable interfaces. For local testing, use a
+  trusted network and restrict access with your firewall. Production workloads
+  may also need wildcard bindings, especially inside containers; control their
+  exposure through the deployment's networking, authentication, and access
+  policies rather than assuming a wildcard binding is safe.
 </Aside>
 
 ### For ASP.NET Core projects
 
-Configure a proxyless endpoint whose public and target ports match, and set its target host to `0.0.0.0`. Aspire derives Kestrel's binding from the endpoint, so the AppHost and workload stay aligned:
+Configure a proxyless endpoint whose public and target ports match, and set its target host to `0.0.0.0`. For projects using the standard `ASPNETCORE_URLS` configuration, Aspire derives the listener binding from the endpoint:
+
+The examples assume an existing `Api` project, referenced by the C# AppHost or located at the path shown for the TypeScript AppHost.
 
 <Tabs syncKey="aspire-lang">
 <TabItem id="csharp" label="C#">
@@ -559,9 +563,13 @@ await builder.build().run();
 </TabItem>
 </Tabs>
 
+If the API explicitly configures `Kestrel:Endpoints`, changing only the AppHost endpoint's `TargetHost` doesn't replace those configured listener hosts. Update the API's Kestrel endpoint configuration to bind to the intended interfaces as well.
+
 ### For container resources
 
 For container resources, configure a proxyless host-to-container port mapping and make the application inside the container listen on `0.0.0.0`:
+
+This example uses the public ASP.NET Core sample image and requires a running [container runtime](/get-started/prerequisites/). `ASPNETCORE_URLS` configures ASP.NET Core workloads; configure the equivalent listener setting when using an image for another runtime.
 
 <Tabs syncKey="aspire-lang">
 <TabItem id="csharp" label="C#">
@@ -570,7 +578,7 @@ For container resources, configure a proxyless host-to-container port mapping an
 var builder = DistributedApplication.CreateBuilder(args);
 
 // Map host port 8080 to container port 80, and configure the app inside to bind on all interfaces
-builder.AddContainer("myapp", "myregistry/myapp")
+builder.AddContainer("myapp", "mcr.microsoft.com/dotnet/samples", "aspnetapp")
     .WithHttpEndpoint(port: 8080, targetPort: 80, isProxied: false)
     .WithEnvironment("ASPNETCORE_URLS", "http://0.0.0.0:80");
 
@@ -587,8 +595,8 @@ const builder = await createBuilder();
 
 // Map host port 8080 to container port 80, and configure the app inside to bind on all interfaces
 const myapp = await builder.addContainer('myapp', {
-  image: 'myregistry/myapp',
-  tag: 'latest',
+  image: 'mcr.microsoft.com/dotnet/samples',
+  tag: 'aspnetapp',
 });
 await myapp.withHttpEndpoint({ port: 8080, targetPort: 80, isProxied: false });
 await myapp.withEnvironment('ASPNETCORE_URLS', 'http://0.0.0.0:80');
@@ -603,13 +611,33 @@ await builder.build().run();
 
 For executable resources, pass `0.0.0.0` as the bind address and configure a proxyless endpoint whose public and target ports match:
 
+The following example runs a Python ASGI application. Install its dependencies in the Python environment used by the AppHost:
+
+```bash title="Python dependencies"
+python -m pip install fastapi uvicorn
+```
+
+Create _main.py_ in the AppHost directory:
+
+```python title="main.py"
+from fastapi import FastAPI
+
+app = FastAPI()
+
+@app.get("/")
+async def root():
+    return {"message": "Hello from Aspire"}
+```
+
+The snippets invoke uvicorn as a Python module, so a separate `uvicorn` executable doesn't need to be on `PATH`. If your environment uses `python3` instead of `python`, use that command in both the installation step and the AppHost.
+
 <Tabs syncKey="aspire-lang">
 <TabItem id="csharp" label="C#">
 
 ```csharp title="AppHost.cs"
 var builder = DistributedApplication.CreateBuilder(args);
 
-builder.AddExecutable("api", "uvicorn", ".", "main:app", "--host", "0.0.0.0", "--port", "8000")
+builder.AddExecutable("api", "python", ".", "-m", "uvicorn", "main:app", "--host", "0.0.0.0", "--port", "8000")
     .WithHttpEndpoint(port: 8000, targetPort: 8000, isProxied: false);
 
 builder.Build().Run();
@@ -623,7 +651,9 @@ import { createBuilder } from './.aspire/modules/aspire.mjs';
 
 const builder = await createBuilder();
 
-const api = await builder.addExecutable('api', 'uvicorn', '.', [
+const api = await builder.addExecutable('api', 'python', '.', [
+  '-m',
+  'uvicorn',
   'main:app',
   '--host',
   '0.0.0.0',
@@ -640,7 +670,7 @@ await builder.build().run();
 
 ## Container-to-host networking
 
-Starting with Aspire 13.3, the DCP container tunnel is enabled by default and provides container-to-host connectivity when you use `WithReference`. Runtime-specific host gateway names such as `host.docker.internal` are fallbacks for when the tunnel is disabled.
+The DCP container tunnel is enabled by default and provides container-to-host connectivity for TCP endpoints when you use `WithReference`. With the tunnel enabled, references to host project or executable endpoints using another transport protocol aren't supported. Runtime-specific host gateway names such as `host.docker.internal` are fallbacks for when the tunnel is disabled.
 
 For tunnel behavior, configuration, and examples, see [Container networking](/fundamentals/container-networking/).
 
