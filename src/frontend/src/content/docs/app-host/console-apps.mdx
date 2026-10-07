@@ -21,7 +21,12 @@ Choose the resource type that matches how your app runs. Use an executable resou
   integration](/integrations/frameworks/javascript/).
 </LearnMore>
 
-The following examples show how to add a .NET or Node.js console app, connect it to other resources, and run it as a background worker. Choose the **.NET** or **Node.js** tab for the language of your console app. Within each, the AppHost examples are available in C# and TypeScript.
+The following examples show how to add a .NET or Node.js console app, connect it to other resources, and run it as a background worker. The examples use two sets of tabs, which you choose independently:
+
+- **.NET** and **Node.js** tabs select the language of the console app or executable that the AppHost orchestrates.
+- **C#** and **TypeScript** tabs select the language of the AppHost itself.
+
+For example, to orchestrate a Node.js console app from a C# AppHost, choose **Node.js** and then **C#**. Your selections stay the same as you move through the page.
 
 These examples assume an existing AppHost.
 
@@ -34,6 +39,8 @@ For the Redis examples, install the hosting integration in your AppHost. Running
 
 <Tabs syncKey='console-app-lang'>
 <TabItem id='dotnet' label='.NET'>
+
+Add the console app project to your AppHost:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -86,6 +93,8 @@ The `processor` project receives the `ConnectionStrings__cache` environment vari
 Install the JavaScript hosting integration in your AppHost. It provides `AddNodeApp` / `addNodeApp`, which runs a JavaScript file with Node.js:
 
 <InstallPackage packageName="Aspire.Hosting.JavaScript" />
+
+Then add the console app to your AppHost:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -489,6 +498,8 @@ The database reference supplies connection information, but the worker above doe
 <Tabs syncKey='console-app-lang'>
 <TabItem id='dotnet' label='.NET'>
 
+Add the Worker Service project to your AppHost:
+
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
 
@@ -534,6 +545,8 @@ await builder.build().run();
 
 </TabItem>
 <TabItem id='nodejs' label='Node.js'>
+
+Add the Node.js worker to your AppHost:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
@@ -598,6 +611,8 @@ By default, all resources start automatically when the AppHost runs. For console
 <Tabs syncKey='console-app-lang'>
 <TabItem id='dotnet' label='.NET'>
 
+In your AppHost, add the console app project with `WithExplicitStart`:
+
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
 
@@ -632,6 +647,8 @@ await builder.build().run();
 
 </TabItem>
 <TabItem id='nodejs' label='Node.js'>
+
+In your AppHost, add the Node.js app with `WithExplicitStart`:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='csharp' label='C#'>
