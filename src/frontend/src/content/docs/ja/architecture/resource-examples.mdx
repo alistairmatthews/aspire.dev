@@ -4,6 +4,8 @@ description: Aspire の主要な概念を示す、実行可能な完全なサン
 next: false
 ---
 
+import ApiReference from '@components/ApiReference.astro';
+
 Aspire では柔軟なリソースモデルが提供されており、構造化された方法でリソースを定義および構成できます。このガイドでは、カスタムリソースの例とその実装方法を含め、リソースを追加して構成する一般的なパターンを紹介します。
 
 ### 例: 派生コンテナーリソース（Redis）
@@ -12,7 +14,7 @@ Aspire では柔軟なリソースモデルが提供されており、構造化�
 
 - データのみを保持するリソースクラスの定義。
 - `ReferenceExpression` を使用した遅延評価での `IResourceWithConnectionString` の実装。
-- パラメーター検証、パスワード管理、イベント購読、正常性チェック、Fluent API を使ったコンテナー構成を処理する `AddRedis` 拡張メソッドの作成。
+- パラメーター検証、パスワード管理、イベント購読、正常性チェック、Fluent API を使ったコンテナー構成を処理する <ApiReference name="Aspire.Hosting.RedisBuilderExtensions.AddRedis" /> 拡張メソッドの作成。
 
 ```csharp title="C# — RedisResourceExtensions.cs"
 public static class RedisResourceExtensions
