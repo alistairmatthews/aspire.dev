@@ -5,6 +5,7 @@ description: Learn what causes the Aspire compiler warning ASPIRERADIUS003 and h
 ---
 
 import { Badge } from '@astrojs/starlight/components';
+import ApiReference from '@components/ApiReference.astro';
 
 <Badge
   text="Version introduced: 13.5"
@@ -17,7 +18,7 @@ import { Badge } from '@astrojs/starlight/components';
 
 This diagnostic warning is reported when using the experimental Radius cloud-provider APIs from the `Aspire.Hosting.Radius` integration, `WithAzureProvider` and `WithAwsProvider`.
 
-The `[Experimental]` gate is on `WithAzureProvider` and `WithAwsProvider` themselves. The credential callbacks you configure through them—such as `WithServicePrincipal`, `WithWorkloadIdentity`, `WithAccessKey`, and `WithIrsa`—are part of the same experimental surface; they don't each emit `ASPIRERADIUS003` on their own.
+The `[Experimental]` gate is on `WithAzureProvider` and `WithAwsProvider` themselves. The credential callbacks you configure through them—such as `WithServicePrincipal`, <ApiReference name="Aspire.Hosting.AzureKubernetesEnvironmentExtensions.WithWorkloadIdentity" />, `WithAccessKey`, and `WithIrsa`—are part of the same experimental surface; they don't each emit `ASPIRERADIUS003` on their own.
 
 These APIs configure the Azure and AWS cloud providers that the Radius publisher emits and that the deploy pipeline registers credentials for.
 
