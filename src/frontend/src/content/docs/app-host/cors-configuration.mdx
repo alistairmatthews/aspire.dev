@@ -11,7 +11,7 @@ Cross-Origin Resource Sharing (CORS) is a browser security feature that restrict
 
 ## When does CORS matter with Aspire?
 
-CORS is only enforced by **browsers**. It applies when a web frontend (running in a user's browser) makes HTTP requests to an API on a different origin (different host, port, or scheme). Aspire doesn't add or remove any browser CORS restrictions.
+CORS is only enforced by **browsers**. It applies when a web frontend, running in a user's browser, makes HTTP requests to an API on a different origin. That origin could be a different host, port, or scheme. Aspire doesn't add or remove any browser CORS restrictions.
 
 You need to configure CORS in your API when:
 
@@ -22,8 +22,8 @@ You need to configure CORS in your API when:
 You **don't** need to configure CORS when:
 
 - The API request is made on the server, for example by a Blazor Server, Razor Pages, or MVC application. Browser-side requests from those applications still require CORS if they cross origins.
-- Your API and frontend share the same origin (same scheme, host, and port).
-- Communication is between server-to-server (backend services calling other backend services).
+- Your API and frontend share the same origin, consisting of the same scheme, host, and port.
+- Communication is server-to-server. That is, backend services calling other backend services.
 
 <Aside type="note">
   Aspire's inner-loop proxy handles port routing between services, but it
