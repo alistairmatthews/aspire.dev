@@ -464,17 +464,23 @@ app.get('/secure', requireAuth, (req, res) => res.sendStatus(200));
 
 ### Issue: Preflight requests failing
 
-**Symptom**: `OPTIONS` requests return 405 Method Not Allowed.
-
-**Cause**: The API doesn't handle `OPTIONS` requests, which browsers use for CORS preflight checks.
+**Symptom**: The browser blocks a request after its preflight `OPTIONS` request fails.
 
 <Tabs syncKey='console-app-lang'>
 <TabItem id='dotnet' label='.NET'>
+
+`OPTIONS` requests return 405 Method Not Allowed.
+
+**Cause**: The API doesn't handle `OPTIONS` requests, which browsers use for CORS preflight checks.
 
 **Solution**: `UseCors()` handles recognized preflight requests automatically. Ensure an applicable policy allows the request's origin, method, and headers, and that CORS runs after routing and before authorization and endpoint execution.
 
 </TabItem>
 <TabItem id='nodejs' label='Node.js'>
+
+`OPTIONS` requests return 200 OK, but the response has no `Access-Control-Allow-*` headers.
+
+**Cause**: The `cors` middleware doesn't run for `OPTIONS` requests. Express answers an `OPTIONS` request for a route automatically, but that response doesn't include CORS headers.
 
 **Solution**: When you register it for all routes with `app.use(cors(...))`, the `cors` middleware responds to preflight requests automatically. If you apply `cors()` to individual routes instead, also register it for the matching `OPTIONS` requests with `app.options(...)`. Ensure the configuration allows the request's origin, method, and headers, and that the middleware runs before authentication and your routes.
 
