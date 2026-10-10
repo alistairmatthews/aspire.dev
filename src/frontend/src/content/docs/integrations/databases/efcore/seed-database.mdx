@@ -53,7 +53,7 @@ The recommended method for executing database seeding scripts depends on the dat
 <Tabs syncKey="efcore-db-provider">
 <TabItem label="SQL Server">
 
-With Aspire, you can use the <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithCreationScript" /> method to ensure a T-SQL script is run when the database is created. Add SQL code to this script that creates and populates the database, the necessary tables, and other database objects.
+With Aspire, you can use the <ApiReference name="Aspire.Hosting.SqlServerBuilderExtensions.WithCreationScript" /> method to ensure a T-SQL script is run when the database is created. Add SQL code to this script that creates and populates the database, the necessary tables, and other database objects.
 
 The following code is an example T-SQL script that creates and populates an address book database:
 

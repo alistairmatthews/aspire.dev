@@ -15,7 +15,7 @@ This example shows how to create a custom resource (`RedisResource`) that derive
 
 - Defining a data-only resource class.
 - Implementing `IResourceWithConnectionString` with deferred evaluation using `ReferenceExpression`.
-- Creating an <ApiReference name="Aspire.Hosting.RedisBuilderExtensions.AddRedis" /> extension method that handles parameter validation, password management, event subscription, health checks, and container configuration using fluent APIs.
+- Creating an `AddRedis` extension method that handles parameter validation, password management, event subscription, health checks, and container configuration using fluent APIs.
 
 ```csharp title="RedisResourceExtensions.cs"
 public static class RedisResourceExtensions
