@@ -10,35 +10,6 @@ description: Learn about common patterns you can use to work with databases as y
 
 Use this table as the starting point:
 
-| Where do you want to run database code? | What language you you want to use? | What do you wan to do?   |
-|-----------------------------------------|------------------------------------|--------------------------|
-| In the Aspire AppHost                   | .NET C#                            | Create a database        |
-| In a different resource                 | JavaScript                         | Update a database schema |
-| In scripts                              |                                    | Deploy a database        |
-| As SQL code in dashboard repl terminals |
-|                                         |
-
-
-
-Common tasks:
-
-- Create a DB
-- Populate DB
-  - EF Core
-- Modify DB Schema
-  - Migrations
-    - EF Core, .NET
-    - Drizzle, JavaScript
-- Persist a DB across restarts
-- Deployment
-
-Where:
-
-- In AppHost
-- In orchestrated app
-  - Triggered on startup?
-  - Triggered by a custom command on the resource
-- In code that runs in dashboard repl terminals
 
 | What do you want to do?            | Where do you want to do it?  | Options                                 |
 |------------------------------------|------------------------------|-----------------------------------------|
@@ -46,19 +17,43 @@ Where:
 |                                    | In an orchestrated app       | On startup/On custom command            |
 |                                    | In a dashboard REPL terminal | Manual commands or script               |
 | Seed a database                    | In an orchestrated app       | On startup/On custom command            |
-|                                    |                              | EF Core/Drizzle                         |
+|                                    |                              | Use EF Core/Drizzle migrations          |
 |                                    | In a dashboard REPL terminal | Script                                  |
 | Modify a database schema           | In an orchestrated app       | On startup/On custom command            |
-|                                    |                              | EF Core/Drizzle                         |
+|                                    |                              | Use EF Core/Drizzle migrations          |
 |                                    | In a dashboard REPL terminal | Script                                  |
 | Persist a database across restarts | In the AppHost               | WithDataVolume                          |
 |                                    |                              | WithBindVolume                          |
 |                                    |                              | WithLifetime                            |
-| Deployment                         | In the AppHost               | New database on each deployment         |
+| Deploy a database                  | In the AppHost               | New database on each deployment         |
 |                                    |                              | Old databsae remains on each deployment |
 
 
-Questions:
-- When material is already covered elsewhere, duplicate, link to other document or link other document to this one?
+> Questions:
+> - When material is already covered elsewhere, duplicate, link to other document or link other document to this one?
 
 > NOTE: Scripts are any kind of script - not just SQL
+
+## Create a database
+
+### Create a database in the AppHost
+
+### Create a database in an orchestrated app
+
+### Create a database in a dashboard REPL terminal
+
+## Seed a database with sample data
+
+### Seed a database in an orchestrated app
+
+#### Seed a database on startup or using a customer command
+
+#### Seed a database using ORM migrations
+
+### Seed a database in a dashboard REPL terminal 
+
+## Modify a database schema
+
+## Persist a database across restarts
+
+## Deploy a database with an Aspire solution
