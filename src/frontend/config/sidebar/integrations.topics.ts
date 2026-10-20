@@ -903,10 +903,6 @@ export const integrationTopics: StarlightSidebarTopicsUserConfig = {
       },
       items: [
         {
-          label: 'Database patterns',
-          slug: 'integrations/databases/database-patterns',
-        },
-        {
           label: 'ClickHouse',
           collapsed: true,
           items: [
