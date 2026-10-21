@@ -10,9 +10,9 @@ import ApiReference from '@components/ApiReference.astro';
 
 Most Aspire solutions include at least one database. During development you create that database, fill it with sample data, change its schema as your app evolves, and decide whether its data should survive a restart. When you deploy, you decide where the database runs and how schema changes reach it. This article describes the options Aspire gives you for each of these tasks and links to the articles that cover each option in detail.
 
-The examples use PostgreSQL, but the same patterns apply to other database integrations such as SQL Server, MySQL, and MongoDB. Where an example needs an object-relational mapper (ORM), it shows both Entity Framework Core (EF Core) for .NET apps and Drizzle for JavaScript and TypeScript apps.
+The examples on this page use PostgreSQL but the same patterns apply to other database integrations such as SQL Server, MySQL, and MongoDB. Where an example needs an Object-Relational Mapper (ORM), it shows both Entity Framework Core (EF Core) for .NET apps and Drizzle for JavaScript and TypeScript apps.
 
-Use this table to find the right approach:
+Use this table to find the right approach for your requirements:
 
 | What do you want to do? | Where do you want to do it? | Options |
 | ----------------------- | --------------------------- | ------- |
@@ -28,7 +28,7 @@ Use this table to find the right approach:
 | Persist a database across restarts | In the AppHost | [Data volumes, bind mounts, and persistent lifetimes](#persist-a-database-across-restarts) |
 | Deploy a database | In the AppHost | [A container database or a managed database service](#deploy-a-database-with-an-aspire-solution) |
 
-In this article, a _script_ is any program that works with the database. It can be a SQL file, a shell script, or a program written in a language such as JavaScript, Python, or C#.
+In this article, a _script_ is any program that works with the database. It can be a SQL file, a shell script, or a program written in a language such as JavaScript or Python.
 
 ## Create a database
 
@@ -75,9 +75,9 @@ builder.Build().Run();
 </TabItem>
 </Tabs>
 
-When the server resource is ready, Aspire creates the database if it doesn't already exist. The reference passes the database's connection information to the app, and the wait makes sure the app doesn't start until the database is available.
+When the server resource is ready, Aspire creates the database if it doesn't already exist. <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WithReference" /> passes the database's connection information to the app, and <ApiReference name="Aspire.Hosting.ResourceBuilderExtensions.WaitFor" /> makes sure the app doesn't start until the database is available.
 
-To control how the database is created, for example to set a collation or an owner, replace the default creation script with <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithCreationScript" />. SQL Server and MySQL support the same method.
+To control how the database is created, for example to set a collation or an owner, replace the default creation script by using <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.WithCreationScript" />. SQL Server and MySQL support the same method.
 
 <LearnMore>
   For more information, see [Add PostgreSQL resource with database scripts](/integrations/databases/postgres/postgres-host/#add-postgresql-resource-with-database-scripts). For details on how Aspire waits for the server to be ready, see [AppHost eventing APIs](/app-host/eventing/).
@@ -144,7 +144,7 @@ builder.Build().Run();
 </TabItem>
 </Tabs>
 
-Run the app, select the **REPL** command on the `postgres` resource, and enter the statement:
+Run the app, then in the Aspire dashboard, select the **REPL** command on the `postgres` resource, and enter the statement:
 
 ```sql title="psql"
 CREATE DATABASE catalogdb;
