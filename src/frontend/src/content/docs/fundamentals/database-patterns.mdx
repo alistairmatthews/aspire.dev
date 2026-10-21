@@ -1,5 +1,5 @@
 ---
-title: Aspire Database patterns
+title: Aspire database patterns
 seoTitle: Learn strategies for using databases in Aspire solutions
 description: Learn about common patterns you can use to work with databases as you develop Aspire solutions.
 ---
@@ -36,7 +36,7 @@ A database server, such as a PostgreSQL container, can host many databases. Your
 
 ### Create a database in the AppHost
 
-The simplest way to create a database is to add a database resource to the server resource in your AppHost. Call <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.AddDatabase" /> on the server resource, then reference the database from the app that uses it:
+The simplest way to create a database is to add a database resource to the server resource in your AppHost. The PostgreSQL resources in the examples on this page come from the [📦 Aspire.Hosting.PostgreSQL](https://www.nuget.org/packages/Aspire.Hosting.PostgreSQL) package. Call <ApiReference name="Aspire.Hosting.PostgresBuilderExtensions.AddDatabase" /> on the server resource, then reference the database from the app that uses it:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='typescript' label='TypeScript'>
@@ -207,7 +207,7 @@ const postgres = await builder.addPostgres('postgres');
 const catalogdb = await postgres.addDatabase('catalogdb');
 
 await builder.addNodeApp('api', './api', 'src/index.ts')
-    .withHttpEndpoint()
+    .withHttpEndpoint({ env: 'PORT' })
     .withReference(catalogdb)
     .waitFor(catalogdb)
     .withHttpCommand('/admin/seed', 'Seed database', {
@@ -246,6 +246,8 @@ builder.Build().Run();
 
 </TabItem>
 </Tabs>
+
+In the TypeScript example, `withHttpEndpoint({ env: 'PORT' })` passes the endpoint's port to the app in the `PORT` environment variable. The app must listen on `process.env.PORT`, otherwise the command can't reach it.
 
 Protect seed endpoints so that only the AppHost can call them, and don't expose them in production. For a way to send a shared secret with each request, see [Considerations when registering HTTP commands](/fundamentals/http-commands/#considerations-when-registering-http-commands).
 
@@ -372,7 +374,7 @@ builder.Build().Run();
 
 If you prefer to apply EF Core migrations from your own code, create a worker service that calls `MigrateAsync` and exits. For a step-by-step guide, see [Create the migration service](/integrations/databases/efcore/migrations/#create-the-migration-service).
 
-For Drizzle, add a `db:migrate` script to the app's _package.json_ file that runs `drizzle-kit migrate`. Then add a second resource to your AppHost that runs this script, and make the app wait for it to finish. Add the resource with <ApiReference name="Aspire.Hosting.JavaScriptHostingExtensions.AddJavaScriptApp" />:
+For Drizzle, add a `db:migrate` script to the app's _package.json_ file that runs `drizzle-kit migrate`. Then add a second resource to your AppHost that runs this script, and make the app wait for it to finish. Add the resource with <ApiReference name="Aspire.Hosting.JavaScriptHostingExtensions.AddJavaScriptApp" /> from the [📦 Aspire.Hosting.JavaScript](https://www.nuget.org/packages/Aspire.Hosting.JavaScript) package:
 
 ```json title="api/package.json"
 {
@@ -393,7 +395,7 @@ const builder = await createBuilder();
 const postgres = await builder.addPostgres('postgres');
 const catalogdb = await postgres.addDatabase('catalogdb');
 
-const migrate = await builder.addJavaScriptApp('api-migrate', './api', 'db:migrate')
+const migrate = await builder.addJavaScriptApp('api-migrate', './api', { runScriptName: 'db:migrate' })
     .withReference(catalogdb)
     .waitFor(catalogdb);
 
@@ -426,6 +428,8 @@ builder.Build().Run();
 
 </TabItem>
 </Tabs>
+
+App paths are relative to the AppHost. The TypeScript example assumes that _apphost.mts_ is in the same folder as the _api_ folder. The C# example assumes that the AppHost is in its own project folder, next to the _api_ folder. Adjust the paths to match your solution layout.
 
 Point the Drizzle Kit configuration at the connection URI that Aspire passes to the resource:
 
@@ -469,12 +473,18 @@ app.post('/admin/migrate', async (_req, res) => {
     res.json({ status: 'Migrations applied' });
 });
 
-// Add your other routes, then start the server...
+// Add your other routes...
+
+app.listen(process.env.PORT);
 ```
 
-With EF Core, the endpoint calls `MigrateAsync` on the database context:
+With EF Core, the endpoint calls `MigrateAsync` on the database context. This example assumes that the app registers a `DbContext` named `CatalogContext`. For more information, see [Use Aspire to create an EF Core context](/integrations/databases/efcore/overview/#use-aspire-to-create-an-ef-core-context).
 
 ```csharp title="Program.cs"
+using Microsoft.EntityFrameworkCore;
+
+// After you build the app...
+
 app.MapPost("/admin/migrate", async (CatalogContext context) =>
 {
     await context.Database.MigrateAsync();
@@ -496,7 +506,7 @@ const postgres = await builder.addPostgres('postgres');
 const catalogdb = await postgres.addDatabase('catalogdb');
 
 await builder.addNodeApp('api', './api', 'src/index.ts')
-    .withHttpEndpoint()
+    .withHttpEndpoint({ env: 'PORT' })
     .withReference(catalogdb)
     .waitFor(catalogdb)
     .withHttpCommand('/admin/migrate', 'Apply migrations', {
