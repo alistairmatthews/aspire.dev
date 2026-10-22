@@ -179,7 +179,7 @@ With Drizzle, the `drizzle-seed` package generates realistic random data from yo
 ```typescript title="src/seed.ts"
 import { drizzle } from 'drizzle-orm/node-postgres';
 import { seed } from 'drizzle-seed';
-import { products } from './schema';
+import { products } from './schema.ts';
 
 export async function seedDatabase() {
     const db = drizzle(process.env.CATALOGDB_URI!);
@@ -458,7 +458,9 @@ Applying migrations on every run isn't always what you want. For example, you mi
 
 When you add an EF Core migration resource without calling `RunDatabaseUpdateOnStart`, the resource doesn't apply migrations on its own. It still appears in the dashboard, with commands that run the EF Core tools for that project. For more information, see [Automated EF migrations with `AddEFMigrations`](/integrations/databases/efcore/migrations/#automated-ef-migrations-with-addefmigrations).
 
-For any ORM, you can also expose migrations as an endpoint in your app and call it with a custom HTTP command. With Drizzle, the endpoint calls the `migrate` function:
+For any ORM, you can also expose migrations as an endpoint in your app and call it with a custom HTTP command. Anyone who can reach the endpoint can change your schema, so the dashboard's confirmation prompt isn't enough protection on its own. Register the endpoint only in development, and require a shared secret that only the AppHost knows. The AppHost passes the secret to the app as an environment variable and sends it in a header when you run the command. For more information, see [Considerations when registering HTTP commands](/fundamentals/http-commands/#considerations-when-registering-http-commands).
+
+With Drizzle, the endpoint calls the `migrate` function:
 
 ```typescript title="api/src/index.ts"
 import express from 'express';
@@ -467,11 +469,19 @@ import { migrate } from 'drizzle-orm/node-postgres/migrator';
 
 const app = express();
 const db = drizzle(process.env.CATALOGDB_URI!);
+const migrationKey = process.env.MIGRATION_KEY;
 
-app.post('/admin/migrate', async (_req, res) => {
-    await migrate(db, { migrationsFolder: './drizzle' });
-    res.json({ status: 'Migrations applied' });
-});
+if (process.env.NODE_ENV === 'development' && migrationKey) {
+    app.post('/admin/migrate', async (req, res) => {
+        if (req.get('X-Migration-Key') !== migrationKey) {
+            res.sendStatus(401);
+            return;
+        }
+
+        await migrate(db, { migrationsFolder: './drizzle' });
+        res.json({ status: 'Migrations applied' });
+    });
+}
 
 // Add your other routes...
 
@@ -481,26 +491,41 @@ app.listen(process.env.PORT);
 With EF Core, the endpoint calls `MigrateAsync` on the database context. This example assumes that the app registers a `DbContext` named `CatalogContext`. For more information, see [Use Aspire to create an EF Core context](/integrations/databases/efcore/overview/#use-aspire-to-create-an-ef-core-context).
 
 ```csharp title="Program.cs"
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 
 // After you build the app...
 
-app.MapPost("/admin/migrate", async (CatalogContext context) =>
+if (app.Environment.IsDevelopment())
 {
-    await context.Database.MigrateAsync();
-    return Results.Ok(new { status = "Migrations applied" });
-});
+    app.MapPost("/admin/migrate", async (
+        [FromHeader(Name = "X-Migration-Key")] string? key,
+        IConfiguration config,
+        CatalogContext context) =>
+    {
+        if (config["MIGRATION_KEY"] is not { Length: > 0 } expected || key != expected)
+        {
+            return Results.Unauthorized();
+        }
+
+        await context.Database.MigrateAsync();
+        return Results.Ok(new { status = "Migrations applied" });
+    });
+}
 ```
 
-Then add the command to the app resource in your AppHost:
+Then add the command to the app resource in your AppHost. The AppHost generates a random key each time it starts, passes it to the app in the `MIGRATION_KEY` environment variable, and adds it to the command's request in the `X-Migration-Key` header:
 
 <Tabs syncKey='aspire-lang'>
 <TabItem id='typescript' label='TypeScript'>
 
 ```typescript title="apphost.mts"
+import { randomBytes } from 'node:crypto';
 import { createBuilder } from './.aspire/modules/aspire.mjs';
 
 const builder = await createBuilder();
+
+const migrationKey = randomBytes(32).toString('hex');
 
 const postgres = await builder.addPostgres('postgres');
 const catalogdb = await postgres.addDatabase('catalogdb');
@@ -509,9 +534,13 @@ await builder.addNodeApp('api', './api', 'src/index.ts')
     .withHttpEndpoint({ env: 'PORT' })
     .withReference(catalogdb)
     .waitFor(catalogdb)
+    .withEnvironment('MIGRATION_KEY', migrationKey)
     .withHttpCommand('/admin/migrate', 'Apply migrations', {
         methodName: 'POST',
         confirmationMessage: 'Apply pending migrations to the catalog database?',
+        prepareRequest: async () => ({
+            headers: { 'X-Migration-Key': migrationKey },
+        }),
     });
 
 await builder.build().run();
@@ -521,7 +550,11 @@ await builder.build().run();
 <TabItem id='csharp' label='C#'>
 
 ```csharp title="AppHost.cs"
+using System.Security.Cryptography;
+
 var builder = DistributedApplication.CreateBuilder(args);
+
+var migrationKey = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
 
 var postgres = builder.AddPostgres("postgres");
 var catalogdb = postgres.AddDatabase("catalogdb");
@@ -529,13 +562,19 @@ var catalogdb = postgres.AddDatabase("catalogdb");
 builder.AddProject<Projects.Api>("api")
     .WithReference(catalogdb)
     .WaitFor(catalogdb)
+    .WithEnvironment("MIGRATION_KEY", migrationKey)
     .WithHttpCommand(
         path: "/admin/migrate",
         displayName: "Apply migrations",
         commandOptions: new HttpCommandOptions
         {
             Method = HttpMethod.Post,
-            ConfirmationMessage = "Apply pending migrations to the catalog database?"
+            ConfirmationMessage = "Apply pending migrations to the catalog database?",
+            PrepareRequest = context =>
+            {
+                context.Request.Headers.Add("X-Migration-Key", migrationKey);
+                return Task.CompletedTask;
+            }
         });
 
 builder.Build().Run();
@@ -622,7 +661,7 @@ When you deploy, the database resources in your AppHost become part of the deplo
 Your schema must also reach the deployed database. `RunDatabaseUpdateOnStart` affects only local runs, so plan a separate step for deployment:
 
 - With EF Core, publish your migrations as a container image with `PublishAsMigrationBundle`. The bundle runs as part of the deployment and applies pending migrations. For more information, see [Publish the migration bundle as a container image](/integrations/databases/efcore/migrations/#publish-the-migration-bundle-as-a-container-image).
-- With Drizzle, the migration resource from [Apply schema migrations on startup](#apply-schema-migrations-on-startup) is deployed like any other app resource. Make sure it runs once and then stops, or call the `migrate` function when the app starts. Alternatively, run `drizzle-kit migrate` as a step in your CI/CD pipeline.
+- With Drizzle, run `drizzle-kit migrate` as a step in your CI/CD pipeline, or call the `migrate` function when the deployed app starts. The migration resource from [Apply schema migrations on startup](#apply-schema-migrations-on-startup) configures a local run script; deploying it requires explicit runtime publishing configuration and a one-shot execution model for your deployment target. For publishing options, see [Deploy JavaScript apps](/deployment/javascript-apps/).
 
 Don't deploy development seed data or seed endpoints. Seed data that's part of your migrations, such as reference data, is deployed with the migrations.
 
