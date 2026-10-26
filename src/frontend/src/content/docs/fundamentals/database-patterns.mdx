@@ -18,7 +18,7 @@ Use this table to find the right approach for your requirements:
 | ----------------------- | --------------------------- | ------- |
 | Create a database | In the AppHost | [Add a database resource](#create-a-database-in-the-apphost) |
 | | In an orchestrated app | [On startup or with a custom command](#create-a-database-in-an-orchestrated-app) |
-| | In a dashboard REPL terminal | [Run commands or a script](#create-a-database-in-a-dashboard-repl-terminal) |
+| | In a dashboard <abbr title="Read-eval-print loop">REPL</abbr> terminal | [Run commands or a script](#create-a-database-in-a-dashboard-repl-terminal) |
 | Seed a database | In an orchestrated app | [On startup or with a custom command](#seed-a-database-on-startup-or-using-a-custom-command) |
 | | | [Use EF Core or Drizzle migrations](#seed-a-database-using-orm-migrations) |
 | | In a dashboard REPL terminal | [Run a script](#seed-a-database-in-a-dashboard-repl-terminal) |
@@ -645,7 +645,7 @@ builder.Build().Run();
 
 In a C# AppHost, the persistent lifetime API is experimental and requires suppressing the [`ASPIREPERSISTENCE001`](/diagnostics/aspirepersistence001/) diagnostic.
 
-When the data persists, plan how seed logic and initialization scripts behave on later runs. Initialization scripts run only against an empty data directory, and seed code should check for existing rows. By default, Aspire generates a new server password on every run. Set the password as a secret or a parameter, so that the server can still open its existing data on the next run.
+When the data persists, plan how seed logic and initialization scripts behave on later runs. Initialization scripts run only against an empty data directory, and seed code should check for existing rows. Aspire generates the password on first run and stores it in the AppHost's user secrets. Set it yourself if you want to control or share it.
 
 <LearnMore>
   For more information, see [Persist Aspire data with volumes and binds](/fundamentals/persist-data-volumes/), [Create persistent passwords](/fundamentals/persist-data-volumes/#create-persistent-passwords), and [Container lifetime vs. data durability](/app-host/resource-lifetimes/#container-lifetime-vs-data-durability).
